@@ -210,6 +210,7 @@ main#home > p:first-child::before {
 
 .card:hover {
   border-color: var(--border-strong);
+  border-left-color: var(--accent);
   box-shadow: 0 4px 16px var(--shadow-hover);
   transform: translateY(-1px);
 }
@@ -274,9 +275,6 @@ main#home > p:first-child::before {
   color: var(--muted);
 }
 .card > h2 + p { margin-top: 0.15rem; }
-
-/* Active level accent left border on hover — subtle Minimal accent */
-.card:hover { border-left-color: var(--accent); }
 
 /* — Page header (detail view) — */
 .page-header {
