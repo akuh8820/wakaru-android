@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3beta — 2026-09-13
+
+### CI/CD
+- Migrate actions: checkout v4→v5, setup-java v4→v5, upload-artifact v4→v5, action-gh-release v2→v3 (Node.js 20 deprecation)
+
 ## v1.2beta — 2026-09-13
 
 ### Data Pipeline (Fase 2)
