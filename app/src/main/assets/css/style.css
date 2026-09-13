@@ -1,80 +1,366 @@
+/* Wakaru — Calm & Content-First */
 :root {
-  --bg: #FAFAF8;
+  --bg: #FAF9F6;
   --surface: #FFFFFF;
-  --text: #1A1A1A;
-  --muted: #6B6B6B;
-  --border: #E5E5E0;
-  --accent: #C94F42;
+  --text: #2C2C2C;
+  --muted: #7A7A72;
+  --border: #E8E5DE;
+  --accent: #5B7B5A;
+  --accent-light: #E8F0E8;
   --accent-text: #FFFFFF;
+  --shadow: rgba(0, 0, 0, 0.04);
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
 }
+
 [data-theme="dark"] {
-  --bg: #141414;
-  --surface: #1F1F1F;
-  --text: #ECECEC;
-  --muted: #9A9A9A;
-  --border: #2E2E2E;
-  --accent: #E07A5F;
-  --accent-text: #141414;
+  --bg: #1A1A18;
+  --surface: #242422;
+  --text: #E8E6E1;
+  --muted: #9A9890;
+  --border: #333330;
+  --accent: #7DA37A;
+  --accent-light: #2A3A2A;
+  --accent-text: #1A1A18;
+  --shadow: rgba(0, 0, 0, 0.3);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* — Reset — */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  padding: 1rem;
-  transition: background 0.3s, color 0.3s;
+  padding: 0 var(--space-sm) var(--space-xl);
+  overflow-wrap: break-word;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
+
+/* Japanese text — never italic, always breakable, ≥14px */
+:lang(ja),
+.card-icon {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  font-style: normal;
+}
+
+/* — Header — calm, no heavy border */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 1.5rem;
+  padding: var(--space-sm) var(--space-xs);
+  margin: 0 calc(-1 * var(--space-sm));
+  padding-left: var(--space-sm);
+  padding-right: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  background: var(--surface);
+  box-shadow: 0 1px 3px var(--shadow);
+  border-bottom: 1px solid transparent;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
-header h1 { color: var(--accent); font-size: 1.5rem; }
+
+header h1 {
+  font-family: 'Inter', 'Noto Sans JP', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  line-height: 1;
+}
+
+/* Theme toggle — pill */
 #theme-toggle {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   background: var(--surface);
+  color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.5rem 0.75rem;
-  font-size: 1.2rem;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
   cursor: pointer;
+  line-height: 1;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
 }
-#level-cards { display: flex; flex-direction: column; gap: 1rem; }
+
+#theme-toggle:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+
+#theme-toggle:active {
+  transform: scale(0.96);
+}
+
+#theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* — Main — */
+main#home {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+main#home > p {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  margin-bottom: var(--space-md);
+  letter-spacing: 0.01em;
+}
+
+/* Cards container */
+#level-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* — Card — hero is the content */
 .card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1.25rem;
   cursor: pointer;
-  transition: border-color 0.3s;
+  box-shadow: 0 1px 3px var(--shadow);
+  transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 200ms ease, transform 200ms ease;
+  animation: fadeInUp 300ms ease both;
 }
-.card:hover { border-color: var(--accent); }
-.card h2 { color: var(--accent); font-size: 1.25rem; }
-.card p { color: var(--muted); font-size: 0.9rem; margin-top: 0.25rem; }
+
+/* staggered entrance */
+.card:nth-child(1) { animation-delay: 40ms; }
+.card:nth-child(2) { animation-delay: 100ms; }
+.card:nth-child(3) { animation-delay: 160ms; }
+.card:nth-child(4) { animation-delay: 220ms; }
+.card:nth-child(5) { animation-delay: 280ms; }
+.card:nth-child(6) { animation-delay: 340ms; }
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.card:active {
+  transform: translateY(0);
+}
+
+/* Icon — large, muted, content hero */
+.card-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow-wrap: break-word;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.card:hover .card-icon {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+/* Body wrapper for contract structure */
+.card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/* Support both contract (.card-body h2) and legacy (.card h2 directly) */
+.card h2,
+.card-body h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+
+.card p,
+.card-body p {
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: break-word;
+}
+
+/* Legacy cards without .card-icon/.card-body still get tidy spacing */
+.card > h2 + p {
+  margin-top: 0.15rem;
+}
+
+/* — Page header (detail view) — */
 .page-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 0;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  margin-bottom: var(--space-md);
   border-bottom: 1px solid var(--border);
-  margin-bottom: 1.5rem;
+  transition: border-color 0.3s;
 }
+
+.page-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
 .back-btn {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   background: var(--surface);
+  color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
   cursor: pointer;
-  font-size: 1rem;
+  line-height: 1;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
+
+.back-btn:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.back-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Also support #back-btn id */
+#back-btn {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* — Placeholder — */
 .placeholder {
   text-align: center;
-  padding: 2rem;
+  padding: var(--space-lg);
   color: var(--muted);
-  border: 2px dashed var(--border);
-  border-radius: 12px;
-  margin-top: 1rem;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  margin-top: var(--space-md);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+}
+
+/* Detail view typography inside #home after navigation */
+#home h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: var(--space-xs);
+  overflow-wrap: break-word;
+}
+
+#home > p {
+  color: var(--muted);
+}
+
+/* — Animations — */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* — Responsive — */
+@media (min-width: 560px) {
+  body {
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+  }
+
+  header {
+    margin-left: calc(-1 * var(--space-lg));
+    margin-right: calc(-1 * var(--space-lg));
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+  }
+}
+
+/* — Reduced motion — */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .card:hover {
+    transform: none;
+  }
 }
