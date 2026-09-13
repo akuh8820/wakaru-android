@@ -12,8 +12,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.webkit.AssetsPathHandler;
 import androidx.webkit.WebViewAssetLoader;
+import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
