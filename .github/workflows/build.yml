@@ -25,10 +25,12 @@ jobs:
       - name: Install Android SDK
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools/latest
-          curl -L -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip -q cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools/latest
-          # cmdline-tools zip extracts nested: latest/cmdline-tools/bin/sdkmanager
-          SDK_BIN="$HOME/android-sdk/cmdline-tools/latest/cmdline-tools/bin"
+          curl -L -o /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q /tmp/cmdline-tools.zip -d /tmp/cmdline-extract
+          # Zip creates cmdline-tools/bin/sdkmanager; move to expected <sdk>/cmdline-tools/latest/bin/
+          cp /tmp/cmdline-extract/cmdline-tools/bin/* $HOME/android-sdk/cmdline-tools/latest/bin/
+          cp -r /tmp/cmdline-extract/cmdline-tools/lib $HOME/android-sdk/cmdline-tools/latest/lib 2>/dev/null || true
+          SDK_BIN="$HOME/android-sdk/cmdline-tools/latest/bin"
           echo "$SDK_BIN" >> $GITHUB_PATH
           echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
           echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
