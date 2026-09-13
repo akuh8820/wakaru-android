@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.4beta — 2026-09-13
+
+### Fitur (P2.4–P2.7)
+- **Kanji detail view**: kanji besar + arti, stroke order animasi (SVG KanjiVG, putar per goresan + nomor urut), readings on/kun/nama dengan tombol audio, contoh kalimat + terjemahan, kosakata terkait
+- **Quiz mode**: pilih jenis (Kanji/Kosakata) + jumlah soal (10/30), 4 opsi, feedback langsung, skor X/100, review jawaban salah, skor terbaik tersimpan
+- **Flashcard mode**: 3 mode sembunyikan (arti/kana/kanji), tap untuk balik, acak, navigasi prev/next, tandai sudah hafal
+- **Audio**: Android TTS via JS bridge (speakJapanese) — tombol 🔊 di readings, contoh kalimat, flashcard; fallback senyap di browser
+- **Data**: `kanji-detail.json` — 79 kanji × contoh kalimat N5 kurasi + 229 kosakata terkait (script `scripts/gen_kanji_detail.py`)
+
+### Fix & Polish
+- Fix crash kanji detail: strokes.json array-of-arrays → `segs.join(' ')`
+- Fix aria-label precedence bug di list kosakata (layout rusak)
+- Audio button: span → `<button>` 44×44, ikon SVG speaker (bukan emoji), focus-visible
+- Reading pill: hapus nested button-in-button
+- Flashcard: keyboard accessible (role=button, Enter/Space), audio tidak membalik kartu
+- Touch target ≥44px: tab, quiz-pill, btn-stroke, reading-pill
+- Stroke animasi: guard re-entry, prefers-reduced-motion → langsung tampil semua
+- Quiz: opsi non-pilihan disabled, tap untuk lanjut cepat, aria-live
+- TTS: `shutdown()` di onDestroy, `volatile ready`, hapus KITKAT branch mati, hardening WebView
+- Dark mode: hover level-action, shadow kartu baru, progress track 6px seragam
+
 ## v1.3beta — 2026-09-13
 
 ### Fitur (P2.3)

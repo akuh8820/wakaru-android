@@ -15,12 +15,14 @@
  *   WakaruData.getQuizBest(levelId, type) → number
  *   WakaruData.setQuizBest(levelId, type, score)
  *   WakaruData.getLevelProgress(levelId) → {kanjiPct, kosakataPct}
+ *   WakaruData.loadKanjiDetail(levelId)  → Promise<dict>
  */
 var WakaruData = (function () {
   'use strict';
 
   var GOJUON_ORDER = ['A行','K行','S行','T行','N行','H行','M行','Y行','R行','W行','Lainnya'];
   var CACHE = new Map();
+  var DETAIL_CACHE = {};
   var PROGRESS_KEY = 'wakaru-progress';
 
   // ── localStorage helpers ──────────────────────────────────────────
@@ -173,6 +175,16 @@ var WakaruData = (function () {
     };
   }
 
+  // ── Kanji detail ──────────────────────────────────────────────────
+  function loadKanjiDetail(levelId) {
+    if (DETAIL_CACHE[levelId]) return Promise.resolve(DETAIL_CACHE[levelId]);
+    var path = 'data/' + levelId + '/kanji-detail.json';
+    return fetchJSON(path).then(function (detail) {
+      DETAIL_CACHE[levelId] = detail;
+      return detail;
+    });
+  }
+
   // ── Public API ───────────────────────────────────────────────────
   return {
     load: load,
@@ -187,6 +199,7 @@ var WakaruData = (function () {
     isSeen: isSeen,
     getQuizBest: getQuizBest,
     setQuizBest: setQuizBest,
-    getLevelProgress: getLevelProgress
+    getLevelProgress: getLevelProgress,
+    loadKanjiDetail: loadKanjiDetail
   };
 })();

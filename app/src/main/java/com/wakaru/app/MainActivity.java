@@ -1,9 +1,12 @@
 package com.wakaru.app;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.webkit.ConsoleMessage;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -11,12 +14,15 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.Locale;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
+    private TTSBridge ttsBridge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,27 +59,66 @@ public class MainActivity extends AppCompatActivity {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setAllowFileAccess(true);
-        settings.setAllowContentAccess(true);
+        ttsBridge = new TTSBridge(this);
+        webView.addJavascriptInterface(ttsBridge, "Android");
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
         setContentView(webView);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            webView.evaluateJavascript("wakaruGoBack()", value -> {
-                if (value == null || !"true".equals(value.replace("\"", ""))) {
-                    finish();
+    private static class TTSBridge implements TextToSpeech.OnInitListener {
+        private final Context context;
+        private TextToSpeech tts;
+        private volatile boolean ready = false;
+
+        TTSBridge(Context ctx) {
+            this.context = ctx;
+            try {
+                tts = new TextToSpeech(ctx, this);
+            } catch (Exception e) {
+                Log.e("Wakaru", "TTS init failed", e);
+            }
+        }
+
+        @Override
+        public void onInit(int status) {
+            if (status == TextToSpeech.SUCCESS && tts != null) {
+                int result = tts.setLanguage(Locale.JAPANESE);
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    tts.setLanguage(Locale.getDefault());
                 }
-            });
-        } else {
-            finish();
+                ready = true;
+            } else {
+                Log.w("Wakaru", "TTS not available, status=" + status);
+            }
+        }
+
+        @JavascriptInterface
+        public void speakJapanese(String text) {
+            if (!ready || tts == null || text == null || text.isEmpty()) return;
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "wakaru_" + System.currentTimeMillis());
+        }
+
+        void shutdown() {
+            if (tts != null) {
+                tts.stop();
+                tts.shutdown();
+                tts = null;
+            }
         }
     }
 
     @Override
+    public void onBackPressed() {
+        webView.evaluateJavascript("wakaruGoBack()", value -> {
+            if (value == null || !"true".equals(value.replace("\"", ""))) {
+                finish();
+            }
+        });
+    }
+
+    @Override
     protected void onDestroy() {
+        if (ttsBridge != null) ttsBridge.shutdown();
         if (webView != null) {
             webView.destroy();
         }
