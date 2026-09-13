@@ -161,8 +161,8 @@ main#home > p {
   margin-bottom: var(--space-md);
   letter-spacing: 0.01em;
 }
-/* inject Minimal eyebrow above the lead without touching JS */
-main#home > p::before {
+/* inject Minimal eyebrow above the lead without touching JS — home view only (detail view's <p> is not :first-child) */
+main#home > p:first-child::before {
   content: "WAKARU — 日本語";
   display: block;
   font-family: 'Inconsolata', ui-monospace, monospace;
