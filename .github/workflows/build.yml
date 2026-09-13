@@ -70,4 +70,19 @@ jobs:
           name: wakaru-app
           path: app/build/outputs/apk/release/app-release.apk
 
+      - name: Version tag
+        id: version
+        run: |
+          VERSION=$(grep 'versionName' app/build.gradle | sed 's/.*"\(.*\)".*/\1/')
+          echo "tag=v${VERSION}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
+      - name: Create GitHub Release
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            app/build/outputs/apk/release/app-release.apk \
+            --title "Wakaru v${{ steps.version.outputs.version }}" \
+            --notes "Wakaru — App belajar bahasa Jepang (N5/N4/N3)" \
+            --latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
