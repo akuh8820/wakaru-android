@@ -2,6 +2,13 @@
 
 ## v1.3beta — 2026-09-13
 
+### Fitur (P2.3)
+- **Level detail view**: list materi kanji + kosakata N5 dengan data nyata (79 kanji, 668 kosakata)
+- **Filter tabs**: Semua / Kanji / Kosakata dengan count badge
+- **Search real-time**: cari kanji (karakter/arti) atau kosakata (kanji/kana/arti/romaji)
+- **Progress tracking**: bar progres kanji + kosakata, item yang sudah dilihat ditandai ✓
+- Loading skeleton, empty state, error state + retry
+
 ### CI/CD
 - Migrate actions: checkout v4→v5, setup-java v4→v5, upload-artifact v4→v5, action-gh-release v2→v3 (Node.js 20 deprecation)
 
