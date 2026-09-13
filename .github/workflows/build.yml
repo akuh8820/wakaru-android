@@ -27,7 +27,7 @@ jobs:
           mkdir -p $HOME/android-sdk/cmdline-tools/latest
           curl -L -o /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip -q /tmp/cmdline-tools.zip -d /tmp/cmdline-extract
-          # Zip creates cmdline-tools/bin/sdkmanager; move to expected <sdk>/cmdline-tools/latest/bin/
+          mkdir -p $HOME/android-sdk/cmdline-tools/latest/bin
           cp /tmp/cmdline-extract/cmdline-tools/bin/* $HOME/android-sdk/cmdline-tools/latest/bin/
           cp -r /tmp/cmdline-extract/cmdline-tools/lib $HOME/android-sdk/cmdline-tools/latest/lib 2>/dev/null || true
           SDK_BIN="$HOME/android-sdk/cmdline-tools/latest/bin"
