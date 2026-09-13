@@ -1,97 +1,118 @@
-/* Wakaru — Calm & Content-First */
+/* Wakaru — Minimal · sage #5B7B5A · TypeUI */
 :root {
-  --bg: #FAF9F6;
+  /* core — light */
+  --bg: #F4F4F1;
   --surface: #FFFFFF;
-  --text: #2C2C2C;
-  --muted: #7A7A72;
-  --border: #E8E5DE;
+  --surface-2: #FAFAF8;
+  --text: #0C0C09;
+  --muted: #6B6B63;
+  --muted-2: #8A8A83;
+  --border: #E8E6E0;
+  --border-strong: #DDDBD5;
   --accent: #5B7B5A;
-  --accent-light: #E8F0E8;
+  --accent-hover: #4E6A4E;
+  --accent-light: #E9EFE9;
   --accent-text: #FFFFFF;
-  --shadow: rgba(0, 0, 0, 0.04);
-  --space-xs: 0.5rem;
-  --space-sm: 1rem;
-  --space-md: 1.5rem;
-  --space-lg: 2rem;
-  --space-xl: 3rem;
+  --success: #16A34A;
+  --warning: #D97706;
+  --danger: #DC2626;
+  --shadow: rgba(12, 12, 9, 0.06);
+  --shadow-hover: rgba(12, 12, 9, 0.08);
+  /* spacing · 4/8/12/16/24/32 */
+  --space-2xs: 0.25rem; /* 4 */
+  --space-xs: 0.5rem;   /* 8 */
+  --space-sm: 0.75rem;  /* 12 */
+  --space-md: 1rem;     /* 16 */
+  --space-lg: 1.5rem;   /* 24 */
+  --space-xl: 2rem;     /* 32 */
+  --space-2xl: 3rem;    /* 48 */
+  /* radius */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-pill: 999px;
 }
 
 [data-theme="dark"] {
-  --bg: #1A1A18;
-  --surface: #242422;
-  --text: #E8E6E1;
-  --muted: #9A9890;
-  --border: #333330;
-  --accent: #7DA37A;
-  --accent-light: #2A3A2A;
-  --accent-text: #1A1A18;
-  --shadow: rgba(0, 0, 0, 0.3);
+  --bg: #181A18;
+  --surface: #242624;
+  --surface-2: #2A2C2A;
+  --text: #F2F0EB;
+  --muted: #A8A6A0;
+  --muted-2: #8E8C86;
+  --border: #2E302E;
+  --border-strong: #3A3C39;
+  --accent: #8EB08E;
+  --accent-hover: #A1C2A1;
+  --accent-light: #2A332A;
+  --accent-text: #0C0C09;
+  --shadow: rgba(0, 0, 0, 0.35);
+  --shadow-hover: rgba(0, 0, 0, 0.5);
 }
 
 /* — Reset — */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  background: var(--bg);
 }
 
 body {
-  font-family: 'Inter', 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  font-family: 'Inter', 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', system-ui, -apple-system, sans-serif;
   font-size: 1rem;
   line-height: 1.6;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  padding: 0 var(--space-sm) var(--space-xl);
+  padding: 0 var(--space-md) var(--space-xl);
   overflow-wrap: break-word;
-  transition: background 0.3s, color 0.3s, border-color 0.3s;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
-/* Japanese text — never italic, always breakable, ≥14px */
-:lang(ja),
-.card-icon {
-  overflow-wrap: break-word;
-  word-break: break-word;
-  font-style: normal;
-}
+/* Japanese never italic */
+:lang(ja), .card-icon { font-style: normal; overflow-wrap: break-word; word-break: break-word; }
 
-/* — Header — calm, no heavy border */
+/* — Header — hairline, generous whitespace */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-sm) var(--space-xs);
-  margin: 0 calc(-1 * var(--space-sm));
-  padding-left: var(--space-sm);
-  padding-right: var(--space-sm);
-  margin-bottom: var(--space-lg);
+  padding: var(--space-md) 0;
+  margin: 0 calc(-1 * var(--space-md));
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+  margin-bottom: var(--space-xl);
   background: var(--surface);
-  box-shadow: 0 1px 3px var(--shadow);
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 10;
-  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  transition: background 0.25s, border-color 0.25s;
 }
 
 header h1 {
   font-family: 'Inter', 'Noto Sans JP', sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--accent);
+  letter-spacing: -0.03em;
+  color: var(--text);
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+header h1::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
 }
 
-/* Theme toggle — pill */
+/* Theme toggle — Minimal 8px, 44px touch target */
 #theme-toggle {
   font-family: inherit;
   font-size: 0.875rem;
@@ -100,26 +121,20 @@ header h1 {
   background: var(--surface);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.45rem 0.85rem;
+  border-radius: var(--r-md);
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   line-height: 1;
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 120ms ease;
 }
-
-#theme-toggle:hover {
-  background: var(--accent-light);
-  border-color: var(--accent);
-}
-
-#theme-toggle:active {
-  transform: scale(0.96);
-}
-
-#theme-toggle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
+#theme-toggle:hover { background: var(--accent-light); border-color: var(--accent); color: var(--text); }
+#theme-toggle:active { transform: scale(0.97); }
+#theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* — Main — */
 main#home {
@@ -127,134 +142,154 @@ main#home {
   margin: 0 auto;
 }
 
+/* eyebrow + lead — Minimal hierarchy */
+.label-caps {
+  font-family: 'Inconsolata', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* The JS-generated intro <p> — style as lead with eyebrow via pseudo */
 main#home > p {
   color: var(--muted);
   font-size: 0.9375rem;
+  line-height: 1.5;
   margin-bottom: var(--space-md);
   letter-spacing: 0.01em;
 }
+/* inject Minimal eyebrow above the lead without touching JS */
+main#home > p::before {
+  content: "WAKARU — 日本語";
+  display: block;
+  font-family: 'Inconsolata', ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-bottom: var(--space-xs);
+}
+/* static fallback .home-intro eyebrow hidden when JS replaces — no clash */
+.home-intro .label-caps { margin-bottom: var(--space-xs); }
+.home-intro .lead { color: var(--muted); font-size: 0.9375rem; margin-bottom: var(--space-md); }
 
-/* Cards container */
+/* Cards container — whitespace-driven */
 #level-cards {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-sm); /* 12px */
 }
 
-/* — Card — hero is the content */
+/* — Card — refined anatomy, 8px radius, restrained */
 .card {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 1.25rem;
+  border-radius: var(--r-md);
+  padding: var(--space-md) var(--space-md);
   cursor: pointer;
-  box-shadow: 0 1px 3px var(--shadow);
-  transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 200ms ease, transform 200ms ease;
-  animation: fadeInUp 300ms ease both;
+  box-shadow: 0 1px 2px var(--shadow);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 0.25s;
+  animation: fadeInUp 360ms ease both;
+  min-height: 72px; /* ensure touch comfort */
+  -webkit-tap-highlight-color: transparent;
 }
-
-/* staggered entrance */
 .card:nth-child(1) { animation-delay: 40ms; }
-.card:nth-child(2) { animation-delay: 100ms; }
-.card:nth-child(3) { animation-delay: 160ms; }
-.card:nth-child(4) { animation-delay: 220ms; }
-.card:nth-child(5) { animation-delay: 280ms; }
-.card:nth-child(6) { animation-delay: 340ms; }
+.card:nth-child(2) { animation-delay: 110ms; }
+.card:nth-child(3) { animation-delay: 180ms; }
+.card:nth-child(4) { animation-delay: 250ms; }
+.card:nth-child(5) { animation-delay: 320ms; }
+.card:nth-child(6) { animation-delay: 390ms; }
 
 .card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: 0 4px 16px var(--shadow-hover);
+  transform: translateY(-1px);
+}
+.card:hover .card-icon {
   border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
 }
-
-[data-theme="dark"] .card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
+.card:hover::after { color: var(--accent); transform: translateX(2px); }
 
 .card:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+  border-color: var(--accent);
+}
+.card:active { transform: translateY(0); box-shadow: 0 1px 2px var(--shadow); }
+
+/* chevron — Minimal indicator */
+.card::after {
+  content: "→";
+  font-size: 0.9rem;
+  color: var(--muted-2);
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: var(--space-xs);
+  transition: color 150ms ease, transform 150ms ease;
 }
 
-.card:active {
-  transform: translateY(0);
-}
-
-/* Icon — large, muted, content hero */
+/* Icon — 48px, 8px radius, centered Japanese glyph */
 .card-icon {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3.25rem;
-  height: 3.25rem;
-  font-size: 2rem;
+  width: 3rem;
+  height: 3rem;
+  font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  font-size: 1.45rem;
   font-weight: 500;
   line-height: 1;
   color: var(--muted);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow-wrap: break-word;
-  transition: background 0.3s, border-color 0.3s, color 0.3s;
+  border-radius: var(--r-md);
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
 }
 
-.card:hover .card-icon {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: var(--accent-light);
-}
-
-/* Body wrapper for contract structure */
-.card-body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-/* Support both contract (.card-body h2) and legacy (.card h2 directly) */
-.card h2,
-.card-body h2 {
-  font-size: 1.25rem;
+/* Body */
+.card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.card h2, .card-body h2 {
+  font-family: 'Inter', 'Noto Sans JP', sans-serif;
+  font-size: 1rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   color: var(--text);
-  line-height: 1.2;
-  overflow-wrap: break-word;
+  line-height: 1.25;
 }
-
-.card p,
-.card-body p {
-  font-size: 0.9rem;
+.card p, .card-body p {
+  font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.5;
   color: var(--muted);
-  overflow-wrap: break-word;
 }
+.card > h2 + p { margin-top: 0.15rem; }
 
-/* Legacy cards without .card-icon/.card-body still get tidy spacing */
-.card > h2 + p {
-  margin-top: 0.15rem;
-}
+/* Active level accent left border on hover — subtle Minimal accent */
+.card:hover { border-left-color: var(--accent); }
 
 /* — Page header (detail view) — */
 .page-header {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) 0;
+  padding: var(--space-sm) 0 var(--space-md);
   margin-bottom: var(--space-md);
   border-bottom: 1px solid var(--border);
-  transition: border-color 0.3s;
+  transition: border-color 0.25s;
 }
-
 .page-header h2 {
-  font-size: 1.25rem;
+  font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text);
@@ -262,105 +297,83 @@ main#home > p {
 
 .back-btn {
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   background: var(--surface);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.5rem 0.9rem;
+  border-radius: var(--r-md);
+  min-height: 44px;
+  padding: 0 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   cursor: pointer;
   line-height: 1;
   transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
+.back-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+.back-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#back-btn { font-family: inherit; font-size: 0.8125rem; font-weight: 500; }
 
-.back-btn:hover {
-  background: var(--accent-light);
-  border-color: var(--accent);
+/* Detail view typography */
+#home h1 {
+  font-family: 'Inter', 'Noto Sans JP', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
   color: var(--text);
+  margin-bottom: var(--space-xs);
+  line-height: 1.2;
 }
+#home > p { color: var(--muted); }
 
-.back-btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* Also support #back-btn id */
-#back-btn {
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-}
-
-/* — Placeholder — */
+/* Placeholder — Minimal dashed, 8px */
 .placeholder {
   text-align: center;
-  padding: var(--space-lg);
+  padding: var(--space-lg) var(--space-md);
   color: var(--muted);
   background: var(--surface);
   border: 1px dashed var(--border);
-  border-radius: 16px;
+  border-radius: var(--r-md);
   margin-top: var(--space-md);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  transition: background 0.3s, border-color 0.3s, color 0.3s;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
 }
 
-/* Detail view typography inside #home after navigation */
-#home h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  margin-bottom: var(--space-xs);
-  overflow-wrap: break-word;
-}
-
-#home > p {
-  color: var(--muted);
-}
-
-/* — Animations — */
+/* Animations */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* — Responsive — */
+/* Responsive — breathing room on larger phones */
 @media (min-width: 560px) {
-  body {
-    padding-left: var(--space-lg);
-    padding-right: var(--space-lg);
-  }
-
+  body { padding-left: var(--space-lg); padding-right: var(--space-lg); }
   header {
     margin-left: calc(-1 * var(--space-lg));
     margin-right: calc(-1 * var(--space-lg));
     padding-left: var(--space-lg);
     padding-right: var(--space-lg);
   }
+  .card { padding: 1.1rem var(--space-md); }
 }
 
-/* — Reduced motion — */
+/* Tighter on very small */
+@media (max-width: 360px) {
+  .card { gap: var(--space-sm); }
+  .card-icon { width: 2.75rem; height: 2.75rem; font-size: 1.3rem; }
+}
+
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-
-  .card:hover {
-    transform: none;
-  }
+  .card:hover { transform: none; }
 }
