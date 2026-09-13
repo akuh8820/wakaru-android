@@ -1,0 +1,45 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.wakaru.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.wakaru.app"
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+}
+
+def keystorePropsFile = rootProject.file('app/keystore.properties')
+if (keystorePropsFile.exists()) {
+    def keystoreProps = new Properties()
+    keystoreProps.load(new FileInputStream(keystorePropsFile))
+    android {
+        signingConfigs {
+            release {
+                storeFile file(keystoreProps['storeFile'])
+                storeType 'PKCS12'
+                storePassword keystoreProps['storePassword']
+                keyPassword keystoreProps['keyPassword']
+                keyAlias keystoreProps['keyAlias']
+            }
+        }
+        buildTypes {
+            release { signingConfig signingConfigs.release }
+        }
+    }
+}

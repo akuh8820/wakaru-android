@@ -1,0 +1,8 @@
+app/keystore.properties
+app/release-key.jks
+app/release-key.p12
+*.jks
+*.p12
+build/
+.gradle/
+.local.properties
