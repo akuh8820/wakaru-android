@@ -3,6 +3,9 @@ app/release-key.jks
 app/release-key.p12
 *.jks
 *.p12
+*.apk
+*.zip
+apk-extract/
 build/
 .gradle/
-.local.properties
+local.properties
