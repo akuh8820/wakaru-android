@@ -89,7 +89,7 @@ jobs:
           gh release create "$TAG" \
             app/build/outputs/apk/release/app-release.apk \
             --title "Wakaru v${{ steps.version.outputs.version }}" \
-            --notes "Wakaru — App belajar bahasa Jepang (N5/N4/N3)" \
+            --notes-file CHANGELOG.md \
             --latest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
