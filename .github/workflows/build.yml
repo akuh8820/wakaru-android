@@ -70,9 +70,17 @@ jobs:
           name: wakaru-app
           path: app/build/outputs/apk/release/app-release.apk
 
+      - name: Create tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag v1.0
+          git push origin v1.0
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v1.0
           files: app/build/outputs/apk/release/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
