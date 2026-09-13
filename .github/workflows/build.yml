@@ -27,9 +27,8 @@ jobs:
           mkdir -p $HOME/android-sdk/cmdline-tools/latest
           curl -L -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip -q cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools/latest
-          # sdkmanager might be in cmdline-tools/bin or cmdline-tools/latest/bin
-          SDK_BIN="$HOME/android-sdk/cmdline-tools/latest/bin"
-          [ -f "$SDK_BIN/sdkmanager" ] || SDK_BIN="$HOME/android-sdk/cmdline-tools/bin"
+          # cmdline-tools zip extracts nested: latest/cmdline-tools/bin/sdkmanager
+          SDK_BIN="$HOME/android-sdk/cmdline-tools/latest/cmdline-tools/bin"
           echo "$SDK_BIN" >> $GITHUB_PATH
           echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
           echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
