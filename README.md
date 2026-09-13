@@ -34,6 +34,11 @@ cd wakaru-android
 gradle assembleRelease
 ```
 
+## Data Sources
+
+- **Kanji + kosakata N5**: [kanji-data](https://github.com/sepTN/kanji-data) (MIT) + [jepang.org](https://jepang.org) — arti bahasa Indonesia
+- **Stroke order**: [KanjiVG](https://kanjivg.tagaini.net) (CC BY-SA 3.0, © 2009/2010/2011 Ulrich Apel) — digunakan sesuai lisensi
+
 ## License
 
 MIT
