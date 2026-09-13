@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.2beta — 2026-09-13
+
+### Data Pipeline (Fase 2)
+- **N5 Kanji**: 79 kanji dengan arti bahasa Indonesia, readings (on/kun/nama), stroke count, grade, frekuensi
+- **N5 Kosakata**: 668 kosakata dengan kanji, kana, arti Indonesia, romaji, kategori baris gojuon
+- **Stroke Order**: 79 SVG path kanji dari KanjiVG (CC BY-SA 3.0) untuk visualisasi cara menulis
+
+### Data Layer
+- `WakaruData` API (13 methods): load/cache JSON, search kosakata, filter baris gojuon, progress tracking
+- Progress persistence via localStorage (kanji/kosakata yang sudah dilihat, skor quiz terbaik)
+- WebViewAssetLoader: fetch() API bisa akses file JSON lokal via `https://appassets.androidplatform.net`
+
+### CI/CD
+- Tambah `workflow_dispatch` trigger untuk manual build
+- Fix: `AssetsPathHandler` inner class import (androidx.webkit)
+
 ## v1.1 — 2026-09-13
 
 ### Design
