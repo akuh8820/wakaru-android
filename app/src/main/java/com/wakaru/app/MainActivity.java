@@ -16,6 +16,7 @@ import android.webkit.WebViewClient;
 
 import java.util.Locale;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
@@ -63,6 +64,17 @@ public class MainActivity extends AppCompatActivity {
         webView.addJavascriptInterface(ttsBridge, "Android");
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
         setContentView(webView);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                webView.evaluateJavascript("wakaruGoBack()", value -> {
+                    if (value == null || !"true".equals(value.replace("\"", ""))) {
+                        finish();
+                    }
+                });
+            }
+        });
     }
 
     private static class TTSBridge implements TextToSpeech.OnInitListener {
@@ -105,15 +117,6 @@ public class MainActivity extends AppCompatActivity {
                 tts = null;
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        webView.evaluateJavascript("wakaruGoBack()", value -> {
-            if (value == null || !"true".equals(value.replace("\"", ""))) {
-                finish();
-            }
-        });
     }
 
     @Override

@@ -22,6 +22,7 @@ var WakaruData = (function () {
 
   var GOJUON_ORDER = ['A行','K行','S行','T行','N行','H行','M行','Y行','R行','W行','Lainnya'];
   var CACHE = new Map();
+  var KAMUS_CACHE = {};
   var DETAIL_CACHE = {};
   var PROGRESS_KEY = 'wakaru-progress';
 
@@ -185,6 +186,104 @@ var WakaruData = (function () {
     });
   }
 
+  // ── Kamus (Dictionary) layer ─────────────────────────────────────
+  function kamusLoad(levelId) {
+    if (KAMUS_CACHE[levelId]) return Promise.resolve(KAMUS_CACHE[levelId]);
+    var base = 'data/' + levelId + '/';
+    return Promise.all([
+      fetchJSON(base + 'kosakata.json'),
+      fetchJSON(base + 'kanji.json'),
+      fetchJSON(base + 'partikel.json'),
+      fetchJSON(base + 'bunpou.json'),
+      fetchJSON(base + 'kata_bantu.json')
+    ]).then(function (r) {
+      var data = {
+        kosakata: r[0],
+        kanji: r[1],
+        partikel: r[2],
+        bunpou: r[3],
+        kataBantu: r[4]
+      };
+      KAMUS_CACHE[levelId] = data;
+      return data;
+    });
+  }
+
+  function getKamusData(levelId) {
+    return KAMUS_CACHE[levelId] || null;
+  }
+
+  function getByCategory(category) {
+    // Search all loaded kamus levels (primary: n5)
+    var levelId = 'n5';
+    var data = getKamusData(levelId);
+    if (!data) return [];
+
+    if (category === 'kata-sifat') {
+      return data.kosakata.filter(function (item) {
+        return item.pos === 'i-adj' || item.pos === 'na-adj';
+      });
+    }
+    if (category === 'noun' || category === 'verb' || category === 'i-adj' || category === 'na-adj' || category === 'other') {
+      return data.kosakata.filter(function (item) {
+        return item.pos === category;
+      });
+    }
+    if (category === 'kata-bantu') return data.kataBantu;
+    if (category === 'partikel') return data.partikel;
+    if (category === 'bunpou') return data.bunpou;
+    if (category === 'kanji') return data.kanji;
+    return [];
+  }
+
+  function getByLevel(level) {
+    var data = getKamusData(level);
+    if (!data) return null;
+    return {
+      kosakata: data.kosakata,
+      kanji: data.kanji,
+      partikel: data.partikel,
+      bunpou: data.bunpou,
+      kataBantu: data.kataBantu
+    };
+  }
+
+  function search(query, category) {
+    if (!query) return getByCategory(category || 'noun');
+    var q = query.toLowerCase();
+    var items = category ? getByCategory(category) : getAllKamusItems();
+    return items.filter(function (item) {
+      return matchesQuery(item, q);
+    });
+  }
+
+  function getAllKamusItems() {
+    var data = getKamusData('n5');
+    if (!data) return [];
+    return [].concat(
+      data.kosakata,
+      data.kanji,
+      data.partikel,
+      data.bunpou,
+      data.kataBantu
+    );
+  }
+
+  function matchesQuery(item, q) {
+    // Check all string fields for substring match
+    var keys = Object.keys(item);
+    for (var i = 0; i < keys.length; i++) {
+      var val = item[keys[i]];
+      if (typeof val === 'string' && val.toLowerCase().indexOf(q) !== -1) return true;
+      if (Array.isArray(val)) {
+        for (var j = 0; j < val.length; j++) {
+          if (typeof val[j] === 'string' && val[j].toLowerCase().indexOf(q) !== -1) return true;
+        }
+      }
+    }
+    return false;
+  }
+
   // ── Public API ───────────────────────────────────────────────────
   return {
     load: load,
@@ -200,6 +299,11 @@ var WakaruData = (function () {
     getQuizBest: getQuizBest,
     setQuizBest: setQuizBest,
     getLevelProgress: getLevelProgress,
-    loadKanjiDetail: loadKanjiDetail
+    loadKanjiDetail: loadKanjiDetail,
+    // Kamus API
+    kamusLoad: kamusLoad,
+    getByCategory: getByCategory,
+    getByLevel: getByLevel,
+    search: search
   };
 })();

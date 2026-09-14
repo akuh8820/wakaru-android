@@ -49,6 +49,7 @@ var SPEAKER_ICON = '<svg class="audio-icon" width="18" height="18" viewBox="0 0 
 function init() {
   loadTheme();
   renderHome();
+  WakaruData.kamusLoad('n5');
   var toggle = document.getElementById('theme-toggle');
   if (toggle) toggle.addEventListener('click', toggleTheme);
   document.addEventListener('click', function (e) {
@@ -88,13 +89,16 @@ function renderHome() {
   main.removeAttribute('data-level-view');
   main.innerHTML = '<p>Pilih level belajarmu:</p><div id="level-cards">' +
     levels.map(function (l) {
-      return '<div class="card" data-level="' + escHtml(l.id) + '">' +
+      return '<div class="card" data-level="' + escHtml(l.id) + '" role="button" tabindex="0" aria-label="' + escHtml(l.name) + ' — ' + escHtml(l.description) + '">' +
         '<span class="card-icon">' + l.icon + '</span>' +
         '<div class="card-body"><h2>' + escHtml(l.name) + '</h2><p>' + escHtml(l.description) + '</p></div></div>';
     }).join('') +
     '</div>';
   main.querySelectorAll('.card').forEach(function (card) {
     card.addEventListener('click', function () { goLevel(card.dataset.level); });
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goLevel(card.dataset.level); }
+    });
   });
 }
 
@@ -142,6 +146,9 @@ function renderLevelView(level, data) {
   var kosakataTotal = data.kosakata.length;
   var kanjiSeenCount = WakaruData.getProgress(level.id).kanjiSeen.length;
   var kosakataSeenCount = WakaruData.getProgress(level.id).kosakataSeen.length;
+  var flashSession = getFlashSession();
+  var resumeHtml = (flashSession && flashSession.levelId === level.id) ?
+    '<button class="level-action-btn" id="btn-flash-resume" type="button">Lanjut</button>' : '';
   main.innerHTML =
     '<div class="page-header"><button class="back-btn" id="back-btn" type="button" aria-label="Kembali ke daftar level">← Kembali</button><span class="page-header__level">' + escHtml(level.name) + '</span></div>' +
     '<div class="level-hero" data-level="' + escHtml(level.id) + '">' +
@@ -160,8 +167,11 @@ function renderLevelView(level, data) {
         '</div>' +
       '</div>' +
       '<div class="level-actions">' +
-        '<button class="level-action-btn" id="btn-quiz" type="button">Kuis</button>' +
-        '<button class="level-action-btn" id="btn-flash" type="button">Flashcard</button>' +
+        '<button class="level-action-btn" id="btn-flash-quick" type="button">Flashcard Hari Ini</button>' +
+        '<button class="level-action-btn" id="btn-flash-mode" type="button">Mode…</button>' +
+        '<button class="level-action-btn" id="btn-quiz-quick" type="button">Quiz Cepat</button>' +
+        '<button class="level-action-btn" id="btn-quiz-setup" type="button">Pilih jenis…</button>' +
+        resumeHtml +
       '</div>' +
     '</div>' +
     '<div class="level-toolbar">' +
@@ -179,8 +189,20 @@ function renderLevelView(level, data) {
     '<div id="level-list" class="materi-list" aria-live="polite"></div>' +
     '<div id="level-empty" class="empty-state" hidden><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain atau ganti filter.</p></div>';
   document.getElementById('back-btn').addEventListener('click', renderHome);
-  document.getElementById('btn-quiz').addEventListener('click', function () { openQuiz(level.id); });
-  document.getElementById('btn-flash').addEventListener('click', function () { openFlash(level.id); });
+  document.getElementById('btn-flash-quick').addEventListener('click', function () {
+    startFlash(level.id, 'benda', true);
+  });
+  document.getElementById('btn-flash-mode').addEventListener('click', function () { openFlash(level.id); });
+  var resumeBtn = document.getElementById('btn-flash-resume');
+  if (resumeBtn) resumeBtn.addEventListener('click', function () {
+    var session = getFlashSession();
+    var mode = (session && session.levelId === level.id) ? session.mode : 'benda';
+    startFlash(level.id, mode, true);
+  });
+  document.getElementById('btn-quiz-quick').addEventListener('click', function () {
+    startQuiz(level.id, 'kanji', 10);
+  });
+  document.getElementById('btn-quiz-setup').addEventListener('click', function () { openQuiz(level.id); });
   bindLevelEvents(level.id, data);
   renderMateriList(level.id, data);
 }
@@ -728,7 +750,7 @@ function renderQuizQuestion() {
   if (s.idx >= s.questions.length) { renderQuizResult(); return; }
   var q = s.questions[s.idx];
   var main = document.getElementById('home');
-  var pct = Math.round(((s.idx) / s.count) * 100);
+  var pct = Math.round(((s.idx + 1) / s.count) * 100);
   var isKanji = s.type === 'kanji';
   var questionText = isKanji ? 'Apa arti kanji ini?' : 'Apa artinya?';
   var displayChar = isKanji ? '<span class="quiz-kanji" lang="ja">' + escHtml(q.kanji) + '</span>' :
@@ -752,7 +774,11 @@ function renderQuizQuestion() {
     '</div>';
   main.innerHTML = html;
   s.answered = false;
-  document.getElementById('back-btn').addEventListener('click', function () { goLevel(s.levelId); });
+  document.getElementById('back-btn').addEventListener('click', function () {
+    if (confirm('Keluar dari kuis? Skor belum disimpan.')) {
+      goLevel(s.levelId);
+    }
+  });
   document.getElementById('quiz-options').addEventListener('click', function (e) {
     var btn = e.target.closest('.quiz-option');
     if (!btn) return;
@@ -841,72 +867,101 @@ function openFlash(levelId) {
 
 function renderFlashSetup(levelId) {
   var level = levels.find(function (l) { return l.id === levelId; });
-  var data = WakaruData.getLevel(levelId);
-  var count = data ? data.kosakata.length : 0;
   var main = document.getElementById('home');
+  var autoPlay = true;
+  try { autoPlay = localStorage.getItem('wakaru-flash-autoplay') !== 'off'; } catch (e) {}
   main.innerHTML =
     '<div class="page-header"><button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button><span class="page-header__level">' + escHtml(level.name) + '</span></div>' +
     '<div class="quiz-setup">' +
       '<h1 class="quiz-setup__title">Flashcard ' + escHtml(level.name) + '</h1>' +
-      '<p class="flash-setup__info">' + count + ' kosakata</p>' +
-      '<div class="quiz-setup__section">' +
-        '<span class="quiz-setup__label">Mode</span>' +
-        '<div class="quiz-pill-group" id="flash-mode-pills">' +
-          '<button class="quiz-pill is-active" data-val="hide-arti" type="button">Sembunyikan arti</button>' +
-          '<button class="quiz-pill" data-val="hide-kana" type="button">Sembunyikan kana</button>' +
-          '<button class="quiz-pill" data-val="hide-kanji" type="button">Sembunyikan kanji</button>' +
-        '</div>' +
-      '</div>' +
-      '<label class="flash-shuffle-label"><input type="checkbox" id="flash-shuffle-toggle"> Acak urutan</label>' +
-      '<button class="btn-start" id="btn-flash-start" type="button">Mulai</button>' +
+      '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat data…</p></div>' +
     '</div>';
   document.getElementById('back-btn').addEventListener('click', function () { goLevel(levelId); });
-  document.getElementById('flash-mode-pills').addEventListener('click', function (e) {
-    var pill = e.target.closest('.quiz-pill');
-    if (!pill) return;
-    document.querySelectorAll('#flash-mode-pills .quiz-pill').forEach(function (p) { p.classList.remove('is-active'); });
-    pill.classList.add('is-active');
-  });
-  document.getElementById('btn-flash-start').addEventListener('click', function () {
-    var modePill = document.querySelector('#flash-mode-pills .quiz-pill.is-active');
-    var shuffle = document.getElementById('flash-shuffle-toggle').checked;
-    startFlash(levelId, modePill ? modePill.dataset.val : 'hide-arti', shuffle);
+  WakaruData.kamusLoad(levelId).then(function () {
+    if (currentPage !== 'flash:' + levelId) return;
+    var nounCount = WakaruData.getByCategory('noun').length;
+    var sifatCount = WakaruData.getByCategory('kata-sifat').length;
+    var verbCount = WakaruData.getByCategory('verb').length;
+    var kanjiCount = WakaruData.getByCategory('kanji').length;
+    main.innerHTML =
+      '<div class="page-header"><button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button><span class="page-header__level">' + escHtml(level.name) + '</span></div>' +
+      '<div class="quiz-setup">' +
+        '<h1 class="quiz-setup__title">Flashcard ' + escHtml(level.name) + '</h1>' +
+        '<div class="quiz-setup__section">' +
+          '<span class="quiz-setup__label">Kategori</span>' +
+          '<div class="quiz-pill-group" id="flash-mode-pills">' +
+            '<button class="quiz-pill is-active" data-val="benda" type="button">Benda · ' + nounCount + '</button>' +
+            '<button class="quiz-pill" data-val="sifat" type="button">Sifat · ' + sifatCount + '</button>' +
+            '<button class="quiz-pill" data-val="kerja" type="button">Kerja · ' + verbCount + '</button>' +
+            '<button class="quiz-pill" data-val="kanji" type="button">Kanji · ' + kanjiCount + '</button>' +
+          '</div>' +
+        '</div>' +
+        '<label class="flash-shuffle-label"><input type="checkbox" id="flash-shuffle-toggle" checked> Acak urutan</label>' +
+        '<label class="flash-shuffle-label"><input type="checkbox" id="flash-autoplay-toggle"' + (autoPlay ? ' checked' : '') + '> Putar audio otomatis</label>' +
+        '<button class="btn-start" id="btn-flash-start" type="button">Mulai</button>' +
+      '</div>';
+    document.getElementById('back-btn').addEventListener('click', function () { goLevel(levelId); });
+    document.getElementById('flash-mode-pills').addEventListener('click', function (e) {
+      var pill = e.target.closest('.quiz-pill');
+      if (!pill) return;
+      document.querySelectorAll('#flash-mode-pills .quiz-pill').forEach(function (p) { p.classList.remove('is-active'); });
+      pill.classList.add('is-active');
+    });
+    document.getElementById('btn-flash-start').addEventListener('click', function () {
+      var modePill = document.querySelector('#flash-mode-pills .quiz-pill.is-active');
+      var shuffle = document.getElementById('flash-shuffle-toggle').checked;
+      var autoPlayEnabled = document.getElementById('flash-autoplay-toggle').checked;
+      try { localStorage.setItem('wakaru-flash-autoplay', autoPlayEnabled ? 'on' : 'off'); } catch (e) {}
+      startFlash(levelId, modePill ? modePill.dataset.val : 'benda', shuffle, autoPlayEnabled);
+    });
   });
 }
 
-function startFlash(levelId, mode, shuffle) {
-  var data = WakaruData.getLevel(levelId);
-  if (!data) return;
-  var items = data.kosakata.slice();
-  if (shuffle) shuffleArray(items);
-  currentPage = 'flash:' + levelId;
-  _flashState = { levelId: levelId, mode: mode, items: items, idx: 0, showBack: false };
-  renderFlashCard();
+function startFlash(levelId, mode, shuffle, autoPlay) {
+  var categoryMap = { 'benda': 'noun', 'sifat': 'kata-sifat', 'kerja': 'verb', 'kanji': 'kanji' };
+  if (autoPlay === undefined) {
+    try { autoPlay = localStorage.getItem('wakaru-flash-autoplay') !== 'off'; } catch (e) { autoPlay = true; }
+  }
+  function begin(items) {
+    if (!items || items.length === 0) return;
+    items = items.slice();
+    if (shuffle) shuffleArray(items);
+    currentPage = 'flash:' + levelId;
+    _flashState = { levelId: levelId, mode: mode, items: items, idx: 0, showBack: false, seenIds: {}, autoPlay: autoPlay };
+    saveFlashSession(levelId, mode, 0);
+    renderFlashCard();
+  }
+  var items = WakaruData.getByCategory(categoryMap[mode] || 'noun');
+  if (items && items.length > 0) { begin(items); return; }
+  WakaruData.kamusLoad(levelId).then(function () {
+    begin(WakaruData.getByCategory(categoryMap[mode] || 'noun'));
+  });
 }
 
 function renderFlashCard() {
   var s = _flashState;
-  if (s.idx >= s.items.length) { goLevel(s.levelId); return; }
-  var v = s.items[s.idx];
+  if (s.idx >= s.items.length) { renderFlashComplete(); return; }
+  var item = s.items[s.idx];
   var main = document.getElementById('home');
   var pct = Math.round(((s.idx + 1) / s.items.length) * 100);
-  // Determine front/back based on mode
-  var frontHtml = '', backHtml = '';
-  if (s.mode === 'hide-arti') {
-    frontHtml = '<span class="flash-glyph" lang="ja">' + escHtml(v.kanji || v.kana) + '</span>' +
-      (v.kanji ? '<span class="flash-kana" lang="ja">' + escHtml(v.kana) + '</span>' : '');
-    backHtml = '<span class="flash-arti">' + escHtml(v.arti) + '</span>' +
-      '<button type="button" class="audio-btn flash-audio" data-speak="' + escHtml(v.kana) + '" aria-label="Dengarkan">' + SPEAKER_ICON + '</button>';
-  } else if (s.mode === 'hide-kana') {
-    frontHtml = '<span class="flash-glyph" lang="ja">' + escHtml(v.kanji || v.kana) + '</span>' +
-      '<span class="flash-arti">' + escHtml(v.arti) + '</span>';
-    backHtml = '<span class="flash-kana" lang="ja">' + escHtml(v.kana) + '</span>' +
-      '<button type="button" class="audio-btn flash-audio" data-speak="' + escHtml(v.kana) + '" aria-label="Dengarkan">' + SPEAKER_ICON + '</button>';
-  } else { // hide-kanji
-    frontHtml = '<span class="flash-kana" lang="ja">' + escHtml(v.kana) + '</span>' +
-      '<span class="flash-arti">' + escHtml(v.arti) + '</span>';
-    backHtml = '<span class="flash-glyph" lang="ja">' + escHtml(v.kanji || '') + '</span>' +
-      '<button type="button" class="audio-btn flash-audio" data-speak="' + escHtml(v.kana) + '" aria-label="Dengarkan">' + SPEAKER_ICON + '</button>';
+  var isKanji = s.mode === 'kanji';
+  var frontHtml = '', backHtml = '', speechText = '';
+  if (isKanji) {
+    frontHtml = '<span class="flash-glyph" lang="ja">' + escHtml(item.kanji) + '</span>';
+    var meanings = (item.meanings_id || []).join(', ');
+    var onReadings = (item.on_readings || []).join('・');
+    var kunReadings = (item.kun_readings || []).join('・');
+    backHtml = '<span class="flash-arti">' + escHtml(meanings) + '</span>';
+    if (onReadings) backHtml += '<span class="flash-kana">on: ' + escHtml(onReadings) + '</span>';
+    if (kunReadings) backHtml += '<span class="flash-kana">kun: ' + escHtml(kunReadings) + '</span>';
+    speechText = (item.on_readings && item.on_readings[0]) ? cleanReadingForSpeech(item.on_readings[0]) : ((item.kun_readings && item.kun_readings[0]) ? cleanReadingForSpeech(item.kun_readings[0]) : '');
+    backHtml += '<button type="button" class="audio-btn flash-audio" data-speak="' + escHtml(speechText) + '" aria-label="Dengarkan">' + SPEAKER_ICON + '</button>';
+  } else {
+    frontHtml = '<span class="flash-glyph" lang="ja">' + escHtml(item.kanji || item.kana) + '</span>';
+    if (item.kanji) frontHtml += '<span class="flash-kana" lang="ja">' + escHtml(item.kana) + '</span>';
+    backHtml = '<span class="flash-arti">' + escHtml(item.arti) + '</span>';
+    speechText = item.kana;
+    backHtml += '<button type="button" class="audio-btn flash-audio" data-speak="' + escHtml(item.kana) + '" aria-label="Dengarkan">' + SPEAKER_ICON + '</button>';
   }
   var html =
     '<div class="quiz-header">' +
@@ -922,16 +977,11 @@ function renderFlashCard() {
       '<p class="flash-hint" id="flash-hint">Ketuk untuk melihat</p>' +
       '<div class="flash-nav">' +
         '<button class="flash-nav-btn" id="flash-prev" type="button" aria-label="Sebelumnya">←</button>' +
-        '<div class="flash-actions">' +
-          '<button class="flash-action-btn flash-skip" id="flash-skip" type="button">Belum</button>' +
-          '<button class="flash-action-btn flash-done" id="flash-done" type="button">Sudah hafal</button>' +
-        '</div>' +
         '<button class="flash-nav-btn" id="flash-next" type="button" aria-label="Berikutnya">→</button>' +
       '</div>' +
     '</div>';
   main.innerHTML = html;
   s.showBack = false;
-  // Flip on card tap
   var card = document.getElementById('flash-card');
   function flipCard(e) {
     if (e && e.target && e.target.closest && e.target.closest('.audio-btn')) return;
@@ -941,6 +991,15 @@ function renderFlashCard() {
       back.removeAttribute('hidden');
       hint.textContent = 'Ketuk untuk menyembunyikan';
       s.showBack = true;
+      var id = isKanji ? item.kanji : vocabStableId(item);
+      var type = isKanji ? 'kanji' : 'kosakata';
+      if (!s.seenIds[id]) {
+        s.seenIds[id] = true;
+        WakaruData.markSeen(s.levelId, type, id);
+      }
+      if (s.autoPlay && speechText) {
+        setTimeout(function () { WakaruAudio.speak(speechText); }, 200);
+      }
     } else {
       back.setAttribute('hidden', '');
       hint.textContent = 'Ketuk untuk melihat';
@@ -954,31 +1013,77 @@ function renderFlashCard() {
       flipCard();
     }
   });
-  document.getElementById('back-btn').addEventListener('click', function () { goLevel(s.levelId); });
+  document.getElementById('back-btn').addEventListener('click', function () {
+    saveFlashSession(s.levelId, s.mode, s.idx);
+    goLevel(s.levelId);
+  });
   document.getElementById('flash-prev').addEventListener('click', function () {
     if (s.idx > 0) { s.idx--; renderFlashCard(); }
   });
   document.getElementById('flash-next').addEventListener('click', function () {
-    if (s.idx < s.items.length - 1) { s.idx++; renderFlashCard(); }
-  });
-  document.getElementById('flash-skip').addEventListener('click', function () {
     s.idx++;
-    if (s.idx >= s.items.length) { goLevel(s.levelId); } else { renderFlashCard(); }
+    if (s.idx >= s.items.length) { renderFlashComplete(); }
+    else { renderFlashCard(); }
   });
-  document.getElementById('flash-done').addEventListener('click', function () {
-    var stableId = vocabStableId(v);
-    WakaruData.markSeen(s.levelId, 'kosakata', stableId);
-    s.idx++;
-    if (s.idx >= s.items.length) { goLevel(s.levelId); } else { renderFlashCard(); }
+}
+
+function renderFlashComplete() {
+  var s = _flashState;
+  var main = document.getElementById('home');
+  var seenCount = 0;
+  for (var k in s.seenIds) { if (s.seenIds[k]) seenCount++; }
+  var total = s.items.length;
+  clearFlashSession();
+  var html =
+    '<div class="quiz-header">' +
+      '<button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button>' +
+      '<span class="quiz-progress-text">Selesai</span>' +
+    '</div>' +
+    '<div class="quiz-result">' +
+      '<p class="quiz-result__score">' + seenCount + '/' + total + ' kartu dilihat</p>' +
+      '<div class="quiz-result__actions">' +
+        '<button class="btn-start" id="btn-flash-retry" type="button">Ulangi</button>' +
+        '<button class="btn-stroke btn-stroke--secondary" id="btn-flash-done" type="button">Kembali</button>' +
+      '</div>' +
+    '</div>';
+  main.innerHTML = html;
+  document.getElementById('back-btn').addEventListener('click', function () { goLevel(s.levelId); });
+  document.getElementById('btn-flash-retry').addEventListener('click', function () {
+    startFlash(s.levelId, s.mode, true, s.autoPlay);
   });
+  document.getElementById('btn-flash-done').addEventListener('click', function () { goLevel(s.levelId); });
+}
+
+// ── Flash session persistence ─────────────────────────────────────
+
+function getFlashSession() {
+  try {
+    var raw = localStorage.getItem('wakaru-flash-session');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function saveFlashSession(levelId, mode, idx) {
+  try { localStorage.setItem('wakaru-flash-session', JSON.stringify({ levelId: levelId, mode: mode, idx: idx })); } catch (e) {}
+}
+function clearFlashSession() {
+  try { localStorage.removeItem('wakaru-flash-session'); } catch (e) {}
 }
 
 // ── Navigation ────────────────────────────────────────────────────
 
 function wakaruGoBack() {
   if (currentPage === 'home') return 'false';
-  if (currentPage.indexOf('kanji:') === 0 || currentPage.indexOf('quiz:') === 0 || currentPage.indexOf('flash:') === 0) {
+  if (currentPage.indexOf('kanji:') === 0 || currentPage.indexOf('flash:') === 0) {
     var levelId = currentPage.split(':')[1];
+    goLevel(levelId);
+    return 'true';
+  }
+  if (currentPage.indexOf('quiz:') === 0) {
+    var levelId = currentPage.split(':')[1];
+    var onResult = !!document.querySelector('.quiz-result');
+    if (!onResult && !confirm('Keluar dari kuis? Skor belum disimpan.')) {
+      return 'true';
+    }
     goLevel(levelId);
     return 'true';
   }

@@ -14,7 +14,7 @@ typography:
     fontFamily: "Inter"
     fontSize: 3rem
   body-md:
-    fontFamily: "Open Sans"
+    fontFamily: "Inter"
     fontSize: 1rem
   label-caps:
     fontFamily: "Inconsolata"
@@ -38,7 +38,7 @@ Stripped-back design emphasizing whitespace, clean typography, and restrained co
 
 - **Visual style:** minimal, clean, bold
 - **Typography scale:** desktop-first expressive scale
-- **Typography fonts:** primary=Open Sans, display=Inter, mono=Inconsolata
+- **Typography fonts:** primary=Inter, display=Inter, Japanese=Noto Sans JP, mono=Inconsolata
 - **Typography weights:** 100, 200, 300, 400, 500, 600, 700, 800, 900
 - **Color palette:** primary, neutral, success, warning, danger
 - **Spacing scale:** 4/8/12/16/24/32

@@ -7,7 +7,7 @@
   <title>Wakaru — Belajar Bahasa Jepang</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&family=Inconsolata:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Inconsolata:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,14 +15,321 @@
     <h1>Wakaru</h1>
     <button id="theme-toggle" aria-label="Ganti tema" type="button">🌙</button>
   </header>
-  <main id="home">
-    <div class="home-intro">
-      <p class="label-caps" lang="ja">WAKARU — 日本語</p>
-      <p class="lead">Pilih level belajarmu:</p>
+
+  <nav id="app-tabs" role="tablist" aria-label="Navigasi utama">
+    <button id="tab-level" class="app-tab is-active" role="tab" aria-selected="true" aria-controls="view-level" data-app-tab="level" type="button">Level</button>
+    <button id="tab-kamus" class="app-tab" role="tab" aria-selected="false" aria-controls="kamus-view" data-app-tab="kamus" type="button">Kamus</button>
+  </nav>
+
+  <div id="view-level">
+    <main id="home">
+      <div class="home-intro">
+        <p class="label-caps" lang="ja">WAKARU — 日本語</p>
+        <p class="lead">Pilih level belajarmu:</p>
+      </div>
+      <div id="level-cards" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <section id="kamus-view" hidden aria-label="Kamus">
+    <div class="kamus-header">
+      <p class="label-caps" lang="ja">辞書 — Kamus</p>
+      <h2 class="kamus-title">Kamus</h2>
+      <p class="kamus-desc">Pilih level, lalu kategori untuk mencari kata.</p>
     </div>
-    <div id="level-cards" aria-live="polite"></div>
-  </main>
+
+    <div id="kamus-level-chips" class="kamus-chips" role="group" aria-label="Pilih level">
+      <button class="kamus-chip is-active" data-kamus-level="n5" id="kamus-chip-n5" type="button" aria-pressed="true">N5</button>
+      <button class="kamus-chip" data-kamus-level="n4" id="kamus-chip-n4" type="button" aria-pressed="false">N4</button>
+      <button class="kamus-chip" data-kamus-level="n3" id="kamus-chip-n3" type="button" aria-pressed="false">N3</button>
+    </div>
+
+    <div id="kamus-soon" class="empty-state kamus-soon" hidden>
+      <p class="empty-state__title">Segera hadir</p>
+      <p class="empty-state__msg">Materi untuk level ini sedang disiapkan. Pilih N5 untuk melihat kamus yang tersedia sekarang.</p>
+    </div>
+
+    <div id="kamus-category-grid" class="kamus-grid" role="list" aria-label="Kategori kamus">
+      <button class="kamus-card" data-kamus-category="kata-benda" id="kamus-card-benda" type="button" role="listitem" aria-label="Kata Benda">
+        <span class="kamus-card__label">Kata Benda</span>
+        <span class="kamus-card__meta">Nomina</span>
+      </button>
+      <button class="kamus-card" data-kamus-category="kata-sifat" id="kamus-card-sifat" type="button" role="listitem" aria-label="Kata Sifat">
+        <span class="kamus-card__label">Kata Sifat</span>
+        <span class="kamus-card__meta">Adjektiva</span>
+      </button>
+      <button class="kamus-card" data-kamus-category="kata-bantu" id="kamus-card-bantu" type="button" role="listitem" aria-label="Kata Bantu">
+        <span class="kamus-card__label">Kata Bantu</span>
+        <span class="kamus-card__meta">Auxiliary</span>
+      </button>
+      <button class="kamus-card" data-kamus-category="kata-kerja" id="kamus-card-kerja" type="button" role="listitem" aria-label="Kata Kerja">
+        <span class="kamus-card__label">Kata Kerja</span>
+        <span class="kamus-card__meta">Verba</span>
+      </button>
+      <button class="kamus-card" data-kamus-category="partikel" id="kamus-card-partikel" type="button" role="listitem" aria-label="Partikel">
+        <span class="kamus-card__label">Partikel</span>
+        <span class="kamus-card__meta">Joshi</span>
+      </button>
+      <button class="kamus-card" data-kamus-category="bunpou" id="kamus-card-bunpou" type="button" role="listitem" aria-label="Bunpou">
+        <span class="kamus-card__label">Bunpou</span>
+        <span class="kamus-card__meta">Pola kalimat</span>
+      </button>
+      <button class="kamus-card" data-kamus-category="kanji" id="kamus-card-kanji" type="button" role="listitem" aria-label="Kanji">
+        <span class="kamus-card__label">Kanji</span>
+        <span class="kamus-card__meta">Huruf</span>
+      </button>
+    </div>
+
+    <div id="kamus-list-view" class="kamus-list-view" hidden>
+      <div class="page-header kamus-list-header">
+        <button id="kamus-back-btn" class="back-btn" type="button" aria-label="Kembali ke kategori">← Kembali</button>
+        <span id="kamus-list-title" class="page-header__level">Kata Benda</span>
+      </div>
+      <label class="search-wrap" aria-label="Cari di kamus">
+        <span class="search-wrap__icon" aria-hidden="true">⌕</span>
+        <input id="kamus-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari di kamus">
+      </label>
+      <div id="kamus-count" class="level-count" aria-live="polite"></div>
+      <div id="kamus-item-list" class="materi-list kamus-item-list" aria-live="polite"></div>
+      <div id="kamus-empty" class="empty-state" hidden>
+        <p class="empty-state__title">Tidak ditemukan</p>
+        <p class="empty-state__msg">Coba kata kunci lain.</p>
+      </div>
+    </div>
+  </section>
+
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
+  <script>
+  // App-level tabs + Kamus progressive disclosure (UI shell).
+  // Data lane owns js/data.js and will enhance filtering; this keeps the view usable in browser.
+  (function () {
+    var tabLevel = document.getElementById('tab-level');
+    var tabKamus = document.getElementById('tab-kamus');
+    var viewLevel = document.getElementById('view-level');
+    var kamusView = document.getElementById('kamus-view');
+    var chips = document.querySelectorAll('.kamus-chip');
+    var grid = document.getElementById('kamus-category-grid');
+    var soon = document.getElementById('kamus-soon');
+    var listView = document.getElementById('kamus-list-view');
+    var backBtn = document.getElementById('kamus-back-btn');
+    var search = document.getElementById('kamus-search');
+    var itemList = document.getElementById('kamus-item-list');
+    var countEl = document.getElementById('kamus-count');
+    var emptyEl = document.getElementById('kamus-empty');
+    var listTitle = document.getElementById('kamus-list-title');
+
+    var currentKamusLevel = 'n5';
+    var currentCategory = null;
+    var currentItems = [];
+    var categoryCache = {};
+
+    function setAppTab(which) {
+      var isLevel = which === 'level';
+      tabLevel.classList.toggle('is-active', isLevel);
+      tabLevel.setAttribute('aria-selected', isLevel ? 'true' : 'false');
+      tabKamus.classList.toggle('is-active', !isLevel);
+      tabKamus.setAttribute('aria-selected', !isLevel ? 'true' : 'false');
+      viewLevel.hidden = !isLevel;
+      kamusView.hidden = isLevel;
+      if (!isLevel) {
+        // ensure kamus view shows correct step when switched
+        syncLevelState();
+      }
+    }
+    if (tabLevel) tabLevel.addEventListener('click', function () { setAppTab('level'); });
+    if (tabKamus) tabKamus.addEventListener('click', function () { setAppTab('kamus'); });
+
+    function syncLevelState() {
+      var isN5 = currentKamusLevel === 'n5';
+      if (soon) soon.hidden = isN5 || !!currentCategory;
+      if (grid) grid.hidden = !isN5 || !!currentCategory;
+      if (listView) listView.hidden = !currentCategory || !isN5;
+      // if switching to N4/N3 while in list, close list
+      if (!isN5 && currentCategory) {
+        currentCategory = null;
+        currentItems = [];
+        if (listView) listView.hidden = true;
+      }
+    }
+
+    chips.forEach(function (c) {
+      c.addEventListener('click', function () {
+        var lvl = c.getAttribute('data-kamus-level');
+        if (!lvl) return;
+        currentKamusLevel = lvl;
+        chips.forEach(function (x) {
+          var on = x.getAttribute('data-kamus-level') === lvl;
+          x.classList.toggle('is-active', on);
+          x.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        // exit list view when changing level
+        if (currentCategory) {
+          currentCategory = null;
+          currentItems = [];
+          if (listView) listView.hidden = true;
+          if (search) search.value = '';
+        }
+        syncLevelState();
+      });
+    });
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    function fetchJSON(path) {
+      return fetch(path).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+    }
+
+    function loadCategoryData(cat) {
+      if (categoryCache[cat]) return Promise.resolve(categoryCache[cat]);
+      if (cat === 'kata-benda') {
+        return fetchJSON('data/n5/kosakata.json').then(function (all) {
+          var out = all.filter(function (x) { return x.pos === 'noun'; });
+          categoryCache[cat] = out; return out;
+        });
+      }
+      if (cat === 'kata-sifat') {
+        return fetchJSON('data/n5/kosakata.json').then(function (all) {
+          var out = all.filter(function (x) { return x.pos === 'i-adj' || x.pos === 'na-adj'; });
+          categoryCache[cat] = out; return out;
+        });
+      }
+      if (cat === 'kata-kerja') {
+        return fetchJSON('data/n5/kosakata.json').then(function (all) {
+          var out = all.filter(function (x) { return x.pos === 'verb'; });
+          categoryCache[cat] = out; return out;
+        });
+      }
+      if (cat === 'kata-bantu') return fetchJSON('data/n5/kata_bantu.json').then(function (d) { categoryCache[cat]=d; return d; });
+      if (cat === 'partikel') return fetchJSON('data/n5/partikel.json').then(function (d) { categoryCache[cat]=d; return d; });
+      if (cat === 'bunpou') return fetchJSON('data/n5/bunpou.json').then(function (d) { categoryCache[cat]=d; return d; });
+      if (cat === 'kanji') return fetchJSON('data/n5/kanji.json').then(function (d) { categoryCache[cat]=d; return d; });
+      return Promise.resolve([]);
+    }
+
+    function renderItems(filter) {
+      var q = (filter || '').toLowerCase().trim();
+      var filtered = currentItems;
+      if (q) {
+        filtered = currentItems.filter(function (it) {
+          if (currentCategory === 'kanji') {
+            var m = (it.meanings_id||[]).join(' ').toLowerCase();
+            var on = (it.on_readings||[]).join(' ').toLowerCase();
+            var kun = (it.kun_readings||[]).join(' ').toLowerCase();
+            return it.kanji.indexOf(q) !== -1 || m.indexOf(q) !== -1 || on.indexOf(q) !== -1 || kun.indexOf(q) !== -1;
+          }
+          if (currentCategory === 'partikel') {
+            return (it.partikel||'').indexOf(q) !== -1 || (it.kana||'').toLowerCase().indexOf(q) !== -1 || (it.fungsi||'').toLowerCase().indexOf(q) !== -1 || (it.arti_contoh||'').toLowerCase().indexOf(q) !== -1;
+          }
+          if (currentCategory === 'bunpou') {
+            return (it.pola||'').indexOf(q) !== -1 || (it.arti||'').toLowerCase().indexOf(q) !== -1 || (it.contoh||'').indexOf(q) !== -1;
+          }
+          // kosakata / kata_bantu
+          var kan = (it.kanji||'');
+          var kana = (it.kana||'');
+          var arti = (it.arti||'');
+          var rom = (it.romaji||'');
+          return kan.indexOf(q) !== -1 || kana.indexOf(q) !== -1 || arti.toLowerCase().indexOf(q) !== -1 || rom.toLowerCase().indexOf(q) !== -1;
+        });
+      }
+      if (countEl) countEl.textContent = filtered.length ? filtered.length + ' entri' : '';
+      if (emptyEl) emptyEl.hidden = filtered.length !== 0;
+      if (itemList) itemList.hidden = filtered.length === 0;
+      if (!itemList) return;
+      if (filtered.length === 0) { itemList.innerHTML = ''; return; }
+      var html = '';
+      if (currentCategory === 'kanji') {
+        html = filtered.slice(0, 200).map(function (k) {
+          var mean = esc(k.meanings_id.join(', '));
+          var read = esc([].concat(k.on_readings||[]).slice(0,2).join('・') + (k.kun_readings&&k.kun_readings.length ? ' / ' + k.kun_readings.slice(0,2).join('・') : ''));
+          return '<div class="materi-item kamus-row" data-kamus-item="' + esc(k.kanji) + '"><span class="mi-kanji" lang="ja">' + esc(k.kanji) + '</span><span class="mi-body"><span class="mi-mean">' + mean + '</span><span class="mi-read">' + read + '</span></span></div>';
+        }).join('');
+      } else if (currentCategory === 'partikel') {
+        html = filtered.map(function (p) {
+          return '<div class="materi-item kamus-row" data-kamus-item="' + esc(p.partikel) + '"><span class="mi-kanji" lang="ja">' + esc(p.partikel) + '</span><span class="mi-body"><span class="mi-mean" lang="ja">' + esc(p.kana) + '</span><span class="mi-read">' + esc(p.fungsi) + '</span><span class="mi-meta">' + esc(p.contoh) + ' — ' + esc(p.arti_contoh) + '</span></span></div>';
+        }).join('');
+      } else if (currentCategory === 'bunpou') {
+        html = filtered.map(function (b) {
+          return '<div class="materi-item kamus-row" data-kamus-item="' + esc(b.pola) + '"><span class="mi-body"><span class="mi-vkanji" lang="ja">' + esc(b.pola) + '</span><span class="mi-mean">' + esc(b.arti) + '</span><span class="mi-read">' + esc(b.contoh) + ' — ' + esc(b.terjemahan) + '</span></span></div>';
+        }).join('');
+      } else {
+        // kosakata variants + kata_bantu: same shape
+        html = filtered.slice(0, 200).map(function (v) {
+          var word = esc(v.kanji || v.kana);
+          var kana = esc(v.kana);
+          var arti = esc(v.arti);
+          var showKana = v.kanji && v.kana && v.kanji !== v.kana;
+          return '<div class="materi-item kamus-row" data-kamus-item="' + esc(v.kana) + '"><span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + word + '</span>' + (showKana ? '<span class="mi-vkana" lang="ja">' + kana + '</span>' : '') + '</span><span class="mi-mean">' + arti + '</span>' + (showKana ? '' : '<span class="mi-read" lang="ja">' + kana + '</span>') + '<span class="mi-romaji">' + esc(v.romaji||'') + '</span></span></div>';
+        }).join('');
+      }
+      itemList.innerHTML = html;
+    }
+
+    function openCategory(cat) {
+      if (currentKamusLevel !== 'n5') return;
+      currentCategory = cat;
+      var labelMap = { 'kata-benda':'Kata Benda','kata-sifat':'Kata Sifat','kata-bantu':'Kata Bantu','kata-kerja':'Kata Kerja','partikel':'Partikel','bunpou':'Bunpou','kanji':'Kanji' };
+      if (listTitle) listTitle.textContent = labelMap[cat] || cat;
+      if (search) search.value = '';
+      syncLevelState();
+      // show loading placeholder briefly
+      if (itemList) itemList.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
+      if (countEl) countEl.textContent = '';
+      if (emptyEl) emptyEl.hidden = true;
+      if (itemList) itemList.hidden = false;
+      loadCategoryData(cat).then(function (data) {
+        if (currentCategory !== cat) return;
+        currentItems = data;
+        renderItems('');
+      }).catch(function () {
+        currentItems = [];
+        renderItems('');
+      });
+    }
+
+    document.querySelectorAll('.kamus-card').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var cat = btn.getAttribute('data-kamus-category');
+        if (cat) openCategory(cat);
+      });
+    });
+
+    if (backBtn) backBtn.addEventListener('click', function () {
+      currentCategory = null;
+      currentItems = [];
+      if (search) search.value = '';
+      if (itemList) itemList.innerHTML = '';
+      syncLevelState();
+    });
+
+    if (search) search.addEventListener('input', function () { renderItems(search.value); });
+
+    // initial state
+    syncLevelState();
+
+    // Android back: handle kamus view before delegating to app.js
+    var _origBack = window.wakaruGoBack;
+    window.wakaruGoBack = function () {
+      // If Kamus view is visible, handle its own stack first
+      if (kamusView && !kamusView.hidden) {
+        if (currentCategory) {
+          if (backBtn) backBtn.click();
+          return 'true';
+        }
+        // at top of Kamus (grid), back goes to Level tab
+        setAppTab('level');
+        return 'true';
+      }
+      if (typeof _origBack === 'function') return _origBack();
+      return 'false';
+    };
+
+    // Expose for external JS lane (if it wants to hook)
+    window.WakaruKamus = {
+      setAppTab: setAppTab,
+      openCategory: openCategory
+    };
+  })();
+  </script>
 </body>
 </html>

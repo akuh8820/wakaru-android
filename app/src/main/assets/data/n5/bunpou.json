@@ -1,0 +1,706 @@
+[
+  {
+    "pola": "～は～です",
+    "arti": "Topik adalah (A adalah B)",
+    "contoh": "私は学生です",
+    "terjemahan": "Saya adalah mahasiswa",
+    "kelompok": "Partikel Dasar",
+    "romaji": "watashi wa gakusei desu"
+  },
+  {
+    "pola": "～ではありません",
+    "arti": "Bukan (negasi polite)",
+    "contoh": "田中さんは先生ではありません",
+    "terjemahan": "Pak Tanaka bukan guru",
+    "kelompok": "Partikel Dasar",
+    "romaji": "tanaka-san wa sensei de wa arimasen"
+  },
+  {
+    "pola": "～ですか",
+    "arti": "Apakah? (pertanyaan ya/tidak)",
+    "contoh": "あなたは医者ですか",
+    "terjemahan": "Apakah Anda dokter?",
+    "kelompok": "Partikel Dasar",
+    "romaji": "anata wa isha desu ka"
+  },
+  {
+    "pola": "～に/へ",
+    "arti": "Ke arah / waktu / tujuan",
+    "contoh": "日本へ行きます",
+    "terjemahan": "Saya pergi ke Jepang",
+    "kelompok": "Partikel Dasar",
+    "romaji": "nihon e ikimasu"
+  },
+  {
+    "pola": "～で",
+    "arti": "Di (tempat kegiatan) / dengan (cara)",
+    "contoh": "図書館で勉強します",
+    "terjemahan": "Saya belajar di perpustakaan",
+    "kelompok": "Partikel Dasar",
+    "romaji": "toshokan de benkyou shimasu"
+  },
+  {
+    "pola": "～も",
+    "arti": "Juga / juga",
+    "contoh": "私も学生です",
+    "terjemahan": "Saya juga mahasiswa",
+    "kelompok": "Partikel Dasar",
+    "romaji": "watashi mo gakusei desu"
+  },
+  {
+    "pola": "～を",
+    "arti": "Objek langsung (kata kerja)",
+    "contoh": "パンを食べます",
+    "terjemahan": "Saya makan roti",
+    "kelompok": "Partikel Dasar",
+    "romaji": "pan o tabemasu"
+  },
+  {
+    "pola": "～が",
+    "arti": "Subjek (informasi baru)",
+    "contoh": "猫がいます",
+    "terjemahan": "Ada kucing",
+    "kelompok": "Partikel Dasar",
+    "romaji": "neko ga imasu"
+  },
+  {
+    "pola": "～から",
+    "arti": "Dari / karena",
+    "contoh": "九時から働きます",
+    "terjemahan": "Saya bekerja dari jam sembilan",
+    "kelompok": "Partikel Dasar",
+    "romaji": "kuuji kara hataraikimasu"
+  },
+  {
+    "pola": "～まで",
+    "arti": "Sampai (batas waktu/ruang)",
+    "contoh": "五時まで働きます",
+    "terjemahan": "Saya bekerja sampai jam lima",
+    "kelompok": "Partikel Dasar",
+    "romaji": "goji made hataraikimasu"
+  },
+  {
+    "pola": "～の",
+    "arti": "Kepemilikan / penghubung kata benda",
+    "contoh": "私の本です",
+    "terjemahan": "Ini buku saya",
+    "kelompok": "Partikel Dasar",
+    "romaji": "watashi no hon desu"
+  },
+  {
+    "pola": "～と",
+    "arti": "Dengan / dan (daftar benda)",
+    "contoh": "友達と映画を見ます",
+    "terjemahan": "Saya menonton film dengan teman",
+    "kelompok": "Partikel Dasar",
+    "romaji": "tomodachi to eiga o mimasu"
+  },
+  {
+    "pola": "～へ",
+    "arti": "Ke arah (arah lebih formal)",
+    "contoh": "東京へ行きます",
+    "terjemahan": "Saya pergi ke Tokyo",
+    "kelompok": "Partikel Dasar",
+    "romaji": "toukyou e ikimasu"
+  },
+  {
+    "pola": "～や",
+    "arti": "Dan (daftar tidak lengkap)",
+    "contoh": "冷蔵庫にパンやたまごがあります",
+    "terjemahan": "Di kulkas ada roti dan telur dll",
+    "kelompok": "Partikel Dasar",
+    "romaji": "reizouko ni pan ya tamago ga arimasu"
+  },
+  {
+    "pola": "～を～ます",
+    "arti": "Objek + kata kerja polite",
+    "contoh": "毎朝コーヒーを飲みます",
+    "terjemahan": "Saya minum kopi setiap pagi",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "mainichi kouhii o nomimasu"
+  },
+  {
+    "pola": "～ます",
+    "arti": "Bentuk polite sekarang (melakukan)",
+    "contoh": "毎朝コーヒーを飲みます",
+    "terjemahan": "Saya minum kopi setiap pagi",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "mainichi kouhii o nomimasu"
+  },
+  {
+    "pola": "～ません",
+    "arti": "Bentuk polite negatif (tidak melakukan)",
+    "contoh": "お酒を飲みません",
+    "terjemahan": "Saya tidak minum alkohol",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "osake o nomimasen"
+  },
+  {
+    "pola": "～ました",
+    "arti": "Bentuk polite lampau (telah melakukan)",
+    "contoh": "昨日映画を見ました",
+    "terjemahan": "Kemarin saya menonton film",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "kinou eiga o mimashita"
+  },
+  {
+    "pola": "～ませんでした",
+    "arti": "Bentuk polite negatif lampau",
+    "contoh": "きのう学校へ行きませんでした",
+    "terjemahan": "Kemarin saya tidak pergi ke sekolah",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "kinou gakkou e ikimasen deshita"
+  },
+  {
+    "pola": "～てください",
+    "arti": "Tolong lakukan (permintaan polite)",
+    "contoh": "ちょっと待ってください",
+    "terjemahan": "Tolong tunggu sebentar",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "choitto matte kudasai"
+  },
+  {
+    "pola": "～ない",
+    "arti": "Bentuk negatif biasa (tidak)",
+    "contoh": "私は肉を食べない",
+    "terjemahan": "Saya tidak makan daging",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "watashi wa niku o tabenai"
+  },
+  {
+    "pola": "～た",
+    "arti": "Bentuk lampau biasa (telah)",
+    "contoh": "昨日映画を見た",
+    "terjemahan": "Kemarin saya menonton film",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "kinou eiga o mita"
+  },
+  {
+    "pola": "～ている",
+    "arti": "Sedang melakukan / keadaan berlangsung",
+    "contoh": "今雨が降っています",
+    "terjemahan": "Sekarang hujan sedang turun",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "ima ame ga futte imasu"
+  },
+  {
+    "pola": "～てから",
+    "arti": "Setelah melakukan (urutan)",
+    "contoh": "食べてから行きます",
+    "terjemahan": "Setelah makan saya pergi",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "tabete kara ikimasu"
+  },
+  {
+    "pola": "～ています",
+    "arti": "Sedang / sudah mulai (keadaan)",
+    "contoh": "結婚しています",
+    "terjemahan": "Saya sudah menikah",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "kekkon shite imasu"
+  },
+  {
+    "pola": "～なくてはいけません",
+    "arti": "Harus melakukan (kewajiban)",
+    "contoh": "宿題をしなくてはいけません",
+    "terjemahan": "Saya harus mengerjakan PR",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "shukudai o shinakute wa ikemasen"
+  },
+  {
+    "pola": "～なければなりません",
+    "arti": "Harus melakukan (kewajiban formal)",
+    "contoh": "明日早く起きなければなりません",
+    "terjemahan": "Saya harus bangun pagi besok",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "ashita hayaku oki nakereba narimasen"
+  },
+  {
+    "pola": "～てはいけません",
+    "arti": "Dilarang (tidak boleh)",
+    "contoh": "ここでタバコを吸ってはいけません",
+    "terjemahan": "Dilarang merokok di sini",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "koko de tabako o sutte wa ikemasen"
+  },
+  {
+    "pola": "～たいです",
+    "arti": "Ingin melakukan (keinginan)",
+    "contoh": "寿司が食べたいです",
+    "terjemahan": "Saya ingin makan sushi",
+    "kelompok": "Ajakan & Keinginan",
+    "romaji": "sushi ga tabetai desu"
+  },
+  {
+    "pola": "～ましょう",
+    "arti": "Ayo kita (saran)",
+    "contoh": "一緒に勉強しましょう",
+    "terjemahan": "Ayo kita belajar bersama",
+    "kelompok": "Ajakan & Keinginan",
+    "romaji": "issho ni benkyou shimashou"
+  },
+  {
+    "pola": "～ませんか",
+    "arti": "Maukah Anda? (undangan lembut)",
+    "contoh": "コーヒーを飲みませんか",
+    "terjemahan": "Maukah minum kopi?",
+    "kelompok": "Ajakan & Keinginan",
+    "romaji": "koohii o nomimasen ka"
+  },
+  {
+    "pola": "～ましょうか",
+    "arti": "Bagaimana kalau? (tawaran)",
+    "contoh": "会話の練習をしましょうか",
+    "terjemahan": "Bagaimana kalau kita latih percakapan?",
+    "kelompok": "Ajakan & Keinginan",
+    "romaji": "kaiwa no renshuu o shimashou ka"
+  },
+  {
+    "pola": "～つもりです",
+    "arti": "Bermaksud (niat)",
+    "contoh": "来週日本に行くつもりです",
+    "terjemahan": "Saya berencana pergi ke Jepang minggu depan",
+    "kelompok": "Ajakan & Keinginan",
+    "romaji": "raishuu nihon ni iku tsumori desu"
+  },
+  {
+    "pola": "～ほしいです",
+    "arti": "Ingin (benda)",
+    "contoh": "水がほしいです",
+    "terjemahan": "Saya ingin air",
+    "kelompok": "Ajakan & Keinginan",
+    "romaji": "mizu ga hoshii desu"
+  },
+  {
+    "pola": "～が好きです",
+    "arti": "Suka (pada sesuatu)",
+    "contoh": "私は音楽が好きです",
+    "terjemahan": "Saya suka musik",
+    "kelompok": "Preferensi",
+    "romaji": "watashi wa ongaku ga suki desu"
+  },
+  {
+    "pola": "～が嫌いです",
+    "arti": "Tidak suka (pada sesuatu)",
+    "contoh": "私は野菜が嫌いです",
+    "terjemahan": "Saya tidak suka sayuran",
+    "kelompok": "Preferensi",
+    "romaji": "watashi wa yasai ga kirai desu"
+  },
+  {
+    "pola": "～が上手です",
+    "arti": "Mahir (dalam sesuatu)",
+    "contoh": "弟はサッカーが上手です",
+    "terjemahan": "Adik saya pandai bermain sepak bola",
+    "kelompok": "Preferensi",
+    "romaji": "otouto wa sakkaa ga jouzu desu"
+  },
+  {
+    "pola": "～が下手です",
+    "arti": "Kurang mahir (dalam sesuatu)",
+    "contoh": "私は料理が下手です",
+    "terjemahan": "Saya kurang pandai memasak",
+    "kelompok": "Preferensi",
+    "romaji": "watashi wa ryouri ga heta desu"
+  },
+  {
+    "pola": "～のほうが～より",
+    "arti": "Lebih ... daripada ...",
+    "contoh": "飛行機は電車より速いです",
+    "terjemahan": "Pesawat lebih cepat daripada kereta",
+    "kelompok": "Preferensi",
+    "romaji": "hikouki wa densha yori hayai desu"
+  },
+  {
+    "pola": "～と～とどちらが",
+    "arti": "Mana yang lebih ...?",
+    "contoh": "コーヒーと紅茶とどちらが好きですか",
+    "terjemahan": "Mana yang lebih suka, kopi atau teh?",
+    "kelompok": "Preferensi",
+    "romaji": "koohii to koucha to dochira ga suki desu ka"
+  },
+  {
+    "pola": "～のなかで～がいちばん",
+    "arti": "Paling di antara ...",
+    "contoh": "ここでいちばん静かです",
+    "terjemahan": "Ini yang paling sunyi di sini",
+    "kelompok": "Preferensi",
+    "romaji": "koko de ichiban shizuka desu"
+  },
+  {
+    "pola": "～がほしいです",
+    "arti": "Ingin (benda, bukan kegiatan)",
+    "contoh": "この本がほしいです",
+    "terjemahan": "Saya ingin buku ini",
+    "kelompok": "Preferensi",
+    "romaji": "kono hon ga hoshii desu"
+  },
+  {
+    "pola": "～まえに",
+    "arti": "Sebelum melakukan sesuatu",
+    "contoh": "食事の前に手を洗います",
+    "terjemahan": "Saya cuci tangan sebelum makan",
+    "kelompok": "Urutan & Pengalaman",
+    "romaji": "shokuji no mae ni te o araimasu"
+  },
+  {
+    "pola": "～たことがある",
+    "arti": "Pernah (pengalaman)",
+    "contoh": "日本に行ったことがあります",
+    "terjemahan": "Saya pernah pergi ke Jepang",
+    "kelompok": "Urutan & Pengalaman",
+    "romaji": "nihon ni itta koto ga arimasu"
+  },
+  {
+    "pola": "～たり～たりする",
+    "arti": "Melakukan hal-hal seperti A dan B",
+    "contoh": "日曜日は本を読んだり音楽を聞いたりします",
+    "terjemahan": "Di Minggu saya baca buku dan dengar musik",
+    "kelompok": "Urutan & Pengalaman",
+    "romaji": "nichiyoubi wa hon o yondari ongaku o kikitari shimasu"
+  },
+  {
+    "pola": "～ながら",
+    "arti": "Sambil melakukan (dua kegiatan)",
+    "contoh": "音楽を聞きながら歩きます",
+    "terjemahan": "Saya jalan sambil mendengarkan musik",
+    "kelompok": "Urutan & Pengalaman",
+    "romaji": "ongaku o kiki nagara arukimasu"
+  },
+  {
+    "pola": "～から",
+    "arti": "Karena (alasan)",
+    "contoh": "雨ですから家にいます",
+    "terjemahan": "Karena hujan saya tinggal di rumah",
+    "kelompok": "Alasan & Perubahan",
+    "romaji": "ame desu kara ie ni imasu"
+  },
+  {
+    "pola": "ので",
+    "arti": "Karena (polite)",
+    "contoh": "遅いので待ってください",
+    "terjemahan": "Karena terlambat tolong tunggu",
+    "kelompok": "Alasan & Perubahan",
+    "romaji": "osoi no de matte kudasai"
+  },
+  {
+    "pola": "～になる",
+    "arti": "Menjadi (perubahan status)",
+    "contoh": "学生になります",
+    "terjemahan": "Saya menjadi mahasiswa",
+    "kelompok": "Alasan & Perubahan",
+    "romaji": "gakusei ni narimasu"
+  },
+  {
+    "pola": "～くなる",
+    "arti": "Menjadi (berubah sifat)",
+    "contoh": "高くなりました",
+    "terjemahan": "Menjadi mahal",
+    "kelompok": "Alasan & Perubahan",
+    "romaji": "takaku narimashita"
+  },
+  {
+    "pola": "～にいく",
+    "arti": "Pergi untuk (tujuan)",
+    "contoh": "買い物に行きます",
+    "terjemahan": "Saya pergi berbelanja",
+    "kelompok": "Alasan & Perubahan",
+    "romaji": "kaimono ni ikimasu"
+  },
+  {
+    "pola": "～にくる",
+    "arti": "Datang untuk (tujuan)",
+    "contoh": "買い物に来ました",
+    "terjemahan": "Saya datang untuk berbelanja",
+    "kelompok": "Alasan & Perubahan",
+    "romaji": "kaimono ni kimashita"
+  },
+  {
+    "pola": "～んです",
+    "arti": "Penjelasan / alasan (lisan)",
+    "contoh": "今日は休みなんです",
+    "terjemahan": "Hari ini libur",
+    "kelompok": "Lain-lain",
+    "romaji": "kyou wa yasumi nandesu"
+  },
+  {
+    "pola": "～すぎる",
+    "arti": "Terlalu ...",
+    "contoh": "高すぎる",
+    "terjemahan": "Terlalu mahal",
+    "kelompok": "Lain-lain",
+    "romaji": "takasugiru"
+  },
+  {
+    "pola": "～ほうがいい",
+    "arti": "Sebaiknya ...",
+    "contoh": "早くしたほうがいいです",
+    "terjemahan": "Sebaiknya lebih cepat",
+    "kelompok": "Lain-lain",
+    "romaji": "hayaku shita hou ga ii desu"
+  },
+  {
+    "pola": "～なくちゃいけない",
+    "arti": "Harus (santai)",
+    "contoh": "やらなくちゃいけない",
+    "terjemahan": "Saya harus melakukannya",
+    "kelompok": "Lain-lain",
+    "romaji": "yaranakucha ikenai"
+  },
+  {
+    "pola": "～でしょう",
+    "arti": "Mungkin / bukan?",
+    "contoh": "明日は雨でしょう",
+    "terjemahan": "Mungkin besok hujan",
+    "kelompok": "Lain-lain",
+    "romaji": "ashita wa ame deshou"
+  },
+  {
+    "pola": "～でも",
+    "arti": "Tapi / meskipun",
+    "contoh": "暑くても行きます",
+    "terjemahan": "Meskipun panas saya tetap pergi",
+    "kelompok": "Lain-lain",
+    "romaji": "atsukute mo ikimasu"
+  },
+  {
+    "pola": "～だけ",
+    "arti": "Hanya / cuma",
+    "contoh": "これだけです",
+    "terjemahan": "Ini saja",
+    "kelompok": "Lain-lain",
+    "romaji": "kore dake desu"
+  },
+  {
+    "pola": "～てあげます",
+    "arti": "Membantu (untuk orang lain)",
+    "contoh": "友達に手伝ってあげます",
+    "terjemahan": "Saya membantu teman",
+    "kelompok": "Lain-lain",
+    "romaji": "te agemasu"
+  },
+  {
+    "pola": "～てもらいます",
+    "arti": "Diminta bantuan (menerima)",
+    "contoh": "先生に教えてもらいます",
+    "terjemahan": "Saya minta guru mengajar",
+    "kelompok": "Lain-lain",
+    "romaji": "sensei ni oshiete moraimasu"
+  },
+  {
+    "pola": "～てくれます",
+    "arti": "Membantu saya (memberi)",
+    "contoh": "友達が手伝ってくれます",
+    "terjemahan": "Teman saya membantu saya",
+    "kelompok": "Lain-lain",
+    "romaji": "te kuremasu"
+  },
+  {
+    "pola": "い形容詞",
+    "arti": "Kata sifat i (berakhir -i)",
+    "contoh": "高いです",
+    "terjemahan": "Mahal",
+    "kelompok": "Kata Sifat",
+    "romaji": "takai desu"
+  },
+  {
+    "pola": "な形容詞",
+    "arti": "Kata sifat na (berakhir -na)",
+    "contoh": "静かです",
+    "terjemahan": "Tenang",
+    "kelompok": "Kata Sifat",
+    "romaji": "shizuka desu"
+  },
+  {
+    "pola": "これ／それ／あれ／どれ",
+    "arti": "Kata menunjukkan (ini/itu/itu sana/mana)",
+    "contoh": "これは何ですか",
+    "terjemahan": "Apa ini?",
+    "kelompok": "Kata Tunjuk",
+    "romaji": "kore wa nan desu ka"
+  },
+  {
+    "pola": "～があります",
+    "arti": "Ada (benda mati)",
+    "contoh": "机の上に本があります",
+    "terjemahan": "Ada buku di atas meja",
+    "kelompok": "Arah & Keberadaan",
+    "romaji": "tsukue no ue ni hon ga arimasu"
+  },
+  {
+    "pola": "～がいます",
+    "arti": "Ada (makhluk hidup)",
+    "contoh": "公園に子供がいます",
+    "terjemahan": "Ada anak-anak di taman",
+    "kelompok": "Arah & Keberadaan",
+    "romaji": "kouen ni kodomo ga imasu"
+  },
+  {
+    "pola": "に (waktu)",
+    "arti": "Pada waktu tertentu",
+    "contoh": "七時に起きます",
+    "terjemahan": "Saya bangun jam tujuh",
+    "kelompok": "Arah & Keberadaan",
+    "romaji": "shichiji ni okimasu"
+  },
+  {
+    "pola": "に (tujuan)",
+    "arti": "Ke tujuan (gerakan)",
+    "contoh": "学校に行きます",
+    "terjemahan": "Saya pergi ke sekolah",
+    "kelompok": "Arah & Keberadaan",
+    "romaji": "gakkou ni ikimasu"
+  },
+  {
+    "pola": "に (tempat ada)",
+    "arti": "Di (tempat ada benda/hidup)",
+    "contoh": "部屋に猫がいます",
+    "terjemahan": "Ada kucing di kamar",
+    "kelompok": "Arah & Keberadaan",
+    "romaji": "heya ni neko ga imasu"
+  },
+  {
+    "pola": "～てもいいです",
+    "arti": "Boleh / boleh melakukan",
+    "contoh": "写真を撮ってもいいですか",
+    "terjemahan": "Boleh saya ambil foto?",
+    "kelompok": "Permintaan & Izin",
+    "romaji": "shashin o totte mo ii desu ka"
+  },
+  {
+    "pola": "～ないでください",
+    "arti": "Tolong jangan lakukan",
+    "contoh": "ここに入らないでください",
+    "terjemahan": "Tolong jangan masuk sini",
+    "kelompok": "Permintaan & Izin",
+    "romaji": "koko ni hairanai de kudasai"
+  },
+  {
+    "pola": "～てもいいですか",
+    "arti": "Boleh saya ...? (izin)",
+    "contoh": "教科書を見てもいいですか",
+    "terjemahan": "Boleh saya lihat buku pelajarannya?",
+    "kelompok": "Permintaan & Izin",
+    "romaji": "kyoukasho o mite mo ii desu ka"
+  },
+  {
+    "pola": "～てみる",
+    "arti": "mencoba melakukan",
+    "contoh": "日本語を話してみます。",
+    "terjemahan": "Saya mencoba berbicara bahasa Jepang.",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "te miru"
+  },
+  {
+    "pola": "～ておく",
+    "arti": "melakukan untuk persiapan",
+    "contoh": "窓を開けておきます。",
+    "terjemahan": "Saya membuka jendela (untuk persiapan).",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "te oku"
+  },
+  {
+    "pola": "～てしまう",
+    "arti": "terlanjur / sampai selesai",
+    "contoh": "本を読んでしまいました。",
+    "terjemahan": "Saya sampai selesai membaca buku itu.",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "te shimau"
+  },
+  {
+    "pola": "～ていく",
+    "arti": "pergi sambil / berlanjut",
+    "contoh": "だんだん寒くなっていきます。",
+    "terjemahan": "Semakin lama semakin dingin.",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "te iku"
+  },
+  {
+    "pola": "～てくる",
+    "arti": "datang sambil / berlanjut",
+    "contoh": "走ってきます。",
+    "terjemahan": "Saya datang sambil berlari.",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "te kuru"
+  },
+  {
+    "pola": "～ことができます",
+    "arti": "bisa melakukan",
+    "contoh": "泳ぐことができます。",
+    "terjemahan": "Saya bisa berenang.",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "koto ga dekimasu"
+  },
+  {
+    "pola": "～はじめる",
+    "arti": "mulai melakukan",
+    "contoh": "勉強をはじめます。",
+    "terjemahan": "Saya mulai belajar.",
+    "kelompok": "Konjugasi Dasar",
+    "romaji": "hajimeru"
+  },
+  {
+    "pola": "～やすい",
+    "arti": "mudah untuk",
+    "contoh": "この本は読みやすいです。",
+    "terjemahan": "Buku ini mudah dibaca.",
+    "kelompok": "Kata Sifat",
+    "romaji": "yasui"
+  },
+  {
+    "pola": "～にくい",
+    "arti": "sulit untuk",
+    "contoh": "この漢字は書きにくいです。",
+    "terjemahan": "Kanji ini sulit ditulis.",
+    "kelompok": "Kata Sifat",
+    "romaji": "nikui"
+  },
+  {
+    "pola": "～とき",
+    "arti": "ketika",
+    "contoh": "寝るときに音楽を聞きます。",
+    "terjemahan": "Saya mendengarkan musik ketika tidur.",
+    "kelompok": "Urutan & Pengalaman",
+    "romaji": "toki"
+  },
+  {
+    "pola": "～あとで",
+    "arti": "setelah",
+    "contoh": "ご飯を食べたあとで勉強します。",
+    "terjemahan": "Saya belajar setelah makan.",
+    "kelompok": "Urutan & Pengalaman",
+    "romaji": "ato de"
+  },
+  {
+    "pola": "～とおもいます",
+    "arti": "saya pikir",
+    "contoh": "明日は雨だと思います。",
+    "terjemahan": "Saya pikir besok hujan.",
+    "kelompok": "Lain-lain",
+    "romaji": "to omoimasu"
+  },
+  {
+    "pola": "～けど",
+    "arti": "tapi",
+    "contoh": "高いけど買います。",
+    "terjemahan": "Mahal tapi saya beli.",
+    "kelompok": "Lain-lain",
+    "romaji": "kedo"
+  },
+  {
+    "pola": "～といいます",
+    "arti": "dipanggil / bernama",
+    "contoh": "わたしは田中といいます。",
+    "terjemahan": "Nama saya Tanaka.",
+    "kelompok": "Lain-lain",
+    "romaji": "to iimasu"
+  },
+  {
+    "pola": "～なくてもいいです",
+    "arti": "tidak perlu",
+    "contoh": "行かなくてもいいです。",
+    "terjemahan": "Tidak perlu pergi.",
+    "kelompok": "Permintaan & Izin",
+    "romaji": "nakute mo ii desu"
+  }
+]

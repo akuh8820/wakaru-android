@@ -1,0 +1,114 @@
+[
+  {
+    "partikel": "は",
+    "kana": "は (wa)",
+    "fungsi": "Menandai topik kalimat — 'as for' atau 'mengenai', biasanya membawa informasi yang sudah diketahui",
+    "contoh": "わたしは学生です。",
+    "arti_contoh": "Saya adalah seorang mahasiswa.",
+    "romaji": "wa"
+  },
+  {
+    "partikel": "が",
+    "kana": "が",
+    "fungsi": "Menandai subjek/identifier — memperkenalkan informasi baru atau menjawab pertanyaan 'siapa/apa'",
+    "contoh": "だれがきましたか。",
+    "arti_contoh": "Siapa yang datang?",
+    "romaji": "ga"
+  },
+  {
+    "partikel": "を",
+    "kana": "を (o)",
+    "fungsi": "Menandai objek langsung — benda yang menerima aksi dari kata kerja transitif",
+    "contoh": "パンを食べます。",
+    "arti_contoh": "Saya makan roti.",
+    "romaji": "o"
+  },
+  {
+    "partikel": "に",
+    "kana": "に",
+    "fungsi": "Menandai waktu spesifik, tujuan gerakan, tempat keberadaan, atau penerima aksi",
+    "contoh": "六時に起きます。",
+    "arti_contoh": "Saya bangun jam enam.",
+    "romaji": "ni"
+  },
+  {
+    "partikel": "で",
+    "kana": "で",
+    "fungsi": "Menandai tempat aksi dilakukan atau sarana/cara melakukan sesuatu",
+    "contoh": "図書館で勉強します。",
+    "arti_contoh": "Saya belajar di perpustakaan.",
+    "romaji": "de"
+  },
+  {
+    "partikel": "へ",
+    "kana": "へ (e)",
+    "fungsi": "Menandai arah atau tujuan pergerakan — menekankan proses menuju tujuan",
+    "contoh": "東京へ行きます。",
+    "arti_contoh": "Saya pergi ke Tokyo.",
+    "romaji": "e"
+  },
+  {
+    "partikel": "と",
+    "kana": "と",
+    "fungsi": "Menghubungkan kata benda secara lengkap (daftar exhaustif) atau menandai teman melakukan aksi bersama ('dengan')",
+    "contoh": "友達と映画を見ました。",
+    "arti_contoh": "Saya menonton film bersama teman.",
+    "romaji": "to"
+  },
+  {
+    "partikel": "も",
+    "kana": "も",
+    "fungsi": "Menandai 'juga/tidak kalah' — menggantikan は atau が, berarti 'also/too'",
+    "contoh": "わたしも行きます。",
+    "arti_contoh": "Saya juga pergi.",
+    "romaji": "mo"
+  },
+  {
+    "partikel": "か",
+    "kana": "か",
+    "fungsi": "Penanda pertanyaan — menandai akhir kalimat sebagai pertanyaan",
+    "contoh": "学生ですか。",
+    "arti_contoh": "Apakah Anda seorang mahasiswa?",
+    "romaji": "ka"
+  },
+  {
+    "partikel": "の",
+    "kana": "の",
+    "fungsi": "Menghubungkan dua kata benda — menunjukkan kepemilikan, deskripsi, jenis, atau asal",
+    "contoh": "わたしの本です。",
+    "arti_contoh": "Ini buku saya.",
+    "romaji": "no"
+  },
+  {
+    "partikel": "から",
+    "kana": "から",
+    "fungsi": "Menandai titik awal ('dari') dalam waktu atau tempat, atau alasan ('karena')",
+    "contoh": "東京から来ました。",
+    "arti_contoh": "Saya datang dari Tokyo.",
+    "romaji": "kara"
+  },
+  {
+    "partikel": "まで",
+    "kana": "まで",
+    "fungsi": "Menandai titik akhir ('sampai') dalam waktu atau tempat",
+    "contoh": "九時までです。",
+    "arti_contoh": "Sampai jam sembilan.",
+    "romaji": "made"
+  },
+  {
+    "partikel": "や",
+    "kana": "や",
+    "fungsi": "Menghubungkan kata benda sebagai contoh — daftar tidak lengkap, mengimplikasikan ada item lain",
+    "contoh": "りんごやみかんを買いました。",
+    "arti_contoh": "Saya membeli apel dan jeruk (dan lain-lain).",
+    "romaji": "ya"
+  },
+  {
+    "partikel": "だけ",
+    "kana": "だけ",
+    "fungsi": "Menandai batasan/keterbatasan — 'hanya' atau 'sekali' saja, netral tanpa penilaian",
+    "contoh": "水だけ飲みました。",
+    "arti_contoh": "Saya hanya minum air.",
+    "romaji": "dake"
+  }
+]

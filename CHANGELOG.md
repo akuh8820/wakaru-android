@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.0 — 2026-09-14
+
+### Fitur (Fase 3)
+- **Tab Kamus**: 7 kategori (Kata Benda, Kata Sifat, Kata Bantu, Kata Kerja, Partikel, Bunpou, Kanji) untuk N5, search real-time (kanji/kana/arti), count entri, level N4/N3 "segera hadir"
+- **Flashcard exposure-only**: 4 mode (Benda/Sifat/Kerja/Kanji), flip kartu = tandai "dilihat" (hapus tombol hafal), "Flashcard Hari Ini" quick start, "Lanjut" resume session, auto-play audio toggle, acak
+- **Quiz practice**: "Quiz Cepat" (kanji, 10 soal), progress bar benar, konfirmasi keluar, skor X/100 + review jawaban salah
+- **Progress**: "sudah dilihat" saja — kosakata 668 + kanji 103, tersimpan per level
+- **Data**: `kosakata.json` 668/668 ber-POS (noun 390, verb 161, i-adj 59, na-adj 14, lainnya 44) via `scripts/enrich_pos.py`; `kata_bantu.json` 10, `partikel.json` 14, `bunpou.json` 88
+- **A11y**: level cards `role=button` + keyboard (Enter/Space) + aria-label
+
+### Fix & Polish
+- Fix flashcard quick-start kosong saat cache data belum hangat (warm `kamusLoad('n5')` di init)
+- Fix progress quiz: `(idx+1)/count`
+- Level action buttons wrap rapi di layar sempit (flex-wrap)
+
 ## v1.4beta — 2026-09-13
 
 ### Fitur (P2.4–P2.7)
