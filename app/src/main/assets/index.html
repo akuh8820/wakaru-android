@@ -16,74 +16,103 @@
     <button id="theme-toggle" aria-label="Ganti tema" type="button">🌙</button>
   </header>
 
-  <nav id="app-tabs" role="tablist" aria-label="Navigasi utama">
-    <button id="tab-level" class="app-tab is-active" role="tab" aria-selected="true" aria-controls="view-level" data-app-tab="level" type="button">Level</button>
-    <button id="tab-kamus" class="app-tab" role="tab" aria-selected="false" aria-controls="kamus-view" data-app-tab="kamus" type="button">Kamus</button>
-  </nav>
-
-  <div id="view-level">
-    <main id="home">
-      <div class="home-intro">
-        <p class="label-caps" lang="ja">WAKARU — 日本語</p>
-        <p class="lead">Pilih level belajarmu:</p>
-      </div>
-      <div id="level-cards" aria-live="polite"></div>
-    </main>
-  </div>
-
-  <section id="kamus-view" hidden aria-label="Kamus">
+  <section id="kamus-view" aria-label="Kamus">
     <div class="kamus-header">
       <p class="label-caps" lang="ja">辞書 — Kamus</p>
       <h2 class="kamus-title">Kamus</h2>
-      <p class="kamus-desc">Pilih level, lalu kategori untuk mencari kata.</p>
+      <p class="kamus-desc">Pilih kategori untuk mencari kata.</p>
     </div>
 
-    <div id="kamus-level-chips" class="kamus-chips" role="group" aria-label="Pilih level">
-      <button class="kamus-chip is-active" data-kamus-level="n5" id="kamus-chip-n5" type="button" aria-pressed="true">N5</button>
-      <button class="kamus-chip" data-kamus-level="n4" id="kamus-chip-n4" type="button" aria-pressed="false">N4</button>
-      <button class="kamus-chip" data-kamus-level="n3" id="kamus-chip-n3" type="button" aria-pressed="false">N3</button>
+    <div id="home-search-wrap" class="home-search-wrap" role="search" aria-label="Pencarian global">
+      <label class="search-wrap home-search" aria-label="Cari semua kategori">
+        <span class="search-wrap__icon" aria-hidden="true">⌕</span>
+        <input id="home-search" class="search-input" type="search" placeholder="Cari semua — kata, kana, kanji, arti…" autocomplete="off" spellcheck="false" aria-label="Cari semua kategori" aria-controls="home-search-results" aria-expanded="false">
+        <button id="home-search-clear" class="search-clear" type="button" aria-label="Hapus pencarian" hidden>×</button>
+      </label>
     </div>
 
-    <div id="kamus-soon" class="empty-state kamus-soon" hidden>
-      <p class="empty-state__title">Segera hadir</p>
-      <p class="empty-state__msg">Materi untuk level ini sedang disiapkan. Pilih N5 untuk melihat kamus yang tersedia sekarang.</p>
-    </div>
+    <div id="home-search-results" class="home-search-results" hidden aria-live="polite" aria-atomic="false" tabindex="-1"></div>
 
     <div id="kamus-category-grid" class="kamus-grid" role="list" aria-label="Kategori kamus">
-      <button class="kamus-card" data-kamus-category="kata-benda" id="kamus-card-benda" type="button" role="listitem" aria-label="Kata Benda">
-        <span class="kamus-card__label">Kata Benda</span>
-        <span class="kamus-card__meta">Nomina</span>
+      <button class="kamus-card" data-kamus-category="hiragana" type="button" role="listitem" aria-label="Hiragana">
+        <span class="kamus-card__icon" lang="ja" aria-hidden="true">あ</span>
+        <span class="kamus-card__accent" aria-hidden="true"></span>
+        <span class="kamus-card__label">Hiragana</span>
+        <span class="kamus-card__meta">Kana</span>
       </button>
-      <button class="kamus-card" data-kamus-category="kata-sifat" id="kamus-card-sifat" type="button" role="listitem" aria-label="Kata Sifat">
-        <span class="kamus-card__label">Kata Sifat</span>
-        <span class="kamus-card__meta">Adjektiva</span>
+      <button class="kamus-card" data-kamus-category="katakana" type="button" role="listitem" aria-label="Katakana">
+        <span class="kamus-card__icon" lang="ja" aria-hidden="true">ア</span>
+        <span class="kamus-card__accent" aria-hidden="true"></span>
+        <span class="kamus-card__label">Katakana</span>
+        <span class="kamus-card__meta">Kana</span>
       </button>
-      <button class="kamus-card" data-kamus-category="kata-bantu" id="kamus-card-bantu" type="button" role="listitem" aria-label="Kata Bantu">
-        <span class="kamus-card__label">Kata Bantu</span>
-        <span class="kamus-card__meta">Auxiliary</span>
+      <button class="kamus-card" data-kamus-category="kanji" id="kamus-card-kanji" type="button" role="listitem" aria-label="Kanji">
+        <span class="kamus-card__icon" lang="ja" aria-hidden="true">漢</span>
+        <span class="kamus-card__accent" aria-hidden="true"></span>
+        <span class="kamus-card__label">Kanji</span>
+        <span class="kamus-card__meta">Huruf</span>
       </button>
-      <button class="kamus-card" data-kamus-category="kata-kerja" id="kamus-card-kerja" type="button" role="listitem" aria-label="Kata Kerja">
-        <span class="kamus-card__label">Kata Kerja</span>
-        <span class="kamus-card__meta">Verba</span>
+      <button class="kamus-card" data-kamus-category="kosakata" id="kamus-card-benda" type="button" role="listitem" aria-label="Kosakata">
+        <span class="kamus-card__icon" lang="ja" aria-hidden="true">単</span>
+        <span class="kamus-card__accent" aria-hidden="true"></span>
+        <span class="kamus-card__label">Kosakata</span>
+        <span class="kamus-card__meta">Kata &amp; frasa</span>
+      </button>
+      <button class="kamus-card" data-kamus-category="grammar" id="kamus-card-bunpou" type="button" role="listitem" aria-label="Grammar">
+        <span class="kamus-card__icon" lang="ja" aria-hidden="true">文</span>
+        <span class="kamus-card__accent" aria-hidden="true"></span>
+        <span class="kamus-card__label">Grammar</span>
+        <span class="kamus-card__meta">Pola kalimat</span>
       </button>
       <button class="kamus-card" data-kamus-category="partikel" id="kamus-card-partikel" type="button" role="listitem" aria-label="Partikel">
+        <span class="kamus-card__icon" lang="ja" aria-hidden="true">は</span>
+        <span class="kamus-card__accent" aria-hidden="true"></span>
         <span class="kamus-card__label">Partikel</span>
         <span class="kamus-card__meta">Joshi</span>
       </button>
-      <button class="kamus-card" data-kamus-category="bunpou" id="kamus-card-bunpou" type="button" role="listitem" aria-label="Bunpou">
-        <span class="kamus-card__label">Bunpou</span>
-        <span class="kamus-card__meta">Pola kalimat</span>
+      <button class="kamus-card" data-kamus-category="kata-kerja" id="kamus-card-kerja" type="button" role="listitem" aria-label="Kata Kerja">
+        <span class="kamus-card__icon" lang="ja" aria-hidden="true">動</span>
+        <span class="kamus-card__accent" aria-hidden="true"></span>
+        <span class="kamus-card__label">Kata Kerja</span>
+        <span class="kamus-card__meta">Konjugasi verba</span>
       </button>
-      <button class="kamus-card" data-kamus-category="kanji" id="kamus-card-kanji" type="button" role="listitem" aria-label="Kanji">
-        <span class="kamus-card__label">Kanji</span>
-        <span class="kamus-card__meta">Huruf</span>
+      <button class="kamus-card" data-kamus-category="kata-sifat" id="kamus-card-sifat" type="button" role="listitem" aria-label="Kata Sifat">
+        <span class="kamus-card__icon" lang="ja" aria-hidden="true">形</span>
+        <span class="kamus-card__accent" aria-hidden="true"></span>
+        <span class="kamus-card__label">Kata Sifat</span>
+        <span class="kamus-card__meta">Konjugasi adjektiva</span>
+      </button>
+      <button class="kamus-card" data-kamus-category="kata-bantu" id="kamus-card-bantu" type="button" role="listitem" aria-label="Kata Bantu">
+        <span class="kamus-card__icon" lang="ja" aria-hidden="true">助</span>
+        <span class="kamus-card__accent" aria-hidden="true"></span>
+        <span class="kamus-card__label">Kata Bantu</span>
+        <span class="kamus-card__meta">Auxiliary</span>
+      </button>
+    </div>
+
+    <div id="home-actions" class="home-actions" aria-label="Latihan">
+      <button id="btn-flashcard" class="home-action-card" type="button" aria-label="Buka Flashcard">
+        <span class="home-action__icon" aria-hidden="true">◐</span>
+        <span class="home-action__body">
+          <span class="home-action__label">Flashcard</span>
+          <span class="home-action__desc">Hafalkan kosakata &amp; kanji</span>
+        </span>
+        <span class="home-action__chip" aria-hidden="true">Buka</span>
+      </button>
+      <button id="btn-kuis" class="home-action-card" type="button" aria-label="Buka Kuis">
+        <span class="home-action__icon" aria-hidden="true">✦</span>
+        <span class="home-action__body">
+          <span class="home-action__label">Kuis</span>
+          <span class="home-action__desc">Uji pemahaman N5</span>
+        </span>
+        <span class="home-action__chip" aria-hidden="true">Mulai</span>
       </button>
     </div>
 
     <div id="kamus-list-view" class="kamus-list-view" hidden>
       <div class="page-header kamus-list-header">
         <button id="kamus-back-btn" class="back-btn" type="button" aria-label="Kembali ke kategori">← Kembali</button>
-        <span id="kamus-list-title" class="page-header__level">Kata Benda</span>
+        <span id="kamus-list-title" class="page-header__level">Kamus</span>
       </div>
       <label class="search-wrap" aria-label="Cari di kamus">
         <span class="search-wrap__icon" aria-hidden="true">⌕</span>
@@ -96,239 +125,309 @@
         <p class="empty-state__msg">Coba kata kunci lain.</p>
       </div>
     </div>
+
+    <div id="kategori-view" hidden tabindex="-1"></div>
   </section>
 
+  <div id="app-view" hidden tabindex="-1"></div>
+
   <script src="js/data.js"></script>
+  <script src="js/views.js"></script>
   <script src="js/app.js"></script>
   <script>
-  // App-level tabs + Kamus progressive disclosure (UI shell).
-  // Data lane owns js/data.js and will enhance filtering; this keeps the view usable in browser.
   (function () {
-    var tabLevel = document.getElementById('tab-level');
-    var tabKamus = document.getElementById('tab-kamus');
-    var viewLevel = document.getElementById('view-level');
     var kamusView = document.getElementById('kamus-view');
-    var chips = document.querySelectorAll('.kamus-chip');
     var grid = document.getElementById('kamus-category-grid');
-    var soon = document.getElementById('kamus-soon');
+    var kategoriView = document.getElementById('kategori-view');
     var listView = document.getElementById('kamus-list-view');
-    var backBtn = document.getElementById('kamus-back-btn');
-    var search = document.getElementById('kamus-search');
-    var itemList = document.getElementById('kamus-item-list');
-    var countEl = document.getElementById('kamus-count');
-    var emptyEl = document.getElementById('kamus-empty');
-    var listTitle = document.getElementById('kamus-list-title');
-
-    var currentKamusLevel = 'n5';
+    var homeSearch = document.getElementById('home-search');
+    var homeSearchWrap = document.getElementById('home-search-wrap');
+    var homeSearchResults = document.getElementById('home-search-results');
+    var homeSearchClear = document.getElementById('home-search-clear');
+    var homeActions = document.getElementById('home-actions');
+    var kategoriMap = {};
     var currentCategory = null;
-    var currentItems = [];
-    var categoryCache = {};
+    var searchTimer = null;
 
-    function setAppTab(which) {
-      var isLevel = which === 'level';
-      tabLevel.classList.toggle('is-active', isLevel);
-      tabLevel.setAttribute('aria-selected', isLevel ? 'true' : 'false');
-      tabKamus.classList.toggle('is-active', !isLevel);
-      tabKamus.setAttribute('aria-selected', !isLevel ? 'true' : 'false');
-      viewLevel.hidden = !isLevel;
-      kamusView.hidden = isLevel;
-      if (!isLevel) {
-        // ensure kamus view shows correct step when switched
-        syncLevelState();
-      }
-    }
-    if (tabLevel) tabLevel.addEventListener('click', function () { setAppTab('level'); });
-    if (tabKamus) tabKamus.addEventListener('click', function () { setAppTab('kamus'); });
-
-    function syncLevelState() {
-      var isN5 = currentKamusLevel === 'n5';
-      if (soon) soon.hidden = isN5 || !!currentCategory;
-      if (grid) grid.hidden = !isN5 || !!currentCategory;
-      if (listView) listView.hidden = !currentCategory || !isN5;
-      // if switching to N4/N3 while in list, close list
-      if (!isN5 && currentCategory) {
-        currentCategory = null;
-        currentItems = [];
-        if (listView) listView.hidden = true;
-      }
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    chips.forEach(function (c) {
-      c.addEventListener('click', function () {
-        var lvl = c.getAttribute('data-kamus-level');
-        if (!lvl) return;
-        currentKamusLevel = lvl;
-        chips.forEach(function (x) {
-          var on = x.getAttribute('data-kamus-level') === lvl;
-          x.classList.toggle('is-active', on);
-          x.setAttribute('aria-pressed', on ? 'true' : 'false');
-        });
-        // exit list view when changing level
-        if (currentCategory) {
-          currentCategory = null;
-          currentItems = [];
-          if (listView) listView.hidden = true;
-          if (search) search.value = '';
+    WakaruData.loadAll().then(function () {
+      var list = WakaruData.getKategoriList();
+      for (var i = 0; i < list.length; i++) {
+        kategoriMap[list[i].id] = list[i];
+      }
+      document.querySelectorAll('.kamus-card').forEach(function (btn) {
+        var id = btn.dataset ? btn.dataset.kamusCategory : btn.getAttribute('data-' + 'kamus-category');
+        var info = kategoriMap[id];
+        if (info && typeof info.count === 'number') {
+          var meta = btn.querySelector('.kamus-card__meta');
+          if (meta) meta.textContent = info.count + ' entri';
         }
-        syncLevelState();
       });
     });
 
-    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-    function fetchJSON(path) {
-      return fetch(path).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+    function focusView(el) {
+      if (!el) return;
+      try { el.focus(); } catch (e) {}
     }
 
-    function loadCategoryData(cat) {
-      if (categoryCache[cat]) return Promise.resolve(categoryCache[cat]);
-      if (cat === 'kata-benda') {
-        return fetchJSON('data/n5/kosakata.json').then(function (all) {
-          var out = all.filter(function (x) { return x.pos === 'noun'; });
-          categoryCache[cat] = out; return out;
-        });
-      }
-      if (cat === 'kata-sifat') {
-        return fetchJSON('data/n5/kosakata.json').then(function (all) {
-          var out = all.filter(function (x) { return x.pos === 'i-adj' || x.pos === 'na-adj'; });
-          categoryCache[cat] = out; return out;
-        });
-      }
-      if (cat === 'kata-kerja') {
-        return fetchJSON('data/n5/kosakata.json').then(function (all) {
-          var out = all.filter(function (x) { return x.pos === 'verb'; });
-          categoryCache[cat] = out; return out;
-        });
-      }
-      if (cat === 'kata-bantu') return fetchJSON('data/n5/kata_bantu.json').then(function (d) { categoryCache[cat]=d; return d; });
-      if (cat === 'partikel') return fetchJSON('data/n5/partikel.json').then(function (d) { categoryCache[cat]=d; return d; });
-      if (cat === 'bunpou') return fetchJSON('data/n5/bunpou.json').then(function (d) { categoryCache[cat]=d; return d; });
-      if (cat === 'kanji') return fetchJSON('data/n5/kanji.json').then(function (d) { categoryCache[cat]=d; return d; });
-      return Promise.resolve([]);
+    function showGrid() {
+      currentCategory = null;
+      if (grid) grid.hidden = false;
+      if (homeActions) homeActions.hidden = false;
+      if (homeSearchWrap) homeSearchWrap.hidden = false;
+      if (homeSearchResults) { homeSearchResults.hidden = true; homeSearchResults.innerHTML = ''; }
+      if (homeSearch) { homeSearch.setAttribute('aria-expanded', 'false'); }
+      if (homeSearchClear) homeSearchClear.hidden = !homeSearch || !homeSearch.value;
+      if (kategoriView) { kategoriView.hidden = true; kategoriView.innerHTML = ''; }
+      if (listView) listView.hidden = true;
+      try { if (homeSearch) homeSearch.focus(); } catch (e) {}
     }
 
-    function renderItems(filter) {
-      var q = (filter || '').toLowerCase().trim();
-      var filtered = currentItems;
-      if (q) {
-        filtered = currentItems.filter(function (it) {
-          if (currentCategory === 'kanji') {
-            var m = (it.meanings_id||[]).join(' ').toLowerCase();
-            var on = (it.on_readings||[]).join(' ').toLowerCase();
-            var kun = (it.kun_readings||[]).join(' ').toLowerCase();
-            return it.kanji.indexOf(q) !== -1 || m.indexOf(q) !== -1 || on.indexOf(q) !== -1 || kun.indexOf(q) !== -1;
-          }
-          if (currentCategory === 'partikel') {
-            return (it.partikel||'').indexOf(q) !== -1 || (it.kana||'').toLowerCase().indexOf(q) !== -1 || (it.fungsi||'').toLowerCase().indexOf(q) !== -1 || (it.arti_contoh||'').toLowerCase().indexOf(q) !== -1;
-          }
-          if (currentCategory === 'bunpou') {
-            return (it.pola||'').indexOf(q) !== -1 || (it.arti||'').toLowerCase().indexOf(q) !== -1 || (it.contoh||'').indexOf(q) !== -1;
-          }
-          // kosakata / kata_bantu
-          var kan = (it.kanji||'');
-          var kana = (it.kana||'');
-          var arti = (it.arti||'');
-          var rom = (it.romaji||'');
-          return kan.indexOf(q) !== -1 || kana.indexOf(q) !== -1 || arti.toLowerCase().indexOf(q) !== -1 || rom.toLowerCase().indexOf(q) !== -1;
-        });
+    function openKategori(id) {
+      currentCategory = id;
+      if (grid) grid.hidden = true;
+      if (homeActions) homeActions.hidden = true;
+      if (homeSearchResults) { homeSearchResults.hidden = true; homeSearchResults.innerHTML = ''; }
+      if (homeSearchWrap) homeSearchWrap.hidden = true;
+      if (listView) listView.hidden = true;
+      if (kategoriView) {
+        kategoriView.hidden = false;
+        if (window.WakaruViews && typeof window.WakaruViews.renderKategoriView === 'function') {
+          window.WakaruViews.renderKategoriView(id, kategoriView);
+        } else {
+          kategoriView.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
+        }
+        kategoriView.setAttribute('tabindex', '-1');
+        focusView(kategoriView);
+        var h = kategoriView.querySelector('.page-header');
+        if (h) { h.setAttribute('tabindex', '-1'); }
       }
-      if (countEl) countEl.textContent = filtered.length ? filtered.length + ' entri' : '';
-      if (emptyEl) emptyEl.hidden = filtered.length !== 0;
-      if (itemList) itemList.hidden = filtered.length === 0;
-      if (!itemList) return;
-      if (filtered.length === 0) { itemList.innerHTML = ''; return; }
-      var html = '';
-      if (currentCategory === 'kanji') {
-        html = filtered.slice(0, 200).map(function (k) {
-          var mean = esc(k.meanings_id.join(', '));
-          var read = esc([].concat(k.on_readings||[]).slice(0,2).join('・') + (k.kun_readings&&k.kun_readings.length ? ' / ' + k.kun_readings.slice(0,2).join('・') : ''));
-          return '<div class="materi-item kamus-row" data-kamus-item="' + esc(k.kanji) + '"><span class="mi-kanji" lang="ja">' + esc(k.kanji) + '</span><span class="mi-body"><span class="mi-mean">' + mean + '</span><span class="mi-read">' + read + '</span></span></div>';
-        }).join('');
-      } else if (currentCategory === 'partikel') {
-        html = filtered.map(function (p) {
-          return '<div class="materi-item kamus-row" data-kamus-item="' + esc(p.partikel) + '"><span class="mi-kanji" lang="ja">' + esc(p.partikel) + '</span><span class="mi-body"><span class="mi-mean" lang="ja">' + esc(p.kana) + '</span><span class="mi-read">' + esc(p.fungsi) + '</span><span class="mi-meta">' + esc(p.contoh) + ' — ' + esc(p.arti_contoh) + '</span></span></div>';
-        }).join('');
-      } else if (currentCategory === 'bunpou') {
-        html = filtered.map(function (b) {
-          return '<div class="materi-item kamus-row" data-kamus-item="' + esc(b.pola) + '"><span class="mi-body"><span class="mi-vkanji" lang="ja">' + esc(b.pola) + '</span><span class="mi-mean">' + esc(b.arti) + '</span><span class="mi-read">' + esc(b.contoh) + ' — ' + esc(b.terjemahan) + '</span></span></div>';
-        }).join('');
-      } else {
-        // kosakata variants + kata_bantu: same shape
-        html = filtered.slice(0, 200).map(function (v) {
-          var word = esc(v.kanji || v.kana);
-          var kana = esc(v.kana);
-          var arti = esc(v.arti);
-          var showKana = v.kanji && v.kana && v.kanji !== v.kana;
-          return '<div class="materi-item kamus-row" data-kamus-item="' + esc(v.kana) + '"><span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + word + '</span>' + (showKana ? '<span class="mi-vkana" lang="ja">' + kana + '</span>' : '') + '</span><span class="mi-mean">' + arti + '</span>' + (showKana ? '' : '<span class="mi-read" lang="ja">' + kana + '</span>') + '<span class="mi-romaji">' + esc(v.romaji||'') + '</span></span></div>';
-        }).join('');
-      }
-      itemList.innerHTML = html;
-    }
-
-    function openCategory(cat) {
-      if (currentKamusLevel !== 'n5') return;
-      currentCategory = cat;
-      var labelMap = { 'kata-benda':'Kata Benda','kata-sifat':'Kata Sifat','kata-bantu':'Kata Bantu','kata-kerja':'Kata Kerja','partikel':'Partikel','bunpou':'Bunpou','kanji':'Kanji' };
-      if (listTitle) listTitle.textContent = labelMap[cat] || cat;
-      if (search) search.value = '';
-      syncLevelState();
-      // show loading placeholder briefly
-      if (itemList) itemList.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
-      if (countEl) countEl.textContent = '';
-      if (emptyEl) emptyEl.hidden = true;
-      if (itemList) itemList.hidden = false;
-      loadCategoryData(cat).then(function (data) {
-        if (currentCategory !== cat) return;
-        currentItems = data;
-        renderItems('');
-      }).catch(function () {
-        currentItems = [];
-        renderItems('');
-      });
     }
 
     document.querySelectorAll('.kamus-card').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        var cat = btn.getAttribute('data-kamus-category');
-        if (cat) openCategory(cat);
+        var id = btn.dataset ? btn.dataset.kamusCategory : btn.getAttribute('data-' + 'kamus-category');
+        if (id) openKategori(id);
       });
     });
 
-    if (backBtn) backBtn.addEventListener('click', function () {
-      currentCategory = null;
-      currentItems = [];
-      if (search) search.value = '';
-      if (itemList) itemList.innerHTML = '';
-      syncLevelState();
-    });
-
-    if (search) search.addEventListener('input', function () { renderItems(search.value); });
-
-    // initial state
-    syncLevelState();
-
-    // Android back: handle kamus view before delegating to app.js
     var _origBack = window.wakaruGoBack;
     window.wakaruGoBack = function () {
-      // If Kamus view is visible, handle its own stack first
       if (kamusView && !kamusView.hidden) {
         if (currentCategory) {
-          if (backBtn) backBtn.click();
+          showGrid();
           return 'true';
         }
-        // at top of Kamus (grid), back goes to Level tab
-        setAppTab('level');
-        return 'true';
+        if (homeSearchResults && !homeSearchResults.hidden) {
+          clearSearch();
+          return 'true';
+        }
       }
       if (typeof _origBack === 'function') return _origBack();
       return 'false';
     };
 
-    // Expose for external JS lane (if it wants to hook)
     window.WakaruKamus = {
-      setAppTab: setAppTab,
-      openCategory: openCategory
+      openKategori: openKategori,
+      showGrid: showGrid
     };
+
+    // ── Flashcard / Kuis entry
+    var btnFlash = document.getElementById('btn-flashcard');
+    var btnKuis = document.getElementById('btn-kuis');
+    if (btnFlash) {
+      btnFlash.addEventListener('click', function () {
+        if (typeof window.openFlash === 'function') window.openFlash();
+      });
+    }
+    if (btnKuis) {
+      btnKuis.addEventListener('click', function () {
+        if (typeof window.openQuiz === 'function') window.openQuiz();
+      });
+    }
+
+    // ── Global search (debounced 300ms)
+    var KAT_ORDER = ['hiragana','katakana','kanji','kosakata','grammar','partikel','kata-kerja','kata-sifat','kata-bantu'];
+    var KAT_ACCENT = {
+      hiragana: 'var(--kat-sage)', katakana: 'var(--kat-purple)', kanji: 'var(--kat-vermilion)',
+      kosakata: 'var(--kat-cyan)', grammar: 'var(--kat-amber)', partikel: 'var(--kat-red)',
+      'kata-kerja': 'var(--kat-blue)', 'kata-sifat': 'var(--kat-green)', 'kata-bantu': 'var(--kat-violet)'
+    };
+
+    function getSearchRowHtml(it, katId) {
+      if (katId === 'kanji' && it.kanji) {
+        var mean = escHtml((it.meanings_id || []).join(', '));
+        var onR = (it.on_readings || []).slice(0, 2).join('・');
+        var kunR = (it.kun_readings || []).slice(0, 2).join('・');
+        var read = escHtml(onR + (kunR ? ' / ' + kunR : ''));
+        var h = '<button type="button" class="materi-item kamus-row kamus-row--clickable" data-search-kanji="' + escHtml(it.kanji) + '" aria-label="Kanji ' + escHtml(it.kanji) + '">';
+        h += '<span class="mi-kanji" lang="ja">' + escHtml(it.kanji) + '</span>';
+        h += '<span class="mi-body"><span class="mi-mean">' + mean + '</span><span class="mi-read">' + read + '</span></span></button>';
+        return h;
+      }
+      if (katId === 'partikel') {
+        var hr = '<button type="button" class="materi-item kamus-row" data-search-kategori="' + escHtml(katId) + '" aria-label="' + escHtml(it.partikel || it.kana) + '">';
+        hr += '<span class="mi-kanji" lang="ja">' + escHtml(it.partikel) + '</span>';
+        hr += '<span class="mi-body"><span class="mi-mean" lang="ja">' + escHtml(it.kana) + '</span><span class="mi-read">' + escHtml(it.fungsi) + '</span></span></button>';
+        return hr;
+      }
+      if (katId === 'grammar') {
+        var hg = '<button type="button" class="materi-item kamus-row" data-search-kategori="' + escHtml(katId) + '" aria-label="' + escHtml(it.pola) + '">';
+        hg += '<span class="mi-body"><span class="mi-vkanji" lang="ja">' + escHtml(it.pola) + '</span><span class="mi-mean">' + escHtml(it.arti) + '</span><span class="mi-read">' + escHtml(it.contoh) + '</span></span></button>';
+        return hg;
+      }
+      if (katId === 'kata-kerja' || katId === 'kata-sifat') {
+        var word = escHtml(it.verb || it.adj || it.kanji || it.kana);
+        var kana = escHtml(it.kana || '');
+        var rom = escHtml(it.romaji || '');
+        var hw = '<button type="button" class="materi-item kamus-row" data-search-kategori="' + escHtml(katId) + '" aria-label="' + word + '">';
+        hw += '<span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + word + '</span>';
+        if (it.kanji && it.kana && it.kanji !== it.kana) hw += '<span class="mi-vkana" lang="ja">' + kana + '</span>';
+        hw += '</span><span class="mi-mean">' + escHtml(it.arti) + '</span>';
+        if (rom) hw += '<span class="mi-romaji">' + rom + '</span>';
+        hw += '</span></button>';
+        return hw;
+      }
+      if (it.char) {
+        var hc = '<button type="button" class="materi-item kamus-row" data-search-kategori="' + escHtml(katId) + '" aria-label="' + escHtml(it.char) + '">';
+        hc += '<span class="mi-kanji" lang="ja">' + escHtml(it.char) + '</span><span class="mi-body"><span class="mi-mean">' + escHtml(it.romaji || '') + '</span></span></button>';
+        return hc;
+      }
+      var w = escHtml(it.kanji || it.kana || '');
+      var k2 = escHtml(it.kana || '');
+      var arti = escHtml(it.arti || '');
+      var romaji2 = escHtml(it.romaji || '');
+      var hk = '<button type="button" class="materi-item kamus-row" data-search-kategori="' + escHtml(katId) + '" aria-label="' + w + '">';
+      hk += '<span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + w + '</span>';
+      if (it.kanji && it.kana && it.kanji !== it.kana) hk += '<span class="mi-vkana" lang="ja">' + k2 + '</span>';
+      hk += '</span><span class="mi-mean">' + arti + '</span>';
+      if (romaji2) hk += '<span class="mi-romaji">' + romaji2 + '</span>';
+      hk += '</span></button>';
+      return hk;
+    }
+
+    function renderGroupedResults(q) {
+      var groups = [];
+      var total = 0;
+      for (var i = 0; i < KAT_ORDER.length; i++) {
+        var katId = KAT_ORDER[i];
+        var arr = [];
+        try { arr = WakaruData.search(q, katId) || []; } catch (e) { arr = []; }
+        if (arr && arr.length) {
+          groups.push({ id: katId, items: arr });
+          total += arr.length;
+        }
+      }
+      if (!groups.length) {
+        return '<div class="empty-state" role="status"><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
+      }
+      var html = '<div class="home-search-meta" aria-live="polite">' + total + ' hasil untuk "' + escHtml(q) + '"</div>';
+      for (var g = 0; g < groups.length; g++) {
+        var gr = groups[g];
+        var info = kategoriMap[gr.id] || { name: gr.id, icon: '' };
+        var accent = KAT_ACCENT[gr.id] || 'var(--accent)';
+        var shown = gr.items.slice(0, 6);
+        var more = gr.items.length > 6 ? gr.items.length - 6 : 0;
+        html += '<section class="home-search-group" aria-label="Hasil ' + escHtml(info.name) + '">';
+        html += '<div class="home-search-group__header">';
+        html += '<span class="home-search-group__dot" style="background:' + accent + '" aria-hidden="true"></span>';
+        html += '<span class="home-search-group__icon" lang="ja" aria-hidden="true">' + escHtml(info.icon || '') + '</span>';
+        html += '<h3 class="home-search-group__name">' + escHtml(info.name) + '</h3>';
+        html += '<span class="home-search-group__count">' + gr.items.length + '</span>';
+        html += '</div>';
+        html += '<div class="materi-list home-search-list" role="list">';
+        for (var j = 0; j < shown.length; j++) {
+          html += getSearchRowHtml(shown[j], gr.id);
+        }
+        html += '</div>';
+        if (more) {
+          html += '<button type="button" class="home-search-more" data-search-kategori="' + escHtml(gr.id) + '" aria-label="Lihat semua ' + gr.items.length + ' hasil di ' + escHtml(info.name) + '">Lihat semua ' + gr.items.length + ' →</button>';
+        }
+        html += '</section>';
+      }
+      return html;
+    }
+
+    function doSearch() {
+      if (!homeSearch || !homeSearchResults) return;
+      var q = homeSearch.value.trim();
+      if (!q) {
+        clearSearchState();
+        return;
+      }
+      try {
+        var html = renderGroupedResults(q);
+        homeSearchResults.innerHTML = html;
+        homeSearchResults.hidden = false;
+        if (grid) grid.hidden = true;
+        if (homeActions) homeActions.hidden = true;
+        if (homeSearchWrap) homeSearchWrap.hidden = false;
+        homeSearch.setAttribute('aria-expanded', 'true');
+        if (homeSearchClear) homeSearchClear.hidden = false;
+        // keep focus on input
+      } catch (e) {
+        homeSearchResults.innerHTML = '<div class="empty-state"><p class="empty-state__title">Tidak ditemukan</p></div>';
+        homeSearchResults.hidden = false;
+      }
+    }
+
+    function clearSearchState() {
+      if (homeSearchResults) { homeSearchResults.hidden = true; homeSearchResults.innerHTML = ''; }
+      if (grid) grid.hidden = false;
+      if (homeActions) homeActions.hidden = false;
+      if (homeSearch) homeSearch.setAttribute('aria-expanded', 'false');
+      if (homeSearchClear) homeSearchClear.hidden = true;
+    }
+
+    function clearSearch() {
+      if (homeSearch) homeSearch.value = '';
+      clearSearchState();
+      if (homeSearch) homeSearch.focus();
+    }
+
+    if (homeSearch) {
+      homeSearch.addEventListener('input', function () {
+        if (homeSearchClear) homeSearchClear.hidden = !homeSearch.value;
+        if (searchTimer) clearTimeout(searchTimer);
+        searchTimer = setTimeout(function () { doSearch(); }, 300);
+      });
+      homeSearch.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape' || ev.key === 'Esc') {
+          ev.preventDefault();
+          clearSearch();
+        }
+      });
+      homeSearch.addEventListener('search', function () {
+        if (!homeSearch.value) clearSearchState();
+      });
+    }
+    if (homeSearchClear) {
+      homeSearchClear.addEventListener('click', function () { clearSearch(); });
+    }
+    if (homeSearchResults) {
+      homeSearchResults.addEventListener('click', function (ev) {
+        var t = ev.target;
+        var kanjiBtn = t.closest ? t.closest('[data-search-kanji]') : null;
+        if (kanjiBtn && homeSearchResults.contains(kanjiBtn)) {
+          var ch = kanjiBtn.getAttribute('data-search-kanji');
+          if (ch && typeof window.openKanjiDetail === 'function') window.openKanjiDetail(ch);
+          return;
+        }
+        var katBtn = t.closest ? t.closest('[data-search-kategori]') : null;
+        if (katBtn && homeSearchResults.contains(katBtn)) {
+          var kat = katBtn.getAttribute('data-search-kategori');
+          if (kat) {
+            clearSearchState();
+            openKategori(kat);
+          }
+          return;
+        }
+      });
+    }
+
   })();
   </script>
 </body>
