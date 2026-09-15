@@ -1,5 +1,26 @@
 # Changelog
 
+## v3.0 — 2026-09-15
+
+### Fitur
+- Kamus N5 lengkap 9 kategori: Hiragana, Katakana, Kanji, Kosakata, Bunpou, Partikel, Kata Kerja, Kata Sifat, Kata Bantu
+- UI baru: grid 9 kategori di beranda, view per kategori — gojuon dengan toggle hiragana/katakana, kosakata per 15 topik, bunpou list→detail dengan contoh + audio, tabel konjugasi sticky (verb 40×12, adj 25×7), kanji grid/list + pencarian
+- Pencarian global dari beranda: cari semua kata/kana/kanji, hasil dikelompokkan per kategori, debounce 300ms
+- Flashcard penuh 9 mode sesuai kategori (sebelumnya exposure-only 4 mode): audio, acak, lanjut session
+- Kuis 9 kategori: distractor dari data nyata, skor + review jawaban salah
+- Dark mode, aksesibilitas (ARIA, keyboard, kontras), tombol sentuh ≥44px, responsive 3→2→1 kolom
+
+### Data
+- Kosakata 668→797 (15 topik, tanpa duplikat, POS benar)
+- Kanji 103→117
+- Hiragana & Katakana baru: 105 + 105 dengan audio
+- Konjugasi baru: verb 40 kata × 12 bentuk, adj 25 × 7 bentuk
+
+### Fix
+- Flashcard blank untuk 7 kategori (render schema-aware: kanji/kana/pola/partikel/verb/adj/char)
+- Audio fallback untuk bunpou, hiragana, katakana
+- Detail kartu grammar (contoh + terjemahan) dan partikel (fungsi)
+
 ## v2.0 — 2026-09-14
 
 ### Fitur (Fase 3)

@@ -5,12 +5,14 @@ App belajar bahasa Jepang untuk Android.
 ## Fitur
 
 - **3 Level**: N5 (Pemula), N4 (Menengah Bawah), N3 (Menengah)
-- **Level detail view**: halaman per level dengan materi list, progress bar, dan aksi (Quiz, Flashcard)
-- **Materi list**: kanji (79 item) + kosakata (668 item) per level, dengan filter A-Z, search, dan indikator "sudah dilihat"
+- **9 kategori N5**: Hiragana, Katakana, Kanji, Kosakata (797), Bunpou, Partikel, Kata Kerja, Kata Sifat, Kata Bantu
+- **Level detail view**: halaman per level dengan grid kategori, progress bar, dan aksi (Quiz, Flashcard)
+- **Materi list**: kanji (117 item) + kosakata (797 item) per level, dengan filter A-Z, search, dan indikator "sudah dilihat"
 - **Kanji detail**: arti, readings (kun'yomi/on'yomi), contoh penggunaan, related vocab, dan animasi stroke order (KanjiVG)
-- **Quiz**: mode pilihan ganda dengan setup jumlah soal, skor, dan review jawaban
-- **Flashcard**: flip card dengan front/back, shuffle, dan audio TTS
-- **Audio TTS**: speakJapanese via Android bridge untuk pengucapan
+- **Gojuon & Konjugasi**: tabel gojuon toggle hiragana/katakana, tabel konjugasi sticky (verb 40×12, adj 25×7)
+- **Quiz**: 9 kategori, distractor dari data nyata, skor, dan review jawaban salah
+- **Flashcard**: 9 mode sesuai kategori, flip card, shuffle, audio, lanjut session
+- **Audio TTS**: speakJapanese via Android bridge untuk pengucapan (kosa, kanji, kana, bunpou)
 - **Tema Light / Dark**
 - **Offline** — semua konten lokal, tidak perlu internet
 
