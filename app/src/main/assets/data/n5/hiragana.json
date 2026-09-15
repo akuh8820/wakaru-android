@@ -1,0 +1,134 @@
+[
+  {"char":"あ","romaji":"a","row":"A","audio":"あ"},
+  {"char":"い","romaji":"i","row":"A","audio":"い"},
+  {"char":"う","romaji":"u","row":"A","audio":"う"},
+  {"char":"え","romaji":"e","row":"A","audio":"え"},
+  {"char":"お","romaji":"o","row":"A","audio":"お"},
+
+  {"char":"か","romaji":"ka","row":"K","audio":"か"},
+  {"char":"き","romaji":"ki","row":"K","audio":"き"},
+  {"char":"く","romaji":"ku","row":"K","audio":"く"},
+  {"char":"け","romaji":"ke","row":"K","audio":"け"},
+  {"char":"こ","romaji":"ko","row":"K","audio":"こ"},
+
+  {"char":"さ","romaji":"sa","row":"S","audio":"さ"},
+  {"char":"し","romaji":"shi","row":"S","audio":"し"},
+  {"char":"す","romaji":"su","row":"S","audio":"す"},
+  {"char":"せ","romaji":"se","row":"S","audio":"せ"},
+  {"char":"そ","romaji":"so","row":"S","audio":"そ"},
+
+  {"char":"た","romaji":"ta","row":"T","audio":"た"},
+  {"char":"ち","romaji":"chi","row":"T","audio":"ち"},
+  {"char":"つ","romaji":"tsu","row":"T","audio":"つ"},
+  {"char":"て","romaji":"te","row":"T","audio":"て"},
+  {"char":"と","romaji":"to","row":"T","audio":"と"},
+
+  {"char":"な","romaji":"na","row":"N","audio":"な"},
+  {"char":"に","romaji":"ni","row":"N","audio":"に"},
+  {"char":"ぬ","romaji":"nu","row":"N","audio":"ぬ"},
+  {"char":"ね","romaji":"ne","row":"N","audio":"ね"},
+  {"char":"の","romaji":"no","row":"N","audio":"の"},
+
+  {"char":"は","romaji":"ha","row":"H","audio":"は"},
+  {"char":"ひ","romaji":"hi","row":"H","audio":"ひ"},
+  {"char":"ふ","romaji":"fu","row":"H","audio":"ふ"},
+  {"char":"へ","romaji":"he","row":"H","audio":"へ"},
+  {"char":"ほ","romaji":"ho","row":"H","audio":"ほ"},
+
+  {"char":"ま","romaji":"ma","row":"M","audio":"ま"},
+  {"char":"み","romaji":"mi","row":"M","audio":"み"},
+  {"char":"む","romaji":"mu","row":"M","audio":"む"},
+  {"char":"め","romaji":"me","row":"M","audio":"め"},
+  {"char":"も","romaji":"mo","row":"M","audio":"も"},
+
+  {"char":"や","romaji":"ya","row":"Y","audio":"や"},
+  {"char":"ゆ","romaji":"yu","row":"Y","audio":"ゆ"},
+  {"char":"よ","romaji":"yo","row":"Y","audio":"よ"},
+
+  {"char":"ら","romaji":"ra","row":"R","audio":"ら"},
+  {"char":"り","romaji":"ri","row":"R","audio":"り"},
+  {"char":"る","romaji":"ru","row":"R","audio":"る"},
+  {"char":"れ","romaji":"re","row":"R","audio":"れ"},
+  {"char":"ろ","romaji":"ro","row":"R","audio":"ろ"},
+
+  {"char":"わ","romaji":"wa","row":"W","audio":"わ"},
+  {"char":"を","romaji":"o","row":"W","audio":"を"},
+
+  {"char":"ん","romaji":"n","row":"Lainnya","audio":"ん"},
+
+  {"char":"が","romaji":"ga","row":"K","audio":"が"},
+  {"char":"ぎ","romaji":"gi","row":"K","audio":"ぎ"},
+  {"char":"ぐ","romaji":"gu","row":"K","audio":"ぐ"},
+  {"char":"げ","romaji":"ge","row":"K","audio":"げ"},
+  {"char":"ご","romaji":"go","row":"K","audio":"ご"},
+
+  {"char":"ざ","romaji":"za","row":"S","audio":"ざ"},
+  {"char":"じ","romaji":"ji","row":"S","audio":"じ"},
+  {"char":"ず","romaji":"zu","row":"S","audio":"ず"},
+  {"char":"ぜ","romaji":"ze","row":"S","audio":"ぜ"},
+  {"char":"ぞ","romaji":"zo","row":"S","audio":"ぞ"},
+
+  {"char":"だ","romaji":"da","row":"T","audio":"だ"},
+  {"char":"ぢ","romaji":"ji","row":"T","audio":"ぢ"},
+  {"char":"づ","romaji":"zu","row":"T","audio":"づ"},
+  {"char":"で","romaji":"de","row":"T","audio":"で"},
+  {"char":"ど","romaji":"do","row":"T","audio":"ど"},
+
+  {"char":"ば","romaji":"ba","row":"H","audio":"ば"},
+  {"char":"び","romaji":"bi","row":"H","audio":"び"},
+  {"char":"ぶ","romaji":"bu","row":"H","audio":"ぶ"},
+  {"char":"べ","romaji":"be","row":"H","audio":"べ"},
+  {"char":"ぼ","romaji":"bo","row":"H","audio":"ぼ"},
+
+  {"char":"ぱ","romaji":"pa","row":"H","audio":"ぱ"},
+  {"char":"ぴ","romaji":"pi","row":"H","audio":"ぴ"},
+  {"char":"ぷ","romaji":"pu","row":"H","audio":"ぷ"},
+  {"char":"ぺ","romaji":"pe","row":"H","audio":"ぺ"},
+  {"char":"ぽ","romaji":"po","row":"H","audio":"ぽ"},
+
+  {"char":"きゃ","romaji":"kya","row":"K","audio":"きゃ"},
+  {"char":"きゅ","romaji":"kyu","row":"K","audio":"きゅ"},
+  {"char":"きょ","romaji":"kyo","row":"K","audio":"きょ"},
+
+  {"char":"しゃ","romaji":"sha","row":"S","audio":"しゃ"},
+  {"char":"しゅ","romaji":"shu","row":"S","audio":"しゅ"},
+  {"char":"しょ","romaji":"sho","row":"S","audio":"しょ"},
+
+  {"char":"ちゃ","romaji":"cha","row":"T","audio":"ちゃ"},
+  {"char":"ちゅ","romaji":"chu","row":"T","audio":"ちゅ"},
+  {"char":"ちょ","romaji":"cho","row":"T","audio":"ちょ"},
+
+  {"char":"にゃ","romaji":"nya","row":"N","audio":"にゃ"},
+  {"char":"にゅ","romaji":"nyu","row":"N","audio":"にゅ"},
+  {"char":"にょ","romaji":"nyo","row":"N","audio":"にょ"},
+
+  {"char":"ひゃ","romaji":"hya","row":"H","audio":"ひゃ"},
+  {"char":"ひゅ","romaji":"hyu","row":"H","audio":"ひゅ"},
+  {"char":"ひょ","romaji":"hyo","row":"H","audio":"ひょ"},
+
+  {"char":"みゃ","romaji":"mya","row":"M","audio":"みゃ"},
+  {"char":"みゅ","romaji":"myu","row":"M","audio":"みゅ"},
+  {"char":"みょ","romaji":"myo","row":"M","audio":"みょ"},
+
+  {"char":"りゃ","romaji":"rya","row":"R","audio":"りゃ"},
+  {"char":"りゅ","romaji":"ryu","row":"R","audio":"りゅ"},
+  {"char":"りょ","romaji":"ryo","row":"R","audio":"りょ"},
+
+  {"char":"ぎゃ","romaji":"gya","row":"K","audio":"ぎゃ"},
+  {"char":"ぎゅ","romaji":"gyu","row":"K","audio":"ぎゅ"},
+  {"char":"ぎょ","romaji":"gyo","row":"K","audio":"ぎょ"},
+
+  {"char":"じゃ","romaji":"ja","row":"S","audio":"じゃ"},
+  {"char":"じゅ","romaji":"ju","row":"S","audio":"じゅ"},
+  {"char":"じょ","romaji":"jo","row":"S","audio":"じょ"},
+
+  {"char":"びゃ","romaji":"bya","row":"H","audio":"びゃ"},
+  {"char":"びゅ","romaji":"byu","row":"H","audio":"びゅ"},
+  {"char":"びょ","romaji":"byo","row":"H","audio":"びょ"},
+
+  {"char":"ぴゃ","romaji":"pya","row":"H","audio":"ぴゃ"},
+  {"char":"ぴゅ","romaji":"pyu","row":"H","audio":"ぴゅ"},
+  {"char":"ぴょ","romaji":"pyo","row":"H","audio":"ぴょ"},
+
+  {"char":"っ","romaji":"sokuon","row":"Lainnya","audio":"っ"}
+]

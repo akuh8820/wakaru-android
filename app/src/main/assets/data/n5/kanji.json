@@ -2654,5 +2654,272 @@
     "jlpt": 5,
     "frequency": null,
     "url": "https://kanji.jepang.org/kanji/%E9%AD%9A"
+  },
+  {
+    "kanji": "売",
+    "meanings_id": [
+      "menjual"
+    ],
+    "on_readings": [
+      "バイ"
+    ],
+    "kun_readings": [
+      "う.る",
+      "う.れる"
+    ],
+    "name_readings": [],
+    "stroke_count": 7,
+    "grade": 3,
+    "jlpt": 5,
+    "frequency": 214,
+    "url": "https://kanji.jepang.org/kanji/%E5%A3%B2"
+  },
+  {
+    "kanji": "使",
+    "meanings_id": [
+      "menggunakan",
+      "mempergunakan"
+    ],
+    "on_readings": [
+      "シ"
+    ],
+    "kun_readings": [
+      "つか.う",
+      "つか.わす"
+    ],
+    "name_readings": [],
+    "stroke_count": 8,
+    "grade": 3,
+    "jlpt": 5,
+    "frequency": 193,
+    "url": "https://kanji.jepang.org/kanji/%E4%BD%BF"
+  },
+  {
+    "kanji": "持",
+    "meanings_id": [
+      "memegang",
+      "mempunyai"
+    ],
+    "on_readings": [
+      "ジ"
+    ],
+    "kun_readings": [
+      "も.つ",
+      "も.てる"
+    ],
+    "name_readings": [],
+    "stroke_count": 9,
+    "grade": 3,
+    "jlpt": 5,
+    "frequency": 136,
+    "url": "https://kanji.jepang.org/kanji/%E6%8C%81"
+  },
+  {
+    "kanji": "届",
+    "meanings_id": [
+      "tiba",
+      "mencapai",
+      "melaporkan"
+    ],
+    "on_readings": [
+      "カイ"
+    ],
+    "kun_readings": [
+      "とど.ける",
+      "とど.く"
+    ],
+    "name_readings": [],
+    "stroke_count": 8,
+    "grade": 4,
+    "jlpt": 5,
+    "frequency": 289,
+    "url": "https://kanji.jepang.org/kanji/%E5%B1%8A"
+  },
+  {
+    "kanji": "送",
+    "meanings_id": [
+      "mengirim"
+    ],
+    "on_readings": [
+      "ソウ"
+    ],
+    "kun_readings": [
+      "おく.る"
+    ],
+    "name_readings": [],
+    "stroke_count": 9,
+    "grade": 3,
+    "jlpt": 5,
+    "frequency": 246,
+    "url": "https://kanji.jepang.org/kanji/%E9%80%81"
+  },
+  {
+    "kanji": "歩",
+    "meanings_id": [
+      "berjalan",
+      "langkah"
+    ],
+    "on_readings": [
+      "ホ",
+      "ブ"
+    ],
+    "kun_readings": [
+      "ある.く",
+      "あゆ.む"
+    ],
+    "name_readings": [],
+    "stroke_count": 8,
+    "grade": 2,
+    "jlpt": 5,
+    "frequency": 232,
+    "url": "https://kanji.jepang.org/kanji/%E6%AD%A9"
+  },
+  {
+    "kanji": "待",
+    "meanings_id": [
+      "menunggu"
+    ],
+    "on_readings": [
+      "タイ"
+    ],
+    "kun_readings": [
+      "ま.つ"
+    ],
+    "name_readings": [],
+    "stroke_count": 9,
+    "grade": 3,
+    "jlpt": 5,
+    "frequency": 186,
+    "url": "https://kanji.jepang.org/kanji/%E5%BE%85"
+  },
+  {
+    "kanji": "思",
+    "meanings_id": [
+      "berpikir",
+      "mengira"
+    ],
+    "on_readings": [
+      "シ"
+    ],
+    "kun_readings": [
+      "おも.う"
+    ],
+    "name_readings": [],
+    "stroke_count": 9,
+    "grade": 2,
+    "jlpt": 5,
+    "frequency": 65,
+    "url": "https://kanji.jepang.org/kanji/%E6%80%9D"
+  },
+  {
+    "kanji": "知",
+    "meanings_id": [
+      "tahu",
+      "mengenal"
+    ],
+    "on_readings": [
+      "チ"
+    ],
+    "kun_readings": [
+      "し.る",
+      "し.らせる"
+    ],
+    "name_readings": [],
+    "stroke_count": 8,
+    "grade": 2,
+    "jlpt": 5,
+    "frequency": 91,
+    "url": "https://kanji.jepang.org/kanji/%E7%9F%A5"
+  },
+  {
+    "kanji": "急",
+    "meanings_id": [
+      "tergesa",
+      "mendadak"
+    ],
+    "on_readings": [
+      "キュウ"
+    ],
+    "kun_readings": [
+      "いそ.ぐ",
+      "いそ.ぎ"
+    ],
+    "name_readings": [],
+    "stroke_count": 9,
+    "grade": 3,
+    "jlpt": 5,
+    "frequency": 247,
+    "url": "https://kanji.jepang.org/kanji/%E6%80%A5"
+  },
+  {
+    "kanji": "院",
+    "meanings_id": [
+      "institusi",
+      "rumah sakit"
+    ],
+    "on_readings": [
+      "イン"
+    ],
+    "kun_readings": [],
+    "name_readings": [],
+    "stroke_count": 9,
+    "grade": 2,
+    "jlpt": 5,
+    "frequency": 220,
+    "url": "https://kanji.jepang.org/kanji/%E9%99%A2"
+  },
+  {
+    "kanji": "場",
+    "meanings_id": [
+      "tempat",
+      "lokasi"
+    ],
+    "on_readings": [
+      "ジョウ",
+      "チョウ"
+    ],
+    "kun_readings": [
+      "ば"
+    ],
+    "name_readings": [],
+    "stroke_count": 12,
+    "grade": 2,
+    "jlpt": 5,
+    "frequency": 40,
+    "url": "https://kanji.jepang.org/kanji/%E5%A0%B4"
+  },
+  {
+    "kanji": "市",
+    "meanings_id": [
+      "kota"
+    ],
+    "on_readings": [
+      "シ"
+    ],
+    "kun_readings": [
+      "いち"
+    ],
+    "name_readings": [],
+    "stroke_count": 5,
+    "grade": 2,
+    "jlpt": 5,
+    "frequency": 62,
+    "url": "https://kanji.jepang.org/kanji/%E5%B8%82"
+  },
+  {
+    "kanji": "番",
+    "meanings_id": [
+      "nomor urut"
+    ],
+    "on_readings": [
+      "バン"
+    ],
+    "kun_readings": [],
+    "name_readings": [],
+    "stroke_count": 12,
+    "grade": 2,
+    "jlpt": 5,
+    "frequency": 153,
+    "url": "https://kanji.jepang.org/kanji/%E7%95%AA"
   }
 ]
