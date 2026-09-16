@@ -41,6 +41,13 @@ var WakaruData = (function () {
         }
       }
     }
+    if (item.forms && typeof item.forms === 'object') {
+      for (var fk in item.forms) {
+        if (item.forms.hasOwnProperty(fk) && typeof item.forms[fk] === 'string') {
+          if (item.forms[fk].toLowerCase().indexOf(q) !== -1) return true;
+        }
+      }
+    }
     return false;
   }
 

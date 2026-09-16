@@ -88,6 +88,59 @@ EXAMPLES = {
     '電': [{"jp": "電車で行きます。", "kana": "でんしゃでいきます。", "id": "Saya pergi dengan kereta."}],
     '食': [{"jp": "ご飯を食べます。", "kana": "ごはんをたべます。", "id": "Saya makan nasi."}],
     '高': [{"jp": "高い山ですね。", "kana": "たかいやまですね。", "id": "Gunung yang tinggi ya."}],
+    '会': [{"jp": "友だちに会います。", "kana": "ともだちにあいます。", "id": "Saya bertemu teman."}],
+    '使': [{"jp": "パソコンを使います。", "kana": "ぱそこんをつかいます。", "id": "Saya menggunakan komputer."}],
+    '分': [{"jp": "日本語がわかります。", "kana": "にほんごがわかります。", "id": "Saya mengerti bahasa Jepang."}],
+    '口': [{"jp": "口を開けてください。", "kana": "くちをあけてください。", "id": "Tolong buka mulut."}],
+    '古': [{"jp": "古い本ですね。", "kana": "ふるいほんですね。", "id": "Buku yang tua ya."}],
+    '場': [{"jp": "ここは駐車場です。", "kana": "ここはちゅうしゃじょうです。", "id": "Ini tempat parkir."}],
+    '売': [{"jp": "この店はパンを売っています。", "kana": "このみせはぱんをうっています。", "id": "Toko ini menjual roti."}],
+    '多': [{"jp": "人が多いですね。", "kana": "ひとがおおいですね。", "id": "Orangnya banyak ya."}],
+    '安': [{"jp": "この店は安いです。", "kana": "このみせはやすいです。", "id": "Toko ini murah."}],
+    '少': [{"jp": "少し待ってください。", "kana": "すこしまってください。", "id": "Tolong tunggu sebentar."}],
+    '届': [{"jp": "荷物が届きました。", "kana": "にもつがとどきました。", "id": "Paket sudah tiba."}],
+    '市': [{"jp": "市役所はどこですか。", "kana": "しやくしょはどこですか。", "id": "Di mana kantor kota?"}],
+    '店': [{"jp": "あの店で買います。", "kana": "あのみせでかいます。", "id": "Saya membeli di toko itu."}],
+    '待': [{"jp": "ちょっと待ってください。", "kana": "ちょっとまってください。", "id": "Tolong tunggu sebentar."}],
+    '思': [{"jp": "いいと思います。", "kana": "いいとおもいます。", "id": "Saya pikir bagus."}],
+    '急': [{"jp": "急いでください。", "kana": "いそいでください。", "id": "Tolong cepat."}],
+    '手': [{"jp": "手を洗います。", "kana": "てをあらいます。", "id": "Saya mencuci tangan."}],
+    '持': [{"jp": "かばんを持ちます。", "kana": "かばんをもちます。", "id": "Saya membawa tas."}],
+    '新': [{"jp": "新しい車が欲しいです。", "kana": "あたらしいくるまがほしいです。", "id": "Saya ingin mobil baru."}],
+    '歩': [{"jp": "駅まで歩きます。", "kana": "えきまであるきます。", "id": "Saya berjalan ke stasiun."}],
+    '番': [{"jp": "何番ですか。", "kana": "なんばんですか。", "id": "Nomor berapa?"}],
+    '目': [{"jp": "目が大きいですね。", "kana": "めがおおきいですね。", "id": "Matanya besar ya."}],
+    '知': [{"jp": "知っていますか。", "kana": "しっていますか。", "id": "Apakah kamu tahu?"}],
+    '社': [{"jp": "会社へ行きます。", "kana": "かいしゃへいきます。", "id": "Saya pergi ke perusahaan."}],
+    '空': [{"jp": "空が青いです。", "kana": "そらがあおいです。", "id": "Langit biru."}],
+    '立': [{"jp": "ここに立ってください。", "kana": "ここにたってください。", "id": "Tolong berdiri di sini."}],
+    '耳': [{"jp": "耳が痛いです。", "kana": "みみがいたいです。", "id": "Telinga saya sakit."}],
+    '花': [{"jp": "花がきれいです。", "kana": "はながきれいです。", "id": "Bunganya indah."}],
+    '言': [{"jp": "日本語で言ってください。", "kana": "にほんごでいってください。", "id": "Tolong katakan dalam bahasa Jepang."}],
+    '買': [{"jp": "パンを買います。", "kana": "ぱんをかいます。", "id": "Saya membeli roti."}],
+    '足': [{"jp": "足が痛いです。", "kana": "あしがいたいです。", "id": "Kaki saya sakit."}],
+    '送': [{"jp": "メールを送ります。", "kana": "めーるをおくります。", "id": "Saya mengirim email."}],
+    '週': [{"jp": "週に一度、泳ぎます。", "kana": "しゅうにいちど、およぎます。", "id": "Seminggu sekali saya berenang."}],
+    '道': [{"jp": "この道をまっすぐ行ってください。", "kana": "このみちをまっすぐいってください。", "id": "Tolong lurus di jalan ini."}],
+    '院': [{"jp": "病院へ行きます。", "kana": "びょういんへいきます。", "id": "Saya pergi ke rumah sakit."}],
+    '飲': [{"jp": "水を飲みます。", "kana": "みずをのみます。", "id": "Saya minum air."}],
+    '駅': [{"jp": "駅はここです。", "kana": "えきはここです。", "id": "Stasiun di sini."}],
+    '魚': [{"jp": "魚を食べます。", "kana": "さかなをたべます。", "id": "Saya makan ikan."}],
+}
+
+# Curated related fallback for kanji with no kosakata matches
+RELATED_FALLBACK = {
+    '送': [{"kanji": "送る", "kana": "おくる", "arti": "mengirim"},
+           {"kanji": "放送", "kana": "ほうそう", "arti": "siaran"}],
+    '思': [{"kanji": "思う", "kana": "おもう", "arti": "berpikir, mengira"},
+           {"kanji": "思い出", "kana": "おもいで", "arti": "kenangan"}],
+    '急': [{"kanji": "急ぐ", "kana": "いそぐ", "arti": "terburu-buru"},
+           {"kanji": "急行", "kana": "きゅうこう", "arti": "kereta ekspres"}],
+    '場': [{"kanji": "場所", "kana": "ばしょ", "arti": "tempat"},
+           {"kanji": "駐車場", "kana": "ちゅうしゃじょう", "arti": "tempat parkir"},
+           {"kanji": "場合", "kana": "ばあい", "arti": "kasus, keadaan"}],
+    '市': [{"kanji": "市役所", "kana": "しやくしょ", "arti": "kantor kota"},
+           {"kanji": "都市", "kana": "とし", "arti": "kota"}],
 }
 
 def main():
@@ -110,6 +163,8 @@ def main():
             missing.append(ch)
             continue
         rel = related.get(ch, [])[:8]
+        if not rel:
+            rel = RELATED_FALLBACK.get(ch, [])
         out[ch] = {
             'examples': EXAMPLES[ch],
             'related': [{'kanji': r['kanji'], 'kana': r['kana'], 'arti': r['arti']} for r in rel]

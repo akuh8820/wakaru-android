@@ -39,11 +39,132 @@ var SPEAKER_ICON = '<svg class="audio-icon" width="18" height="18" viewBox="0 0 
 
 // ── Init / Theme ──────────────────────────────────────────────────
 
+var _settingsPrevView = null;
+var _themeMode = 'system';
+var _systemMql = null;
+
+function getEffectiveTheme(mode) {
+  if (mode === 'system') {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  return mode === 'dark' ? 'dark' : 'light';
+}
+
+function updateThemePickerActive(mode) {
+  var opts = document.querySelectorAll('.theme-picker__option');
+  for (var i = 0; i < opts.length; i++) {
+    var v = opts[i].getAttribute('data-theme-mode');
+    if (v === mode) opts[i].classList.add('active');
+    else opts[i].classList.remove('active');
+  }
+}
+
+function applyTheme(mode) {
+  if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system';
+  _themeMode = mode;
+  var effective = getEffectiveTheme(mode);
+  document.documentElement.setAttribute('data-theme', effective);
+  var btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = effective === 'dark' ? '☀️' : '🌙';
+  updateThemePickerActive(mode);
+  try {
+    localStorage.setItem('wakaru-theme-mode', mode);
+    localStorage.setItem('wakaru-theme', effective);
+  } catch (e) {}
+}
+
+function toggleTheme() {
+  var effective = getEffectiveTheme(_themeMode);
+  var next = effective === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+}
+
+function loadTheme() {
+  var savedMode = null;
+  try { savedMode = localStorage.getItem('wakaru-theme-mode'); } catch (e) {}
+  if (savedMode !== 'light' && savedMode !== 'dark' && savedMode !== 'system') {
+    var legacy = null;
+    try { legacy = localStorage.getItem('wakaru-theme'); } catch (e2) {}
+    if (legacy === 'light' || legacy === 'dark') savedMode = legacy;
+    else savedMode = 'system';
+  }
+  applyTheme(savedMode);
+}
+
+function openSettings() {
+  var kamusView = document.getElementById('kamus-view');
+  var appView = document.getElementById('app-view');
+  var settingsView = document.getElementById('settings-view');
+  if (!settingsView) return;
+  // store previous view reference for back navigation
+  if (appView && !appView.hidden) _settingsPrevView = 'app';
+  else _settingsPrevView = 'kamus';
+  // also remember logical page so we can restore currentPage
+  try { settingsView.dataset.prevPage = currentPage; } catch (e2) {}
+  if (kamusView) kamusView.hidden = true;
+  if (appView) appView.hidden = true;
+  settingsView.hidden = false;
+  settingsView.removeAttribute('hidden');
+  currentPage = 'settings';
+  updateThemePickerActive(_themeMode);
+  try { settingsView.focus(); } catch (e3) {}
+}
+
+function closeSettings() {
+  var kamusView = document.getElementById('kamus-view');
+  var appView = document.getElementById('app-view');
+  var settingsView = document.getElementById('settings-view');
+  if (!settingsView) return;
+  settingsView.hidden = true;
+  var prevPage = null;
+  try { prevPage = settingsView.dataset.prevPage || null; } catch (e2) {}
+  if (_settingsPrevView === 'app' && appView) {
+    appView.hidden = false;
+    if (kamusView) kamusView.hidden = true;
+    currentPage = prevPage || currentPage;
+    if (currentPage === 'settings') currentPage = 'kamus';
+    // if appView is empty (edge case), fallback to kamus grid
+    if (!appView.innerHTML || appView.innerHTML.trim() === '') {
+      currentPage = 'kamus';
+      if (kamusView) kamusView.hidden = false;
+      appView.hidden = true;
+    } else {
+      try { appView.focus(); } catch (e3) {}
+    }
+  } else {
+    if (kamusView) kamusView.hidden = false;
+    if (appView) appView.hidden = true;
+    currentPage = 'kamus';
+  }
+}
+
 function init() {
   loadTheme();
+  // listen to OS theme changes when in system mode
+  try {
+    _systemMql = window.matchMedia('(prefers-color-scheme: dark)');
+    var onSystemChange = function () {
+      if (_themeMode === 'system') applyTheme('system');
+    };
+    if (_systemMql.addEventListener) _systemMql.addEventListener('change', onSystemChange);
+    else if (_systemMql.addListener) _systemMql.addListener(onSystemChange);
+  } catch (e3) {}
   WakaruData.loadAll().catch(function (err) { console.error('WakaruData.loadAll failed:', err); });
   var toggle = document.getElementById('theme-toggle');
   if (toggle) toggle.addEventListener('click', toggleTheme);
+  var settingsBtn = document.getElementById('settings-btn');
+  if (settingsBtn) settingsBtn.addEventListener('click', openSettings);
+  var settingsBack = document.getElementById('settings-back-btn');
+  if (settingsBack) settingsBack.addEventListener('click', closeSettings);
+  var picker = document.querySelector('.theme-picker');
+  if (picker) {
+    picker.addEventListener('click', function (e) {
+      var opt = e.target.closest('.theme-picker__option');
+      if (!opt) return;
+      var mode = opt.getAttribute('data-theme-mode');
+      if (mode) applyTheme(mode);
+    });
+  }
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.audio-btn');
     if (btn) {
@@ -51,25 +172,6 @@ function init() {
       if (text) WakaruAudio.speak(text);
     }
   });
-}
-
-function toggleTheme() {
-  var html = document.documentElement;
-  var current = html.getAttribute('data-theme');
-  var next = current === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  try { localStorage.setItem('wakaru-theme', next); } catch (e) {}
-  var btn = document.getElementById('theme-toggle');
-  if (btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
-}
-
-function loadTheme() {
-  var btn = document.getElementById('theme-toggle');
-  var saved = null;
-  try { saved = localStorage.getItem('wakaru-theme'); } catch (e) {}
-  var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  document.documentElement.setAttribute('data-theme', theme);
-  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
 }
 
 // ── Stroke animation ──────────────────────────────────────────────
@@ -271,13 +373,9 @@ function renderKanjiDetail(kanji, strokes, detail) {
     html += '</div></div>';
   }
 
-  // Related vocab — filter kosakata by kanji char match
-  var allKosakata = WakaruData.getByKategori('kosakata');
-  var related = [];
-  for (var i = 0; i < allKosakata.length; i++) {
-    var v = allKosakata[i];
-    if (v.kanji && v.kanji.indexOf(kanji.kanji) !== -1) related.push(v);
-  }
+  // Related vocab — use curated detail.related data
+  var detailData = WakaruData.getKanjiDetail && WakaruData.getKanjiDetail(kanji.kanji);
+  var related = (detailData && detailData.related) || [];
   if (related.length > 0) {
     html += '<div class="section-block"><h2 class="section-title">Kosakata Terkait</h2><div class="related-list">';
     related.forEach(function (r) {
@@ -742,6 +840,15 @@ function clearFlashSession() {
 // ── Navigation ────────────────────────────────────────────────────
 
 function wakaruGoBack() {
+  var settingsView = document.getElementById('settings-view');
+  if (settingsView && !settingsView.hidden) {
+    closeSettings();
+    return 'true';
+  }
+  if (currentPage === 'settings') {
+    closeSettings();
+    return 'true';
+  }
   if (currentPage === 'kamus') return 'false';
   if (currentPage.indexOf('kanji:') === 0) {
     var appView = document.getElementById('app-view');

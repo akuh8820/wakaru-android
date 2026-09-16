@@ -1,5 +1,24 @@
 # Changelog
 
+## v3.1 — 2026-09-15
+
+### Fitur
+- Halaman Pengaturan (gear icon di header): pilih tema Terang/Gelap/Sistem (segmented control), Tentang (nama, versi, deskripsi), Lisensi data (kanji-data MIT, KanjiVG CC BY-SA 3.0, OpenJLPT CC BY, jepang.org/jlptsensei.com)
+- Mode tema "Sistem": mengikuti preferensi OS, update otomatis saat OS berubah
+
+### Data
+- Kanji detail lengkap: 79 → 117 kanji (38 kanji baru dengan contoh kalimat N5 + kosakata terkait)
+- Stroke order lengkap: 79 → 117 kanji (38 SVG path baru dari KanjiVG)
+- Fix stroke count 4 kanji yang salah di kanji.json (週 15→11, 飲 13→12, 駅 11→14, 院 9→10)
+
+### Fix
+- Kosakata terkait di detail kanji kini pakai data kurasi (kanji-detail.related) — sebelumnya scan substring yang mengabaikan data kurasi
+- Pencarian global kini menemukan bentuk konjugasi (forms object) — konsisten dengan filter kategori
+- Unhandled rejection saat load data gagal di startup — tambah .catch handler
+
+### Tooling
+- Smoke test otomatis `scripts/smoke_test.py`: validasi 11 JSON (parse, struktur, integritas kanji-detail/strokes ⊆ kanji.json, stroke count match, no duplicates), HTML required elements, JS syntax — 40 checks
+
 ## v3.0 — 2026-09-15
 
 ### Fitur
