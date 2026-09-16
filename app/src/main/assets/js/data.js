@@ -20,6 +20,7 @@ var WakaruData = (function () {
 
   var DATA = {};
   var LOADED = false;
+  var _loading = null;
 
   // ── Helpers ───────────────────────────────────────────────────────
 
@@ -30,9 +31,12 @@ var WakaruData = (function () {
     });
   }
 
+  var SKIP_SEARCH_KEYS = { url: 1 };
+
   function matchesQuery(item, q) {
     var keys = Object.keys(item);
     for (var i = 0; i < keys.length; i++) {
+      if (SKIP_SEARCH_KEYS[keys[i]]) continue;
       var val = item[keys[i]];
       if (typeof val === 'string' && val.toLowerCase().indexOf(q) !== -1) return true;
       if (Array.isArray(val)) {
@@ -80,9 +84,10 @@ var WakaruData = (function () {
 
   function loadAll() {
     if (LOADED) return Promise.resolve(DATA);
+    if (_loading) return _loading;
 
     var base = 'data/n5/';
-    return Promise.all([
+    _loading = Promise.all([
       fetchJSON(base + 'hiragana.json'),
       fetchJSON(base + 'katakana.json'),
       fetchJSON(base + 'kanji.json'),
@@ -107,8 +112,10 @@ var WakaruData = (function () {
       DATA.kanjiDetail = r[9];
       DATA.strokes = r[10];
       LOADED = true;
+      _loading = null;
       return DATA;
     });
+    return _loading;
   }
 
   function isLoaded() {

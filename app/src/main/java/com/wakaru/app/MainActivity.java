@@ -46,6 +46,27 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String url = request.getUrl().toString();
+                if (url.startsWith("https://appassets.androidplatform.net")) {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                if (url != null && url.startsWith("https://appassets.androidplatform.net")) {
+                    if (ttsBridge != null) {
+                        view.addJavascriptInterface(ttsBridge, "Android");
+                    }
+                } else {
+                    view.removeJavascriptInterface("Android");
+                }
+            }
+
+            @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Log.e("Wakaru", "WebView error: " + description + " (" + failingUrl + ")");
             }
@@ -53,13 +74,22 @@ public class MainActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                Log.d("WakaruJS", consoleMessage.message() + " (" + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + ")");
+                if (BuildConfig.DEBUG) {
+                    Log.d("WakaruJS", consoleMessage.message() + " (" + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + ")");
+                }
                 return true;
             }
         });
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
+        settings.setAllowFileAccess(false);
+        settings.setAllowContentAccess(false);
+        settings.setAllowFileAccessFromFileURLs(false);
+        settings.setAllowUniversalAccessFromFileURLs(false);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+        settings.setGeolocationEnabled(false);
+        settings.setSafeBrowsingEnabled(true);
         ttsBridge = new TTSBridge(this);
         webView.addJavascriptInterface(ttsBridge, "Android");
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
@@ -106,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         @JavascriptInterface
         public void speakJapanese(String text) {
-            if (!ready || tts == null || text == null || text.isEmpty()) return;
+            if (!ready || tts == null || text == null || text.isEmpty() || text.length() > 500) return;
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "wakaru_" + System.currentTimeMillis());
         }
 

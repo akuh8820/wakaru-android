@@ -1,4 +1,10 @@
 var currentPage = 'kamus';
+var _kanjiReturnFromSearch = false;
+
+// honey: L3 — "Lihat semua" in search results drops the query because
+// openKategori() (index.html) has no query param and clearSearchState()
+// runs before it. Fix requires index.html change to pass the query + views.js
+// to accept initial filter. Deferred — needs coordinated change across files.
 
 var _quizState = {};
 var _flashState = {};
@@ -171,6 +177,19 @@ function init() {
       var text = btn.getAttribute('data-speak');
       if (text) WakaruAudio.speak(text);
     }
+    var relatedItem = e.target.closest('.related-item');
+    if (relatedItem && relatedItem.getAttribute('data-type') === 'kosakata') {
+      var stableId = relatedItem.getAttribute('data-id');
+      if (stableId && window.WakaruKamus && window.WakaruKamus.openKategori) {
+        var all = WakaruData.getByKategori('kosakata');
+        for (var i = 0; i < all.length; i++) {
+          if (vocabStableId(all[i]) === stableId) {
+            window.WakaruKamus.openKategori('kosakata');
+            return;
+          }
+        }
+      }
+    }
   });
 }
 
@@ -269,6 +288,9 @@ function showAllStrokes(svgEl) {
 // ── Kanji detail ──────────────────────────────────────────────────
 
 function openKanjiDetail(char) {
+  _kanjiReturnFromSearch = false;
+  var searchResults = document.getElementById('home-search-results');
+  if (searchResults && !searchResults.hidden) _kanjiReturnFromSearch = true;
   currentPage = 'kanji:' + char;
   var kanji = WakaruData.getKanji(char);
   if (!kanji) return;
@@ -824,12 +846,6 @@ function renderFlashComplete() {
 
 // ── Flash session persistence ─────────────────────────────────────
 
-function getFlashSession() {
-  try {
-    var raw = localStorage.getItem('wakaru-flash-session');
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) { return null; }
-}
 function saveFlashSession(mode, idx) {
   try { localStorage.setItem('wakaru-flash-session', JSON.stringify({ mode: mode, idx: idx })); } catch (e) {}
 }
@@ -855,8 +871,12 @@ function wakaruGoBack() {
     if (appView) appView.hidden = true;
     var kamusView = document.getElementById('kamus-view');
     if (kamusView) kamusView.hidden = false;
-    if (window.WakaruKamus && window.WakaruKamus.openKategori) {
-      window.WakaruKamus.openKategori('kanji');
+    if (_kanjiReturnFromSearch) {
+      _kanjiReturnFromSearch = false;
+    } else {
+      if (window.WakaruKamus && window.WakaruKamus.openKategori) {
+        window.WakaruKamus.openKategori('kanji');
+      }
     }
     return 'true';
   }

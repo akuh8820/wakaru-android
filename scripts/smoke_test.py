@@ -74,6 +74,24 @@ check_file('kanji.json', [
 # ── kanji-detail.json ──────────────────────────────────────────────
 d = files.get('kanji-detail.json', {})
 k_chars = set(x['kanji'] for x in k)
+
+# Build kosakata kana lookup (handles multi-reading: split on comma, trim)
+_kosakata_kana = set()
+for _x in files.get('kosakata.json', []):
+    for _r in _x.get('kana', '').split(','):
+        _kosakata_kana.add(_r.strip())
+
+def _check_related_referential(detail):
+    orphans = []
+    for kanji, v in detail.items():
+        for rel in v.get('related', []):
+            matched = any(r.strip() in _kosakata_kana for r in rel['kana'].split(','))
+            if not matched:
+                orphans.append(f"{kanji}->{rel['kanji']}({rel['kana']})")
+    if orphans:
+        return f"{len(orphans)} orphan related entries: {orphans[:10]}"
+    return True
+
 check_file('kanji-detail.json', [
     ('117 keys', lambda d: len(d) == 117),
     ('All keys in kanji.json', lambda d: True if set(d.keys()) <= k_chars
@@ -84,6 +102,7 @@ check_file('kanji-detail.json', [
     ('Examples have jp/kana/id', lambda d: all(
         all('jp' in e and 'kana' in e and 'id' in e for e in v['examples'])
         for v in d.values())),
+    ('Related entries resolve in kosakata (M3b)', _check_related_referential),
 ])
 
 # ── strokes.json ───────────────────────────────────────────────────
@@ -111,7 +130,7 @@ for name in ['hiragana.json', 'katakana.json']:
 # ── kosakata.json ──────────────────────────────────────────────────
 k_data = files.get('kosakata.json', [])
 check_file('kosakata.json', [
-    (f'797 entries', lambda d: len(d) == 797),
+    (f'807 entries', lambda d: len(d) == 807),
     ('All have kana/arti', lambda d: all(
         x.get('kana') and x.get('arti') for x in d)),
     ('No empty kana', lambda d: all(x.get('kana', '') != '' for x in d)),

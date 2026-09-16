@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#F4F4F1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#181A18">
   <title>Wakaru — Belajar Bahasa Jepang</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Inconsolata:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script>(function(){try{var m=localStorage.getItem('wakaru-theme-mode');var t=m==='dark'?'dark':m==='light'?'light':(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
 <body>
   <header>
@@ -155,7 +154,7 @@
       <p class="settings-section__title">Tentang</p>
       <div class="settings-about">
         <p class="settings-about__name">Wakaru</p>
-        <p class="settings-about__version">Versi 3.0</p>
+        <p class="settings-about__version">Versi 3.1</p> <!-- TODO: inject from BuildConfig.VERSION_NAME via bridge -->
         <p class="settings-about__desc">Kamus JLPT N5 offline untuk belajar bahasa Jepang</p>
       </div>
     </div>
