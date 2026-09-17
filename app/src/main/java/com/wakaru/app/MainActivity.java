@@ -7,22 +7,24 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
-import android.webkit.JavaScriptReplyProxy;
 import android.webkit.WebChromeClient;
-import android.webkit.WebMessage;
-import android.webkit.WebMessageListener;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.Collections;
 import java.util.Locale;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.webkit.JavaScriptReplyProxy;
+import androidx.webkit.WebMessageCompat;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
+import androidx.webkit.WebViewCompat;
+import androidx.webkit.WebViewFeature;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
@@ -88,20 +90,26 @@ public class MainActivity extends AppCompatActivity {
         settings.setGeolocationEnabled(false);
         settings.setSafeBrowsingEnabled(true);
         ttsBridge = new TTSBridge(this);
-        webView.addWebMessageListener("WakaruBridge", new String[]{"https://appassets.androidplatform.net"},
-                new WebMessageListener() {
-                    @Override
-                    public void onPostMessage(WebView view, WebMessage message, Uri sourceOrigin,
-                                              boolean isMainFrame, JavaScriptReplyProxy replyProxy) {
-                        String data = message.getData();
-                        if (data == null) return;
-                        if (data.startsWith("speak:")) {
-                            ttsBridge.speakJapanese(data.substring(6));
-                        } else if (data.equals("getVersion")) {
-                            replyProxy.postMessage(BuildConfig.VERSION_NAME);
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
+            WebViewCompat.addWebMessageListener(webView, "WakaruBridge",
+                    Collections.singleton("https://appassets.androidplatform.net"),
+                    new WebViewCompat.WebMessageListener() {
+                        @Override
+                        public void onPostMessage(WebView view, WebMessageCompat message, Uri sourceOrigin,
+                                                  boolean isMainFrame, JavaScriptReplyProxy replyProxy) {
+                            if (!isMainFrame) return;
+                            String data = message.getData();
+                            if (data == null) return;
+                            if (data.startsWith("speak:")) {
+                                ttsBridge.speakJapanese(data.substring(6));
+                            } else if (data.equals("getVersion")) {
+                                replyProxy.postMessage(BuildConfig.VERSION_NAME);
+                            }
                         }
-                    }
-                });
+                    });
+        } else {
+            Log.w("Wakaru", "WEB_MESSAGE_LISTENER not supported by WebView; bridge disabled");
+        }
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
         setContentView(webView);
 
