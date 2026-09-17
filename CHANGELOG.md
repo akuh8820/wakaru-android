@@ -1,5 +1,21 @@
 # Changelog
 
+## v3.2 — 2026-09-17
+
+### UI
+- Tombol toggle tema di beranda dihapus; opsi "Sistem" dihapus dari pengaturan tema — tema hanya Terang/Gelap (nilai lama "Sistem" otomatis jadi Terang)
+- Tombol pengaturan di-redesign: ghost icon button 44px, konsisten dengan design system
+- Seluruh header kategori view dihapus (tombol kembali, judul, toggle Hiragana/Katakana, jumlah entri) — tampilan lebih bersih, pencarian tetap ada
+- Semua tombol "← Kembali" dihapus — navigasi kini pakai tombol back sistem di semua level
+- Back sistem di dalam kategori naik 1 level dulu (daftar topik → kartu topik, detail bunpou → daftar), baru keluar ke beranda
+- Auto-focus keyboard saat kembali ke beranda dihapus — keyboard tidak lagi muncul otomatis
+
+### Fix
+- Launcher icon kini bisa dibuka dari launcher Android (android:exported="true")
+
+### Tooling
+- Smoke test: daftar required element ID diperbarui (theme-toggle, kamus-back-btn dihapus)
+
 ## v3.1 — 2026-09-15
 
 ### Fitur
