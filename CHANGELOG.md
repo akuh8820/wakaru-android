@@ -1,5 +1,24 @@
 # Changelog
 
+## v3.3 — 2026-09-17
+
+### Refactor
+- State navigasi satu sumber: `currentPage` + state kategori dipusatkan di `WakaruNav` (data.js), `_current` di views.js dihapus
+- `escHtml` jadi util global di data.js, `esc` lama dihapus
+
+### Fitur
+- Query pencarian di beranda diteruskan ke kategori — hasil filter langsung tampil saat pindah
+
+### Performance
+- Lazy-fetch kanji-detail + stroke order: startup 11 file (~206 KB) → 9 file (~103 KB); dimuat saat detail dibuka dengan spinner "Memuat…" dan fallback "Gagal memuat"
+
+### Security
+- Bridge WebView migrasi ke `WebViewCompat.addWebMessageListener` (androidx.webkit) + feature guard + origin whitelist — `addJavascriptInterface` dihapus total
+
+### Fix
+- Versi aplikasi dibaca dari `BuildConfig.VERSION_NAME` (bukan hardcoded)
+- Hapus fallback TTS `Android.speakJapanese` yang sudah mati
+
 ## v3.2.1 — 2026-09-17
 
 ### Fix
