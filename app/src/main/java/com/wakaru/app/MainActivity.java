@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -47,8 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
-                if (url.startsWith("https://appassets.androidplatform.net")) {
+                Uri uri = request.getUrl();
+                if (uri != null && "appassets.androidplatform.net".equals(uri.getHost())
+                        && "https".equals(uri.getScheme())) {
                     return false;
                 }
                 return true;
@@ -57,7 +59,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                if (url != null && url.startsWith("https://appassets.androidplatform.net")) {
+                boolean trusted = false;
+                if (url != null) {
+                    Uri uri = Uri.parse(url);
+                    trusted = "appassets.androidplatform.net".equals(uri.getHost())
+                            && "https".equals(uri.getScheme());
+                }
+                if (trusted) {
                     if (ttsBridge != null) {
                         view.addJavascriptInterface(ttsBridge, "Android");
                     }
@@ -91,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         settings.setGeolocationEnabled(false);
         settings.setSafeBrowsingEnabled(true);
         ttsBridge = new TTSBridge(this);
-        webView.addJavascriptInterface(ttsBridge, "Android");
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
         setContentView(webView);
 
@@ -140,6 +147,10 @@ public class MainActivity extends AppCompatActivity {
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "wakaru_" + System.currentTimeMillis());
         }
 
+        void stop() {
+            if (tts != null) tts.stop();
+        }
+
         void shutdown() {
             if (tts != null) {
                 tts.stop();
@@ -150,9 +161,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        if (webView != null) webView.onPause();
+        if (ttsBridge != null) ttsBridge.stop();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webView != null) webView.onResume();
+    }
+
+    @Override
     protected void onDestroy() {
         if (ttsBridge != null) ttsBridge.shutdown();
         if (webView != null) {
+            ViewGroup parent = (ViewGroup) webView.getParent();
+            if (parent != null) parent.removeView(webView);
             webView.destroy();
         }
         super.onDestroy();
