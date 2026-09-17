@@ -197,6 +197,7 @@ var WakaruViews = (function () {
 
     function onClick(ev) {
       if (selected) return;
+      if (!opts.onRowClick && !opts.detailHtml) return;
       var t = ev.target;
       if (opts.onHeaderClick && opts.onHeaderClick(ev, ctrl)) return;
       var row = t.closest ? t.closest('[data-row-idx]') : null;
