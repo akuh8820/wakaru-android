@@ -81,12 +81,16 @@ jobs:
           echo "tag=v${VERSION}" >> $GITHUB_OUTPUT
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
+      - name: Release notes (current version only)
+        run: |
+          awk -v hdr="## v${{ steps.version.outputs.version }} " 'BEGIN{on=0} /^## /{if(on) exit; if(index($0, hdr)==1) on=1} on{print}' CHANGELOG.md > release-notes.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           name: "Wakaru-app v${{ steps.version.outputs.version }}"
-          body_path: CHANGELOG.md
+          body_path: release-notes.md
           files: app/build/outputs/apk/release/app-release.apk
           make_latest: true
           overwrite_files: true
