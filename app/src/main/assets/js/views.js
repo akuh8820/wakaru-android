@@ -6,9 +6,6 @@
 var WakaruViews = (function () {
   'use strict';
 
-  var _current = null;
-
-  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
   function debounce(fn, ms) {
     var t;
@@ -33,8 +30,6 @@ var WakaruViews = (function () {
     try {
       if (window.WakaruAudio && typeof window.WakaruAudio.speak === 'function') {
         window.WakaruAudio.speak(String(text || ''));
-      } else if (typeof Android !== 'undefined' && Android && Android.speakJapanese) {
-        Android.speakJapanese(String(text || ''));
       }
     } catch (e) {}
   }
@@ -85,33 +80,33 @@ var WakaruViews = (function () {
     var isKanji = categoryId === 'kanji' && !!it.kanji;
     if (isKanji) rowClass += ' kamus-row--clickable materi-kanji';
     var title = it.kanji || it.kana || it.verb || it.adj || it.partikel || it.pola || it.char || '';
-    var dataAttr = ' data-kamus-item="' + esc(title) + '"';
+    var dataAttr = ' data-kamus-item="' + escHtml(title) + '"';
     var h = '<div class="' + rowClass + '"' + dataAttr + '>';
     if (isKanji) {
-      var mean = esc((it.meanings_id || []).join(', '));
+      var mean = escHtml((it.meanings_id || []).join(', '));
       var onR = (it.on_readings || []).slice(0, 2).join('\u30FB');
       var kunR = (it.kun_readings || []).slice(0, 2).join('\u30FB');
-      var read = esc(onR + (kunR ? ' / ' + kunR : ''));
-      h += '<span class="mi-kanji" lang="ja">' + esc(it.kanji) + '</span>';
+      var read = escHtml(onR + (kunR ? ' / ' + kunR : ''));
+      h += '<span class="mi-kanji" lang="ja">' + escHtml(it.kanji) + '</span>';
       h += '<span class="mi-body"><span class="mi-mean">' + mean + '</span><span class="mi-read">' + read + '</span></span>';
     } else if (categoryId === 'partikel') {
-      h += '<span class="mi-kanji" lang="ja">' + esc(it.partikel) + '</span>';
-      h += '<span class="mi-body"><span class="mi-mean" lang="ja">' + esc(it.kana) + '</span>';
-      h += '<span class="mi-read">' + esc(it.fungsi) + '</span>';
-      h += '<span class="mi-meta">' + esc(it.contoh) + ' \u2014 ' + esc(it.arti_contoh) + '</span></span>';
+      h += '<span class="mi-kanji" lang="ja">' + escHtml(it.partikel) + '</span>';
+      h += '<span class="mi-body"><span class="mi-mean" lang="ja">' + escHtml(it.kana) + '</span>';
+      h += '<span class="mi-read">' + escHtml(it.fungsi) + '</span>';
+      h += '<span class="mi-meta">' + escHtml(it.contoh) + ' \u2014 ' + escHtml(it.arti_contoh) + '</span></span>';
     } else if (categoryId === 'grammar') {
-      h += '<span class="mi-body"><span class="mi-vkanji" lang="ja">' + esc(it.pola) + '</span>';
-      h += '<span class="mi-mean">' + esc(it.arti) + '</span>';
-      h += '<span class="mi-read">' + esc(it.contoh) + ' \u2014 ' + esc(it.terjemahan) + '</span></span>';
+      h += '<span class="mi-body"><span class="mi-vkanji" lang="ja">' + escHtml(it.pola) + '</span>';
+      h += '<span class="mi-mean">' + escHtml(it.arti) + '</span>';
+      h += '<span class="mi-read">' + escHtml(it.contoh) + ' \u2014 ' + escHtml(it.terjemahan) + '</span></span>';
     } else if (categoryId === 'kata-kerja' || categoryId === 'kata-sifat') {
-      var word = esc(it.verb || it.adj || it.kanji || it.kana);
-      var kana = esc(it.kana || '');
-      var romaji = esc(it.romaji || '');
+      var word = escHtml(it.verb || it.adj || it.kanji || it.kana);
+      var kana = escHtml(it.kana || '');
+      var romaji = escHtml(it.romaji || '');
       h += '<span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + word + '</span>';
       if (it.kanji && it.kana && it.kanji !== it.kana) {
         h += '<span class="mi-vkana" lang="ja">' + kana + '</span>';
       }
-      h += '</span><span class="mi-mean">' + esc(it.arti) + '</span>';
+      h += '</span><span class="mi-mean">' + escHtml(it.arti) + '</span>';
       if (!(it.kanji && it.kana && it.kanji !== it.kana) && kana) {
         h += '<span class="mi-read" lang="ja">' + kana + '</span>';
       }
@@ -123,17 +118,17 @@ var WakaruViews = (function () {
       var arti = it.arti || '';
       var romaji2 = it.romaji || '';
       if (it.char) {
-        h += '<span class="mi-kanji" lang="ja">' + esc(it.char) + '</span>';
-        h += '<span class="mi-body"><span class="mi-mean">' + esc(romaji2) + '</span>';
-        if (it.row) h += '<span class="mi-read">Baris ' + esc(it.row) + '</span>';
+        h += '<span class="mi-kanji" lang="ja">' + escHtml(it.char) + '</span>';
+        h += '<span class="mi-body"><span class="mi-mean">' + escHtml(romaji2) + '</span>';
+        if (it.row) h += '<span class="mi-read">Baris ' + escHtml(it.row) + '</span>';
         h += '</span>';
       } else {
         var showKana = it.kanji && it.kana && it.kanji !== it.kana;
-        h += '<span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + esc(w) + '</span>';
-        if (showKana) h += '<span class="mi-vkana" lang="ja">' + esc(kana2) + '</span>';
-        h += '</span><span class="mi-mean">' + esc(arti) + '</span>';
-        if (!showKana && kana2) h += '<span class="mi-read" lang="ja">' + esc(kana2) + '</span>';
-        if (romaji2) h += '<span class="mi-romaji">' + esc(romaji2) + '</span>';
+        h += '<span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + escHtml(w) + '</span>';
+        if (showKana) h += '<span class="mi-vkana" lang="ja">' + escHtml(kana2) + '</span>';
+        h += '</span><span class="mi-mean">' + escHtml(arti) + '</span>';
+        if (!showKana && kana2) h += '<span class="mi-read" lang="ja">' + escHtml(kana2) + '</span>';
+        if (romaji2) h += '<span class="mi-romaji">' + escHtml(romaji2) + '</span>';
         h += '</span>';
       }
     }
@@ -207,19 +202,19 @@ var WakaruViews = (function () {
         else byRow['Lainnya'].push(data[j]);
       }
       var h = '';
-      h += '<div class="gojuon" role="list" aria-label="' + esc(title) + ' gojuon">';
+      h += '<div class="gojuon" role="list" aria-label="' + escHtml(title) + ' gojuon">';
       for (var ri = 0; ri < order.length; ri++) {
         var rowKey = order[ri];
         var items = byRow[rowKey] || [];
         if (!items.length) continue;
         h += '<div class="gj-row" role="listitem">';
-        h += '<span class="gj-row-label" aria-hidden="true">' + esc(labels[rowKey]) + '</span>';
+        h += '<span class="gj-row-label" aria-hidden="true">' + escHtml(labels[rowKey]) + '</span>';
         h += '<div class="gj-row-cells">';
         for (var ci = 0; ci < items.length; ci++) {
           var it = items[ci];
-          h += '<button type="button" class="gj-cell" data-char="' + esc(it.char) + '" data-romaji="' + esc(it.romaji) + '" aria-label="' + esc(it.char) + ' \u2014 ' + esc(it.romaji) + '">';
-          h += '<span class="gj-cell__char" lang="ja">' + esc(it.char) + '</span>';
-          h += '<span class="gj-cell__roma">' + esc(it.romaji) + '</span>';
+          h += '<button type="button" class="gj-cell" data-char="' + escHtml(it.char) + '" data-romaji="' + escHtml(it.romaji) + '" aria-label="' + escHtml(it.char) + ' \u2014 ' + escHtml(it.romaji) + '">';
+          h += '<span class="gj-cell__char" lang="ja">' + escHtml(it.char) + '</span>';
+          h += '<span class="gj-cell__roma">' + escHtml(it.romaji) + '</span>';
           h += '</button>';
         }
         h += '</div></div>';
@@ -228,7 +223,7 @@ var WakaruViews = (function () {
       h += '<p class="gj-hint">Ketuk kana untuk melihat romaji dan mendengar pelafalan.</p>';
       container.innerHTML = h;
       focusContainer(container);
-      _current = { id: id, back: function () { return false; } };
+      WakaruNav.category = { id: id, back: function () { return false; } };
 
       function onClick(ev) {
         var t = ev.target;
@@ -248,7 +243,7 @@ var WakaruViews = (function () {
   }
 
   /* 2. kosakata - Topic cards + topic list */
-  function renderKosakataView(container) {
+  function renderKosakataView(container, initialQuery) {
     if (!container) return;
     cleanHandlers(container);
     var info = getKategoriInfo('kosakata');
@@ -272,7 +267,7 @@ var WakaruViews = (function () {
       } catch (e) { topicCounts[tp] = 0; firstCharMap[tp] = tp.charAt(0); }
     }
     var currentTopic = null;
-    var currentFilter = '';
+    var currentFilter = (typeof initialQuery === 'string' && initialQuery) ? initialQuery : '';
 
     function buildCards() {
       var h = '';
@@ -281,10 +276,10 @@ var WakaruViews = (function () {
         var t = topics[i];
         var cnt = topicCounts[t] || 0;
         var ic = firstCharMap[t] || t.charAt(0);
-        h += '<button type="button" class="topic-card" data-topic="' + esc(t) + '" role="listitem" aria-label="' + esc(t) + ' \u2014 ' + cnt + ' entri">';
-        h += '<span class="topic-card__icon" lang="ja" aria-hidden="true">' + esc(ic) + '</span>';
+        h += '<button type="button" class="topic-card" data-topic="' + escHtml(t) + '" role="listitem" aria-label="' + escHtml(t) + ' \u2014 ' + cnt + ' entri">';
+        h += '<span class="topic-card__icon" lang="ja" aria-hidden="true">' + escHtml(ic) + '</span>';
         h += '<span class="topic-card__accent" aria-hidden="true"></span>';
-        h += '<span class="topic-card__label">' + esc(t) + '</span>';
+        h += '<span class="topic-card__label">' + escHtml(t) + '</span>';
         h += '<span class="topic-card__count">' + cnt + ' entri</span>';
         h += '</button>';
       }
@@ -297,9 +292,9 @@ var WakaruViews = (function () {
       try { items = (typeof WakaruData !== 'undefined' && WakaruData.getKosakataByTopic) ? WakaruData.getKosakataByTopic(currentTopic) : []; } catch (e) { items = []; }
       var filtered = filterItems(items, currentFilter);
       var h = '';
-      h += '<label class="search-wrap" aria-label="Cari di ' + esc(currentTopic) + '">';
+      h += '<label class="search-wrap" aria-label="Cari di ' + escHtml(currentTopic) + '">';
       h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
-      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(currentTopic) + '" value="' + esc(currentFilter) + '">';
+      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + escHtml(currentTopic) + '" value="' + escHtml(currentFilter) + '">';
       h += '</label>';
       h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
       if (filtered.length) {
@@ -313,7 +308,7 @@ var WakaruViews = (function () {
     function refresh() {
       if (currentTopic === null) container.innerHTML = buildCards();
       else container.innerHTML = buildTopicList();
-      _current = {
+      WakaruNav.category = {
         id: 'kosakata',
         back: function () {
           if (currentTopic !== null) {
@@ -380,7 +375,7 @@ var WakaruViews = (function () {
   }
 
   /* 3. grammar - Group tabs + list + detail */
-  function renderGrammarView(container) {
+  function renderGrammarView(container, initialQuery) {
     if (!container) return;
     cleanHandlers(container);
     var info = getKategoriInfo('grammar');
@@ -389,7 +384,7 @@ var WakaruViews = (function () {
     try { groups = (typeof WakaruData !== 'undefined' && WakaruData.getGrammarGroups) ? WakaruData.getGrammarGroups() : []; } catch (e) { groups = []; }
     var activeGroup = groups.length ? groups[0] : null;
     var selected = null;
-    var currentFilter = '';
+    var currentFilter = (typeof initialQuery === 'string' && initialQuery) ? initialQuery : '';
 
     function getGroupItems(g) {
       try { return (typeof WakaruData !== 'undefined' && WakaruData.getGrammarByGroup) ? WakaruData.getGrammarByGroup(g) : []; } catch (e) { return []; }
@@ -403,12 +398,12 @@ var WakaruViews = (function () {
       for (var i = 0; i < groups.length; i++) {
         var g = groups[i];
         var isActive = g === activeGroup;
-        h += '<button type="button" role="tab" class="grammar-pill' + (isActive ? ' is-active' : '') + '" data-group="' + esc(g) + '" aria-selected="' + (isActive ? 'true' : 'false') + '" aria-label="Kelompok ' + esc(g) + '">' + esc(g) + '</button>';
+        h += '<button type="button" role="tab" class="grammar-pill' + (isActive ? ' is-active' : '') + '" data-group="' + escHtml(g) + '" aria-selected="' + (isActive ? 'true' : 'false') + '" aria-label="Kelompok ' + escHtml(g) + '">' + escHtml(g) + '</button>';
       }
       h += '</div>';
-      h += '<label class="search-wrap" aria-label="Cari di ' + esc(activeGroup || title) + '">';
+      h += '<label class="search-wrap" aria-label="Cari di ' + escHtml(activeGroup || title) + '">';
       h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
-      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari pola atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari grammar" value="' + esc(currentFilter) + '">';
+      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari pola atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari grammar" value="' + escHtml(currentFilter) + '">';
       h += '</label>';
       h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
       if (filtered.length) {
@@ -416,10 +411,10 @@ var WakaruViews = (function () {
           var it = filtered[j];
           var idx = -1;
           for (var k = 0; k < items.length; k++) if (items[k] === it) { idx = k; break; }
-          h += '<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + esc(activeGroup) + '" data-grammar-idx="' + idx + '" aria-label="' + esc(it.pola) + '">';
-          h += '<span class="mi-body"><span class="mi-vkanji" lang="ja">' + esc(it.pola) + '</span>';
-          h += '<span class="mi-mean">' + esc(it.arti) + '</span>';
-          h += '<span class="mi-read">' + esc(it.contoh) + ' \u2014 ' + esc(it.terjemahan) + '</span></span>';
+          h += '<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + escHtml(activeGroup) + '" data-grammar-idx="' + idx + '" aria-label="' + escHtml(it.pola) + '">';
+          h += '<span class="mi-body"><span class="mi-vkanji" lang="ja">' + escHtml(it.pola) + '</span>';
+          h += '<span class="mi-mean">' + escHtml(it.arti) + '</span>';
+          h += '<span class="mi-read">' + escHtml(it.contoh) + ' \u2014 ' + escHtml(it.terjemahan) + '</span></span>';
           h += '</button>';
         }
       }
@@ -431,14 +426,14 @@ var WakaruViews = (function () {
     function buildDetailHtml() {
       var h = '';
       h += '<div class="grammar-detail">';
-      h += '<h2 class="grammar-detail__pola" lang="ja">' + esc(selected.pola) + '</h2>';
-      h += '<p class="grammar-detail__arti">' + esc(selected.arti) + '</p>';
-      if (selected.romaji) h += '<p class="grammar-detail__romaji">' + esc(selected.romaji) + '</p>';
+      h += '<h2 class="grammar-detail__pola" lang="ja">' + escHtml(selected.pola) + '</h2>';
+      h += '<p class="grammar-detail__arti">' + escHtml(selected.arti) + '</p>';
+      if (selected.romaji) h += '<p class="grammar-detail__romaji">' + escHtml(selected.romaji) + '</p>';
       h += '<div class="grammar-detail__contoh">';
-      h += '<span lang="ja">' + esc(selected.contoh) + '</span>';
-      h += '<button type="button" class="audio-btn" data-speak="' + esc(selected.contoh) + '" aria-label="Dengarkan contoh ' + esc(selected.contoh) + '"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
+      h += '<span lang="ja">' + escHtml(selected.contoh) + '</span>';
+      h += '<button type="button" class="audio-btn" data-speak="' + escHtml(selected.contoh) + '" aria-label="Dengarkan contoh ' + escHtml(selected.contoh) + '"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
       h += '</div>';
-      h += '<p class="grammar-detail__terjemahan">' + esc(selected.terjemahan) + '</p>';
+      h += '<p class="grammar-detail__terjemahan">' + escHtml(selected.terjemahan) + '</p>';
       h += '</div>';
       return h;
     }
@@ -446,7 +441,7 @@ var WakaruViews = (function () {
     function refresh() {
       if (selected) container.innerHTML = buildDetailHtml();
       else container.innerHTML = buildListHtml();
-      _current = {
+      WakaruNav.category = {
         id: 'grammar',
         back: function () {
           if (selected) {
@@ -501,7 +496,7 @@ var WakaruViews = (function () {
             var it = filtered[i];
             var idx = -1;
             for (var k = 0; k < items.length; k++) if (items[k] === it) { idx = k; break; }
-            parts.push('<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + esc(activeGroup) + '" data-grammar-idx="' + idx + '" aria-label="' + esc(it.pola) + '"><span class="mi-body"><span class="mi-vkanji" lang="ja">' + esc(it.pola) + '</span><span class="mi-mean">' + esc(it.arti) + '</span><span class="mi-read">' + esc(it.contoh) + ' \u2014 ' + esc(it.terjemahan) + '</span></span></button>');
+            parts.push('<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + escHtml(activeGroup) + '" data-grammar-idx="' + idx + '" aria-label="' + escHtml(it.pola) + '"><span class="mi-body"><span class="mi-vkanji" lang="ja">' + escHtml(it.pola) + '</span><span class="mi-mean">' + escHtml(it.arti) + '</span><span class="mi-read">' + escHtml(it.contoh) + ' \u2014 ' + escHtml(it.terjemahan) + '</span></span></button>');
           }
           listEl.innerHTML = parts.join('');
         }
@@ -519,7 +514,7 @@ var WakaruViews = (function () {
   }
 
   /* 4. kata-kerja / kata-sifat - Conjugation tables */
-  function renderConjugationView(id, container) {
+  function renderConjugationView(id, container, initialQuery) {
     if (!container) return;
     cleanHandlers(container);
     var isVerb = id === 'kata-kerja';
@@ -541,7 +536,7 @@ var WakaruViews = (function () {
         te: 'te', ta: 'ta', nai: 'nai', nakatta: 'nakatta',
         potential: 'potensial', passive: 'pasif', causative: 'kausatif', volitional: 'volitional'
       };
-      var currentFilter = '';
+      var currentFilter = (typeof initialQuery === 'string' && initialQuery) ? initialQuery : '';
       var grouped = {};
       var groupOrder = [];
       for (var i = 0; i < items.length; i++) {
@@ -572,13 +567,13 @@ var WakaruViews = (function () {
 
       function buildTableContent() {
         var h = '';
-        h += '<div class="conj-wrap" role="region" aria-label="Tabel konjugasi ' + esc(title) + '" tabindex="0">';
+        h += '<div class="conj-wrap" role="region" aria-label="Tabel konjugasi ' + escHtml(title) + '" tabindex="0">';
         h += '<table class="conj-table"><thead><tr>';
         h += '<th class="conj-th conj-th--corner">Kata</th>';
         for (var f = 0; f < formKeys.length; f++) {
           var fk = formKeys[f];
           var lab = formLabels[fk] || fk;
-          h += '<th class="conj-th" scope="col">' + esc(lab) + '</th>';
+          h += '<th class="conj-th" scope="col">' + escHtml(lab) + '</th>';
         }
         h += '</tr></thead><tbody>';
         var filt = filteredItems();
@@ -596,18 +591,18 @@ var WakaruViews = (function () {
             if (!currentFilter || filtSet[rk]) visibleRows.push(rows[r]);
           }
           if (!visibleRows.length) continue;
-          h += '<tr class="conj-group-row"><td colspan="' + (formKeys.length + 1) + '">' + esc(gname) + ' \u00B7 ' + visibleRows.length + '</td></tr>';
+          h += '<tr class="conj-group-row"><td colspan="' + (formKeys.length + 1) + '">' + escHtml(gname) + ' \u00B7 ' + visibleRows.length + '</td></tr>';
           for (var ri = 0; ri < visibleRows.length; ri++) {
             var it = visibleRows[ri];
             var word = it.verb || it.adj || it.kanji || it.kana || '';
             h += '<tr>';
-            h += '<th class="conj-first" scope="row"><span class="conj-first__word" lang="ja">' + esc(word) + '</span>';
-            if (it.kana && it.kana !== word) h += '<span class="conj-first__kana" lang="ja">' + esc(it.kana) + '</span>';
-            h += '<span class="conj-first__arti">' + esc(it.arti || '') + '</span></th>';
+            h += '<th class="conj-first" scope="row"><span class="conj-first__word" lang="ja">' + escHtml(word) + '</span>';
+            if (it.kana && it.kana !== word) h += '<span class="conj-first__kana" lang="ja">' + escHtml(it.kana) + '</span>';
+            h += '<span class="conj-first__arti">' + escHtml(it.arti || '') + '</span></th>';
             for (var fi = 0; fi < formKeys.length; fi++) {
               var fkey = formKeys[fi];
               var formVal = (it.forms && it.forms[fkey]) ? it.forms[fkey] : '\u2014';
-              h += '<td class="conj-td"><button type="button" class="conj-cell" data-speak="' + esc(formVal) + '" aria-label="' + esc(word) + ' ' + esc(formLabels[fkey] || fkey) + ' \u2014 ' + esc(formVal) + '" lang="ja">' + esc(formVal) + '</button></td>';
+              h += '<td class="conj-td"><button type="button" class="conj-cell" data-speak="' + escHtml(formVal) + '" aria-label="' + escHtml(word) + ' ' + escHtml(formLabels[fkey] || fkey) + ' \u2014 ' + escHtml(formVal) + '" lang="ja">' + escHtml(formVal) + '</button></td>';
             }
             h += '</tr>';
           }
@@ -620,9 +615,9 @@ var WakaruViews = (function () {
 
       function buildHtml() {
         var h = '';
-        h += '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">';
+        h += '<label class="search-wrap" aria-label="Cari di ' + escHtml(title) + '">';
         h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
-        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari verba atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '" value="' + esc(currentFilter) + '">';
+        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari verba atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + escHtml(title) + '" value="' + escHtml(currentFilter) + '">';
         h += '</label>';
         h += '<div id="conj-content">';
         h += buildTableContent();
@@ -632,7 +627,7 @@ var WakaruViews = (function () {
 
       container.innerHTML = buildHtml();
       focusContainer(container);
-      _current = { id: id, back: function () { return false; } };
+      WakaruNav.category = { id: id, back: function () { return false; } };
 
       function onClick(ev) {
         var t = ev.target;
@@ -658,7 +653,7 @@ var WakaruViews = (function () {
   }
 
   /* 5. partikel / kata-bantu - List + detail */
-  function renderDetailView(id, container) {
+  function renderDetailView(id, container, initialQuery) {
     if (!container) return;
     cleanHandlers(container);
     var info = getKategoriInfo(id);
@@ -669,13 +664,13 @@ var WakaruViews = (function () {
 
     function doRenderDetail() {
       var selected = null;
-      var currentFilter = '';
+      var currentFilter = (typeof initialQuery === 'string' && initialQuery) ? initialQuery : '';
       function buildList() {
         var filtered = filterItems(items, currentFilter);
         var h = '';
-        h += '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">';
+        h += '<label class="search-wrap" aria-label="Cari di ' + escHtml(title) + '">';
         h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
-        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari partikel atau fungsi\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '" value="' + esc(currentFilter) + '">';
+        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari partikel atau fungsi\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + escHtml(title) + '" value="' + escHtml(currentFilter) + '">';
         h += '</label>';
         h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
         if (filtered.length) {
@@ -689,17 +684,17 @@ var WakaruViews = (function () {
       function buildDetailRow(it, idxInFiltered, allItems) {
         var realIdx = -1;
         for (var k = 0; k < allItems.length; k++) if (allItems[k] === it) { realIdx = k; break; }
-        var row = '<button type="button" class="materi-item kamus-row" data-detail-idx="' + realIdx + '" aria-label="' + esc(it.partikel || it.kanji || it.kana) + '">';
+        var row = '<button type="button" class="materi-item kamus-row" data-detail-idx="' + realIdx + '" aria-label="' + escHtml(it.partikel || it.kanji || it.kana) + '">';
         if (id === 'partikel') {
-          row += '<span class="mi-kanji" lang="ja">' + esc(it.partikel) + '</span>';
-          row += '<span class="mi-body"><span class="mi-mean" lang="ja">' + esc(it.kana) + '</span>';
-          row += '<span class="mi-read">' + esc(it.fungsi) + '</span></span>';
+          row += '<span class="mi-kanji" lang="ja">' + escHtml(it.partikel) + '</span>';
+          row += '<span class="mi-body"><span class="mi-mean" lang="ja">' + escHtml(it.kana) + '</span>';
+          row += '<span class="mi-read">' + escHtml(it.fungsi) + '</span></span>';
         } else {
           var w = it.kanji || it.kana || '';
-          row += '<span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + esc(w) + '</span>';
-          row += '<span class="mi-vkana" lang="ja">' + esc(it.kana || '') + '</span></span>';
-          row += '<span class="mi-mean">' + esc(it.arti || '') + '</span>';
-          if (it.romaji) row += '<span class="mi-romaji">' + esc(it.romaji) + '</span>';
+          row += '<span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + escHtml(w) + '</span>';
+          row += '<span class="mi-vkana" lang="ja">' + escHtml(it.kana || '') + '</span></span>';
+          row += '<span class="mi-mean">' + escHtml(it.arti || '') + '</span>';
+          if (it.romaji) row += '<span class="mi-romaji">' + escHtml(it.romaji) + '</span>';
           row += '</span>';
         }
         row += '</button>';
@@ -710,26 +705,26 @@ var WakaruViews = (function () {
         var h = '';
         if (id === 'partikel') {
           h += '<div class="detail-hero">';
-          h += '<span class="detail-hero__char" lang="ja">' + esc(selected.partikel) + '</span>';
-          h += '<span class="detail-hero__kana" lang="ja">' + esc(selected.kana || '') + '</span>';
-          h += '<p class="detail-hero__fungsi">' + esc(selected.fungsi || '') + '</p>';
+          h += '<span class="detail-hero__char" lang="ja">' + escHtml(selected.partikel) + '</span>';
+          h += '<span class="detail-hero__kana" lang="ja">' + escHtml(selected.kana || '') + '</span>';
+          h += '<p class="detail-hero__fungsi">' + escHtml(selected.fungsi || '') + '</p>';
           h += '</div>';
           if (selected.contoh) {
             h += '<div class="section-block"><h2 class="section-title">Contoh</h2>';
-            h += '<div class="example-item"><div class="example-jp"><span lang="ja">' + esc(selected.contoh) + '</span>';
-            h += '<button type="button" class="audio-btn" data-speak="' + esc(selected.contoh) + '" aria-label="Dengarkan contoh"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button></div>';
-            if (selected.arti_contoh) h += '<span class="example-id">' + esc(selected.arti_contoh) + '</span>';
+            h += '<div class="example-item"><div class="example-jp"><span lang="ja">' + escHtml(selected.contoh) + '</span>';
+            h += '<button type="button" class="audio-btn" data-speak="' + escHtml(selected.contoh) + '" aria-label="Dengarkan contoh"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button></div>';
+            if (selected.arti_contoh) h += '<span class="example-id">' + escHtml(selected.arti_contoh) + '</span>';
             h += '</div></div>';
           }
         } else {
           var w2 = selected.kanji || selected.kana || '';
           h += '<div class="detail-hero">';
-          h += '<span class="detail-hero__char" lang="ja">' + esc(w2) + '</span>';
-          if (selected.kana && selected.kana !== w2) h += '<span class="detail-hero__kana" lang="ja">' + esc(selected.kana) + '</span>';
-          h += '<p class="detail-hero__fungsi">' + esc(selected.arti || '') + '</p>';
-          if (selected.romaji) h += '<p class="detail-hero__romaji">' + esc(selected.romaji) + '</p>';
+          h += '<span class="detail-hero__char" lang="ja">' + escHtml(w2) + '</span>';
+          if (selected.kana && selected.kana !== w2) h += '<span class="detail-hero__kana" lang="ja">' + escHtml(selected.kana) + '</span>';
+          h += '<p class="detail-hero__fungsi">' + escHtml(selected.arti || '') + '</p>';
+          if (selected.romaji) h += '<p class="detail-hero__romaji">' + escHtml(selected.romaji) + '</p>';
           if (selected.kana) {
-            h += '<button type="button" class="audio-btn detail-hero__audio" data-speak="' + esc(selected.kana) + '" aria-label="Dengarkan ' + esc(selected.kana) + '"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
+            h += '<button type="button" class="audio-btn detail-hero__audio" data-speak="' + escHtml(selected.kana) + '" aria-label="Dengarkan ' + escHtml(selected.kana) + '"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
           }
           h += '</div>';
         }
@@ -739,7 +734,7 @@ var WakaruViews = (function () {
       function refresh() {
         if (selected) container.innerHTML = buildDetail();
         else container.innerHTML = buildList();
-        _current = {
+        WakaruNav.category = {
           id: id,
           back: function () {
             if (selected) {
@@ -800,7 +795,7 @@ var WakaruViews = (function () {
   }
 
   /* 6. kanji - Grid/list toggle + search */
-  function renderKanjiView(container) {
+  function renderKanjiView(container, initialQuery) {
     if (!container) return;
     cleanHandlers(container);
     var info = getKategoriInfo('kanji');
@@ -811,7 +806,7 @@ var WakaruViews = (function () {
 
     function doRenderKanji() {
       var viewMode = 'grid';
-      var currentFilter = '';
+      var currentFilter = (typeof initialQuery === 'string' && initialQuery) ? initialQuery : '';
 
       function filtered() { return filterItems(items, currentFilter); }
 
@@ -823,19 +818,19 @@ var WakaruViews = (function () {
         h += '<button type="button" class="kanji-toggle__btn' + (viewMode === 'grid' ? ' is-active' : '') + '" data-kanji-mode="grid" aria-pressed="' + (viewMode === 'grid' ? 'true' : 'false') + '" aria-label="Tampilan grid">Grid</button>';
         h += '<button type="button" class="kanji-toggle__btn' + (viewMode === 'list' ? ' is-active' : '') + '" data-kanji-mode="list" aria-pressed="' + (viewMode === 'list' ? 'true' : 'false') + '" aria-label="Tampilan list">List</button>';
         h += '</div>';
-        h += '<span class="kanji-controls__hint">' + esc(filt.length ? filt.length + ' entri' : 'Tidak ada hasil') + '</span>';
+        h += '<span class="kanji-controls__hint">' + escHtml(filt.length ? filt.length + ' entri' : 'Tidak ada hasil') + '</span>';
         h += '</div>';
         h += '<label class="search-wrap" aria-label="Cari kanji">';
         h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
-        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kanji, bacaan, atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari kanji" value="' + esc(currentFilter) + '">';
+        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kanji, bacaan, atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari kanji" value="' + escHtml(currentFilter) + '">';
         h += '</label>';
         if (viewMode === 'grid') {
           h += '<div id="kategori-list" class="kanji-grid" role="list" aria-label="Grid kanji" aria-live="polite">';
           if (filt.length) {
             for (var i = 0; i < filt.length; i++) {
               var it = filt[i];
-              h += '<button type="button" class="kanji-grid__cell" data-kanji-char="' + esc(it.kanji) + '" role="listitem" aria-label="Kanji ' + esc(it.kanji) + '">';
-              h += '<span class="kanji-grid__char" lang="ja">' + esc(it.kanji) + '</span>';
+              h += '<button type="button" class="kanji-grid__cell" data-kanji-char="' + escHtml(it.kanji) + '" role="listitem" aria-label="Kanji ' + escHtml(it.kanji) + '">';
+              h += '<span class="kanji-grid__char" lang="ja">' + escHtml(it.kanji) + '</span>';
               h += '</button>';
             }
           }
@@ -853,7 +848,7 @@ var WakaruViews = (function () {
 
       container.innerHTML = buildHtml();
       focusContainer(container);
-      _current = { id: 'kanji', back: function () { return false; } };
+      WakaruNav.category = { id: 'kanji', back: function () { return false; } };
 
       function onClick(ev) {
         var t = ev.target;
@@ -890,7 +885,7 @@ var WakaruViews = (function () {
             if (!filt.length) listEl.innerHTML = '';
             else {
               var parts = [];
-              for (var i = 0; i < filt.length; i++) parts.push('<button type="button" class="kanji-grid__cell" data-kanji-char="' + esc(filt[i].kanji) + '" role="listitem" aria-label="Kanji ' + esc(filt[i].kanji) + '"><span class="kanji-grid__char" lang="ja">' + esc(filt[i].kanji) + '</span></button>');
+              for (var i = 0; i < filt.length; i++) parts.push('<button type="button" class="kanji-grid__cell" data-kanji-char="' + escHtml(filt[i].kanji) + '" role="listitem" aria-label="Kanji ' + escHtml(filt[i].kanji) + '"><span class="kanji-grid__char" lang="ja">' + escHtml(filt[i].kanji) + '</span></button>');
               listEl.innerHTML = parts.join('');
             }
           } else {
@@ -914,20 +909,20 @@ var WakaruViews = (function () {
     }
   }
 
-  function renderKategoriView(id, container) {
+  function renderKategoriView(id, container, initialQuery) {
     if (!container) return;
-    _current = null;
+    WakaruNav.category = null;
     if (id === 'hiragana' || id === 'katakana') return renderKanaView(id, container);
-    if (id === 'kosakata') return renderKosakataView(container);
-    if (id === 'grammar') return renderGrammarView(container);
-    if (id === 'kata-kerja' || id === 'kata-sifat') return renderConjugationView(id, container);
-    if (id === 'partikel' || id === 'kata-bantu') return renderDetailView(id, container);
-    if (id === 'kanji') return renderKanjiView(container);
+    if (id === 'kosakata') return renderKosakataView(container, initialQuery);
+    if (id === 'grammar') return renderGrammarView(container, initialQuery);
+    if (id === 'kata-kerja' || id === 'kata-sifat') return renderConjugationView(id, container, initialQuery);
+    if (id === 'partikel' || id === 'kata-bantu') return renderDetailView(id, container, initialQuery);
+    if (id === 'kanji') return renderKanjiView(container, initialQuery);
     if (typeof console !== 'undefined' && console.warn) console.warn('WakaruViews: no renderer for kategori "' + id + '"');
   }
 
   return {
     renderKategoriView: renderKategoriView,
-    handleBack: function () { return _current && typeof _current.back === 'function' ? _current.back() : false; }
+    handleBack: function () { return WakaruNav.category && typeof WakaruNav.category.back === 'function' ? WakaruNav.category.back() : false; }
   };
 })();
