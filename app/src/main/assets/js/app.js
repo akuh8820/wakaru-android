@@ -1,27 +1,21 @@
-var currentPage = 'kamus';
+WakaruNav.page = 'kamus';
 var _kanjiReturnFromSearch = false;
 
-// honey: L3 — "Lihat semua" in search results drops the query because
-// openKategori() (index.html) has no query param and clearSearchState()
-// runs before it. Fix requires index.html change to pass the query + views.js
-// to accept initial filter. Deferred — needs coordinated change across files.
+// honey: L3 — "Lihat semua" in search results now carries query via
+// openKategori(id, currentQuery) in index.html + views.js.
 
 var _quizState = {};
 var _flashState = {};
 
 // ── Helpers ───────────────────────────────────────────────────────
 
-function escHtml(s) {
-  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
 var WakaruAudio = {
   speak: function (text) {
     try {
-      if (typeof Android !== 'undefined' && Android && Android.speakJapanese) {
-        Android.speakJapanese(String(text || ''));
+      if (window.WakaruBridge && window.WakaruBridge.postMessage) {
+        window.WakaruBridge.postMessage('speak:' + String(text || ''));
       }
-    } catch (e) { /* silent fallback for browser testing */ }
+    } catch (e) {}
   }
 };
 
@@ -88,13 +82,13 @@ function openSettings() {
   // store previous view reference for back navigation
   if (appView && !appView.hidden) _settingsPrevView = 'app';
   else _settingsPrevView = 'kamus';
-  // also remember logical page so we can restore currentPage
-  try { settingsView.dataset.prevPage = currentPage; } catch (e2) {}
+  // also remember logical page so we can restore WakaruNav.page
+  try { settingsView.dataset.prevPage = WakaruNav.page; } catch (e2) {}
   if (kamusView) kamusView.hidden = true;
   if (appView) appView.hidden = true;
   settingsView.hidden = false;
   settingsView.removeAttribute('hidden');
-  currentPage = 'settings';
+  WakaruNav.page = 'settings';
   updateThemePickerActive(_themeMode);
   try { settingsView.focus(); } catch (e3) {}
 }
@@ -110,11 +104,11 @@ function closeSettings() {
   if (_settingsPrevView === 'app' && appView) {
     appView.hidden = false;
     if (kamusView) kamusView.hidden = true;
-    currentPage = prevPage || currentPage;
-    if (currentPage === 'settings') currentPage = 'kamus';
+    WakaruNav.page = prevPage || WakaruNav.page;
+    if (WakaruNav.page === 'settings') WakaruNav.page = 'kamus';
     // if appView is empty (edge case), fallback to kamus grid
     if (!appView.innerHTML || appView.innerHTML.trim() === '') {
-      currentPage = 'kamus';
+      WakaruNav.page = 'kamus';
       if (kamusView) kamusView.hidden = false;
       appView.hidden = true;
     } else {
@@ -123,7 +117,7 @@ function closeSettings() {
   } else {
     if (kamusView) kamusView.hidden = false;
     if (appView) appView.hidden = true;
-    currentPage = 'kamus';
+    WakaruNav.page = 'kamus';
   }
 }
 
@@ -155,7 +149,7 @@ function init() {
         var kamusView = document.getElementById('kamus-view');
         if (main) main.hidden = true;
         if (kamusView) kamusView.hidden = false;
-        currentPage = 'kamus';
+        WakaruNav.page = 'kamus';
         window.WakaruKamus.openKategori('kosakata');
         return;
       }
@@ -263,15 +257,24 @@ function openKanjiDetail(char) {
   if (searchResults && !searchResults.hidden) _kanjiReturnFromSearch = true;
   var kanji = WakaruData.getKanji(char);
   if (!kanji) return;
-  currentPage = 'kanji:' + char;
-  var strokes = WakaruData.getStrokes(char);
-  var detailData = WakaruData.getKanjiDetail(char);
+  WakaruNav.page = 'kanji:' + char;
   var main = document.getElementById('app-view');
   var kamusView = document.getElementById('kamus-view');
   if (kamusView) kamusView.hidden = true;
   if (main) main.hidden = false;
   if (!main) return;
-  renderKanjiDetail(kanji, strokes, detailData);
+  main.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
+  Promise.all([
+    WakaruData.loadStrokes(),
+    WakaruData.loadKanjiDetail()
+  ]).then(function (results) {
+    var strokes = results[0] ? results[0][char] : undefined;
+    var detailData = results[1] ? results[1][char] || null : null;
+    renderKanjiDetail(kanji, strokes, detailData);
+  }, function (err) {
+    console.error('Failed to load kanji detail:', err);
+    main.innerHTML = '<div class="empty-state" role="status"><p class="empty-state__title">Gagal memuat</p><p class="empty-state__msg">Tidak dapat memuat detail kanji. Coba lagi nanti.</p></div>';
+  });
 }
 
 function renderKanjiDetail(kanji, strokes, detail) {
@@ -366,8 +369,7 @@ function renderKanjiDetail(kanji, strokes, detail) {
   }
 
   // Related vocab — use curated detail.related data
-  var detailData = WakaruData.getKanjiDetail && WakaruData.getKanjiDetail(kanji.kanji);
-  var related = (detailData && detailData.related) || [];
+  var related = (detail && detail.related) || [];
   if (related.length > 0) {
     html += '<div class="section-block"><h2 class="section-title">Kosakata Terkait</h2><div class="related-list">';
     related.forEach(function (r) {
@@ -392,7 +394,7 @@ function renderKanjiDetail(kanji, strokes, detail) {
 // ── Quiz mode ─────────────────────────────────────────────────────
 
 function openQuiz() {
-  currentPage = 'quiz';
+  WakaruNav.page = 'quiz';
   _quizState = {};
   renderQuizSetup();
 }
@@ -493,7 +495,7 @@ function generateKosakataQuiz(count) {
 function startQuiz(type, count) {
   var questions = type === 'kanji' ? generateKanjiQuiz(count) : generateKosakataQuiz(count);
   if (questions.length === 0) return;
-  currentPage = 'quiz';
+  WakaruNav.page = 'quiz';
   _quizState = {
     type: type,
     count: questions.length,
@@ -567,7 +569,7 @@ function renderQuizQuestion() {
     allBtns2.forEach(function (b) { b.disabled = true; });
     var delay = isCorrect ? 600 : 900;
     s._advanceTimer = setTimeout(function () {
-      if (currentPage !== 'quiz') return;
+      if (WakaruNav.page !== 'quiz') return;
       s.idx++;
       renderQuizQuestion();
     }, delay);
@@ -615,7 +617,7 @@ function renderQuizResult() {
 // ── Flashcard mode ────────────────────────────────────────────────
 
 function openFlash() {
-  currentPage = 'flash';
+  WakaruNav.page = 'flash';
   var saved = loadFlashSession();
   if (saved && saved.mode) {
     var items = WakaruData.getByKategori(saved.mode);
@@ -685,7 +687,7 @@ function startFlash(mode, shuffle, autoPlay) {
   if (!items || items.length === 0) return;
   items = items.slice();
   if (shuffle) shuffleArray(items);
-  currentPage = 'flash';
+  WakaruNav.page = 'flash';
   _flashState = { mode: mode, items: items, idx: 0, showBack: false, seenIds: {}, autoPlay: autoPlay };
   saveFlashSession(mode, 0);
   renderFlashCard();
@@ -840,9 +842,9 @@ function wakaruGoBack() {
     closeSettings();
     return 'true';
   }
-  if (currentPage === 'kamus') return 'false';
-  if (currentPage.indexOf('kanji:') === 0) {
-    currentPage = 'kamus';
+  if (WakaruNav.page === 'kamus') return 'false';
+  if (WakaruNav.page.indexOf('kanji:') === 0) {
+    WakaruNav.page = 'kamus';
     var appView = document.getElementById('app-view');
     if (appView) appView.hidden = true;
     var kamusView = document.getElementById('kamus-view');
@@ -856,11 +858,11 @@ function wakaruGoBack() {
     }
     return 'true';
   }
-  if (currentPage === 'quiz' || currentPage === 'flash') {
-    if (currentPage === 'flash' && _flashState && _flashState.mode) {
+  if (WakaruNav.page === 'quiz' || WakaruNav.page === 'flash') {
+    if (WakaruNav.page === 'flash' && _flashState && _flashState.mode) {
       saveFlashSession(_flashState.mode, _flashState.idx);
     }
-    currentPage = 'kamus';
+    WakaruNav.page = 'kamus';
     var appView = document.getElementById('app-view');
     if (appView) appView.hidden = true;
     var kamusView = document.getElementById('kamus-view');
@@ -872,5 +874,19 @@ function wakaruGoBack() {
   }
   return 'false';
 }
+
+// Bridge version request
+try {
+  if (window.WakaruBridge && window.WakaruBridge.postMessage) {
+    window.WakaruBridge.postMessage('getVersion');
+  }
+  if (window.WakaruBridge) {
+    window.WakaruBridge.onmessage = function (e) {
+      var v = e.data;
+      var el = document.getElementById('settings-version');
+      if (el && v) el.textContent = 'Versi ' + v;
+    };
+  }
+} catch (e) {}
 
 init();

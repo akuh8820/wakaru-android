@@ -134,7 +134,7 @@
       <p class="settings-section__title">Tentang</p>
       <div class="settings-about">
         <p class="settings-about__name">Wakaru</p>
-        <p class="settings-about__version">Versi 3.2.1</p> <!-- TODO: inject from BuildConfig.VERSION_NAME via bridge -->
+        <p class="settings-about__version"><span id="settings-version">Versi 3.2.1</span></p>
         <p class="settings-about__desc">Kamus JLPT N5 offline untuk belajar bahasa Jepang</p>
       </div>
     </div>
@@ -207,7 +207,7 @@
       if (document.activeElement && document.activeElement.blur) { try { document.activeElement.blur(); } catch (e) {} }
     }
 
-    function openKategori(id) {
+    function openKategori(id, initialQuery) {
       currentCategory = id;
       if (grid) grid.hidden = true;
       if (homeActions) homeActions.hidden = true;
@@ -216,7 +216,7 @@
       if (kategoriView) {
         kategoriView.hidden = false;
         if (window.WakaruViews && typeof window.WakaruViews.renderKategoriView === 'function') {
-          window.WakaruViews.renderKategoriView(id, kategoriView);
+          window.WakaruViews.renderKategoriView(id, kategoriView, initialQuery);
         } else {
           kategoriView.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
         }
@@ -439,8 +439,9 @@
         if (katBtn && homeSearchResults.contains(katBtn)) {
           var kat = katBtn.getAttribute('data-search-kategori');
           if (kat) {
+            var query = homeSearch ? homeSearch.value.trim() : '';
             clearSearchState();
-            openKategori(kat);
+            openKategori(kat, query);
           }
           return;
         }

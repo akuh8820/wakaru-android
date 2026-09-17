@@ -1,3 +1,10 @@
+window.WakaruNav = { page: 'kamus', category: null };
+window.escHtml = function (s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+};
+
 /**
  * WakaruData — data layer for the Wakaru Japanese-learning app.
  *
@@ -96,9 +103,7 @@ var WakaruData = (function () {
       fetchJSON(base + 'partikel.json'),
       fetchJSON(base + 'kata_bantu.json'),
       fetchJSON(base + 'conjugation_verb.json'),
-      fetchJSON(base + 'conjugation_adj.json'),
-      fetchJSON(base + 'kanji-detail.json'),
-      fetchJSON(base + 'strokes.json')
+      fetchJSON(base + 'conjugation_adj.json')
     ]).then(function (r) {
       DATA.hiragana = r[0];
       DATA.katakana = r[1];
@@ -109,8 +114,6 @@ var WakaruData = (function () {
       DATA.kataBantu = r[6];
       DATA.conjugationVerb = r[7];
       DATA.conjugationAdj = r[8];
-      DATA.kanjiDetail = r[9];
-      DATA.strokes = r[10];
       LOADED = true;
       _loading = null;
       return DATA;
@@ -198,14 +201,49 @@ var WakaruData = (function () {
     return undefined;
   }
 
+  // ── Lazy-loaded data (kanji-detail, strokes) ─────────────────────
+
+  var _strokesData = null;
+  var _strokesPromise = null;
+  var _kanjiDetailData = null;
+  var _kanjiDetailPromise = null;
+
   function getStrokes(char) {
-    if (!DATA.strokes) return undefined;
-    return DATA.strokes[char];
+    if (!_strokesData) return undefined;
+    return _strokesData[char];
   }
 
   function getKanjiDetail(char) {
-    if (!DATA.kanjiDetail) return null;
-    return DATA.kanjiDetail[char] || null;
+    if (!_kanjiDetailData) return null;
+    return _kanjiDetailData[char] || null;
+  }
+
+  function loadStrokes() {
+    if (_strokesData) return Promise.resolve(_strokesData);
+    if (_strokesPromise) return _strokesPromise;
+    _strokesPromise = fetchJSON('data/n5/strokes.json').then(function (data) {
+      _strokesData = data;
+      _strokesPromise = null;
+      return data;
+    }, function (err) {
+      _strokesPromise = null;
+      throw err;
+    });
+    return _strokesPromise;
+  }
+
+  function loadKanjiDetail() {
+    if (_kanjiDetailData) return Promise.resolve(_kanjiDetailData);
+    if (_kanjiDetailPromise) return _kanjiDetailPromise;
+    _kanjiDetailPromise = fetchJSON('data/n5/kanji-detail.json').then(function (data) {
+      _kanjiDetailData = data;
+      _kanjiDetailPromise = null;
+      return data;
+    }, function (err) {
+      _kanjiDetailPromise = null;
+      throw err;
+    });
+    return _kanjiDetailPromise;
   }
 
   function search(query, kategoriId) {
@@ -246,6 +284,8 @@ var WakaruData = (function () {
     getKanji: getKanji,
     getStrokes: getStrokes,
     getKanjiDetail: getKanjiDetail,
+    loadStrokes: loadStrokes,
+    loadKanjiDetail: loadKanjiDetail,
     search: search
   };
 })();
