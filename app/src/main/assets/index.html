@@ -7,7 +7,7 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#181A18">
   <title>Wakaru — Belajar Bahasa Jepang</title>
   <link rel="stylesheet" href="css/style.css">
-  <script>(function(){try{var m=localStorage.getItem('wakaru-theme-mode');var t=m==='dark'?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script>(function(){try{var m=localStorage.getItem('wakaru-theme-mode');if(m!=='dark'&&m!=='light')m=localStorage.getItem('wakaru-theme');var t=m==='dark'?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
 <body>
   <header>
@@ -112,22 +112,6 @@
       </button>
     </div>
 
-    <div id="kamus-list-view" class="kamus-list-view" hidden>
-      <div class="page-header kamus-list-header">
-        <span id="kamus-list-title" class="page-header__level">Kamus</span>
-      </div>
-      <label class="search-wrap" aria-label="Cari di kamus">
-        <span class="search-wrap__icon" aria-hidden="true">⌕</span>
-        <input id="kamus-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari di kamus">
-      </label>
-      <div id="kamus-count" class="level-count" aria-live="polite"></div>
-      <div id="kamus-item-list" class="materi-list kamus-item-list" aria-live="polite"></div>
-      <div id="kamus-empty" class="empty-state" hidden>
-        <p class="empty-state__title">Tidak ditemukan</p>
-        <p class="empty-state__msg">Coba kata kunci lain.</p>
-      </div>
-    </div>
-
     <div id="kategori-view" hidden tabindex="-1"></div>
   </section>
 
@@ -150,7 +134,7 @@
       <p class="settings-section__title">Tentang</p>
       <div class="settings-about">
         <p class="settings-about__name">Wakaru</p>
-        <p class="settings-about__version">Versi 3.1</p> <!-- TODO: inject from BuildConfig.VERSION_NAME via bridge -->
+        <p class="settings-about__version">Versi 3.2</p> <!-- TODO: inject from BuildConfig.VERSION_NAME via bridge -->
         <p class="settings-about__desc">Kamus JLPT N5 offline untuk belajar bahasa Jepang</p>
       </div>
     </div>
@@ -176,7 +160,6 @@
     var kamusView = document.getElementById('kamus-view');
     var grid = document.getElementById('kamus-category-grid');
     var kategoriView = document.getElementById('kategori-view');
-    var listView = document.getElementById('kamus-list-view');
     var homeSearch = document.getElementById('home-search');
     var homeSearchWrap = document.getElementById('home-search-wrap');
     var homeSearchResults = document.getElementById('home-search-results');
@@ -196,7 +179,7 @@
         kategoriMap[list[i].id] = list[i];
       }
       document.querySelectorAll('.kamus-card').forEach(function (btn) {
-        var id = btn.dataset ? btn.dataset.kamusCategory : btn.getAttribute('data-' + 'kamus-category');
+        var id = btn.dataset ? btn.dataset.kamusCategory : btn.getAttribute('data-kamus-category');
         var info = kategoriMap[id];
         if (info && typeof info.count === 'number') {
           var meta = btn.querySelector('.kamus-card__meta');
@@ -221,7 +204,6 @@
       if (homeSearch) { homeSearch.setAttribute('aria-expanded', 'false'); }
       if (homeSearchClear) homeSearchClear.hidden = !homeSearch || !homeSearch.value;
       if (kategoriView) { kategoriView.hidden = true; kategoriView.innerHTML = ''; }
-      if (listView) listView.hidden = true;
       if (document.activeElement && document.activeElement.blur) { try { document.activeElement.blur(); } catch (e) {} }
     }
 
@@ -231,7 +213,6 @@
       if (homeActions) homeActions.hidden = true;
       if (homeSearchResults) { homeSearchResults.hidden = true; homeSearchResults.innerHTML = ''; }
       if (homeSearchWrap) homeSearchWrap.hidden = true;
-      if (listView) listView.hidden = true;
       if (kategoriView) {
         kategoriView.hidden = false;
         if (window.WakaruViews && typeof window.WakaruViews.renderKategoriView === 'function') {
@@ -246,7 +227,7 @@
 
     document.querySelectorAll('.kamus-card').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        var id = btn.dataset ? btn.dataset.kamusCategory : btn.getAttribute('data-' + 'kamus-category');
+        var id = btn.dataset ? btn.dataset.kamusCategory : btn.getAttribute('data-kamus-category');
         if (id) openKategori(id);
       });
     });

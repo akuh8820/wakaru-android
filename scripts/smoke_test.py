@@ -186,18 +186,37 @@ try:
     html = open(html_path, encoding='utf-8').read()
     required_ids = ['kamus-view', 'kamus-category-grid', 'kategori-view',
                     'app-view', 'home-search', 'home-search-results',
-                    'kamus-list-view']
+                    'settings-btn']
     missing_ids = [i for i in required_ids if f'id="{i}"' not in html]
     if missing_ids:
         fail(f'index.html: missing element IDs: {missing_ids}')
     else:
         ok('index.html: all required element IDs present')
+    if 'class="theme-picker"' in html:
+        ok('index.html: theme-picker present')
+    else:
+        fail('index.html: missing theme-picker')
     if 'data-theme' in html:
         ok('index.html: data-theme attribute present')
     else:
         fail('index.html: no data-theme attribute')
+    if 'handleBack' in html:
+        ok('index.html: handleBack contract present')
+    else:
+        fail('index.html: missing handleBack contract')
 except Exception as e:
     fail(f'index.html: {e}')
+
+# ── views.js handleBack contract ──────────────────────────────────
+views_path = os.path.join(ASSETS, 'js', 'views.js')
+try:
+    views_js = open(views_path, encoding='utf-8').read()
+    if 'handleBack' in views_js:
+        ok('views.js: handleBack contract present')
+    else:
+        fail('views.js: missing handleBack contract')
+except Exception as e:
+    fail(f'views.js: {e}')
 
 # ── JS syntax check ────────────────────────────────────────────────
 for js in ['data.js', 'views.js', 'app.js']:

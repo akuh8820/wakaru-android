@@ -151,13 +151,13 @@ function init() {
     if (relatedItem && relatedItem.getAttribute('data-type') === 'kosakata') {
       var stableId = relatedItem.getAttribute('data-id');
       if (stableId && window.WakaruKamus && window.WakaruKamus.openKategori) {
-        var all = WakaruData.getByKategori('kosakata');
-        for (var i = 0; i < all.length; i++) {
-          if (vocabStableId(all[i]) === stableId) {
-            window.WakaruKamus.openKategori('kosakata');
-            return;
-          }
-        }
+        var main = document.getElementById('app-view');
+        var kamusView = document.getElementById('kamus-view');
+        if (main) main.hidden = true;
+        if (kamusView) kamusView.hidden = false;
+        currentPage = 'kamus';
+        window.WakaruKamus.openKategori('kosakata');
+        return;
       }
     }
   });
@@ -261,9 +261,9 @@ function openKanjiDetail(char) {
   _kanjiReturnFromSearch = false;
   var searchResults = document.getElementById('home-search-results');
   if (searchResults && !searchResults.hidden) _kanjiReturnFromSearch = true;
-  currentPage = 'kanji:' + char;
   var kanji = WakaruData.getKanji(char);
   if (!kanji) return;
+  currentPage = 'kanji:' + char;
   var strokes = WakaruData.getStrokes(char);
   var detailData = WakaruData.getKanjiDetail(char);
   var main = document.getElementById('app-view');
@@ -285,7 +285,7 @@ function renderKanjiDetail(kanji, strokes, detail) {
     '<div class="kanji-hero">' +
       '<span class="kanji-hero__glyph" lang="ja">' + escHtml(kanji.kanji) + '</span>' +
       '<p class="kanji-hero__meanings">' + escHtml(meanings) + '</p>' +
-      (strokeCount ? '<span class="kanji-hero__meta">' + strokeCount + ' goresan</span>' : '') +
+      (strokeCount ? '<span class="kanji-hero__meta">' + escHtml(strokeCount) + ' goresan</span>' : '') +
     '</div>';
 
   // Stroke order section
@@ -616,6 +616,24 @@ function renderQuizResult() {
 
 function openFlash() {
   currentPage = 'flash';
+  var saved = loadFlashSession();
+  if (saved && saved.mode) {
+    var items = WakaruData.getByKategori(saved.mode);
+    if (items && items.length > 0) {
+      items = items.slice();
+      _flashState = {
+        mode: saved.mode,
+        items: items,
+        idx: Math.min(saved.idx || 0, items.length - 1),
+        showBack: false,
+        seenIds: {},
+        autoPlay: true
+      };
+      try { _flashState.autoPlay = localStorage.getItem('wakaru-flash-autoplay') !== 'off'; } catch (e) {}
+      renderFlashCard();
+      return;
+    }
+  }
   _flashState = {};
   renderFlashSetup();
 }
@@ -801,6 +819,15 @@ function renderFlashComplete() {
 function saveFlashSession(mode, idx) {
   try { localStorage.setItem('wakaru-flash-session', JSON.stringify({ mode: mode, idx: idx })); } catch (e) {}
 }
+function loadFlashSession() {
+  try {
+    var raw = localStorage.getItem('wakaru-flash-session');
+    if (!raw) return null;
+    var parsed = JSON.parse(raw);
+    if (parsed && typeof parsed.mode === 'string' && typeof parsed.idx === 'number') return parsed;
+  } catch (e) {}
+  return null;
+}
 function clearFlashSession() {
   try { localStorage.removeItem('wakaru-flash-session'); } catch (e) {}
 }
@@ -813,12 +840,9 @@ function wakaruGoBack() {
     closeSettings();
     return 'true';
   }
-  if (currentPage === 'settings') {
-    closeSettings();
-    return 'true';
-  }
   if (currentPage === 'kamus') return 'false';
   if (currentPage.indexOf('kanji:') === 0) {
+    currentPage = 'kamus';
     var appView = document.getElementById('app-view');
     if (appView) appView.hidden = true;
     var kamusView = document.getElementById('kamus-view');
@@ -836,6 +860,7 @@ function wakaruGoBack() {
     if (currentPage === 'flash' && _flashState && _flashState.mode) {
       saveFlashSession(_flashState.mode, _flashState.idx);
     }
+    currentPage = 'kamus';
     var appView = document.getElementById('app-view');
     if (appView) appView.hidden = true;
     var kamusView = document.getElementById('kamus-view');
