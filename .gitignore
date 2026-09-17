@@ -9,3 +9,4 @@ apk-extract/
 build/
 .gradle/
 local.properties
+tasks/

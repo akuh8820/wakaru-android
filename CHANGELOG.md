@@ -3,8 +3,7 @@
 ## v3.1 — 2026-09-15
 
 ### Fitur
-- Halaman Pengaturan (gear icon di header): pilih tema Terang/Gelap/Sistem (segmented control), Tentang (nama, versi, deskripsi), Lisensi data (kanji-data MIT, KanjiVG CC BY-SA 3.0, OpenJLPT CC BY, jepang.org/jlptsensei.com)
-- Mode tema "Sistem": mengikuti preferensi OS, update otomatis saat OS berubah
+- Halaman Pengaturan (gear icon di header): pilih tema Terang/Gelap (segmented control), Tentang (nama, versi, deskripsi), Lisensi data (kanji-data MIT, KanjiVG CC BY-SA 3.0, OpenJLPT CC BY, jepang.org/jlptsensei.com)
 
 ### Data
 - Kanji detail lengkap: 79 → 117 kanji (38 kanji baru dengan contoh kalimat N5 + kosakata terkait)
@@ -121,7 +120,7 @@
 
 ### Design
 - TypeUI Minimal design system (sage green #5B7B5A, surface #F4F4F1, Inter + Noto Sans JP + Inconsolata)
-- App icon AI-generated: kanji 分 putih di sage green (adaptive icon + round icon)
+- App icon: kanji 分 putih di sage green (adaptive icon + round icon)
 - Light/dark theme dengan token system lengkap
 - WCAG AA contrast, touch targets ≥44px, prefers-reduced-motion
 

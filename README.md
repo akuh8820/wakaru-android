@@ -13,7 +13,7 @@ App belajar bahasa Jepang untuk Android.
 - **Quiz**: 9 kategori, distractor dari data nyata, skor, dan review jawaban salah
 - **Flashcard**: 9 mode sesuai kategori, flip card, shuffle, audio, lanjut session
 - **Audio TTS**: speakJapanese via Android bridge untuk pengucapan (kosa, kanji, kana, bunpou)
-- **Tema Light / Dark / Sistem** (pilih di halaman Pengaturan)
+- **Tema Light / Dark** (pilih di halaman Pengaturan)
 - **Offline** — semua konten lokal, tidak perlu internet
 
 ## Download
