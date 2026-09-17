@@ -6,6 +6,8 @@
 var WakaruViews = (function () {
   'use strict';
 
+  var _current = null;
+
   function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
   function getKategoriInfo(id) {
@@ -209,15 +211,6 @@ var WakaruViews = (function () {
         }
       }
       var h = '';
-      h += '<div class="page-header kategori-view__header">';
-      h += '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke kategori">← Kembali</button>';
-      h += '<div class="kana-toggle" role="group" aria-label="Pilih kana">';
-      h += '<button type="button" class="kana-toggle__btn' + (isHira ? ' is-active' : '') + '" data-kana="hiragana" aria-label="Tampilkan Hiragana" aria-pressed="' + (isHira ? 'true' : 'false') + '">Hiragana</button>';
-      h += '<button type="button" class="kana-toggle__btn' + (!isHira ? ' is-active' : '') + '" data-kana="katakana" aria-label="Tampilkan Katakana" aria-pressed="' + (!isHira ? 'true' : 'false') + '">Katakana</button>';
-      h += '</div>';
-      h += '<span class="page-header__level">' + esc(title) + '</span>';
-      h += '</div>';
-      h += '<div class="level-count" id="kategori-count" aria-live="polite">' + data.length + ' kana</div>';
       h += '<div class="gojuon" role="list" aria-label="' + esc(title) + ' gojuon">';
       for (var ri = 0; ri < order.length; ri++) {
         var rowKey = order[ri];
@@ -239,6 +232,7 @@ var WakaruViews = (function () {
       h += '<p class="gj-hint">Ketuk kana untuk melihat romaji dan mendengar pelafalan.</p>';
       container.innerHTML = h;
       focusContainer(container);
+      _current = { id: id, back: function () { return false; } };
 
       function onClick(ev) {
         var t = ev.target;
@@ -251,18 +245,6 @@ var WakaruViews = (function () {
           if (!wasActive) cell.className += ' is-active';
           if (ch) speak(ch);
           return;
-        }
-        var toggle = t.closest ? t.closest('[data-kana]') : null;
-        if (toggle && container.contains(toggle)) {
-          var nk = toggle.getAttribute('data-kana');
-          if (nk && nk !== id) {
-            renderKanaView(nk, container);
-          }
-          return;
-        }
-        var back = t.closest ? t.closest('#kategori-back-btn') : null;
-        if (back) {
-          if (window.WakaruKamus && window.WakaruKamus.showGrid) window.WakaruKamus.showGrid();
         }
       }
       bindHandlers(container, onClick, null);
@@ -309,11 +291,6 @@ var WakaruViews = (function () {
 
     function buildCards() {
       var h = '';
-      h += '<div class="page-header kategori-view__header">';
-      h += '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke kategori">← Kembali</button>';
-      h += '<span class="page-header__level">' + esc(title) + '</span>';
-      h += '</div>';
-      h += '<div class="level-count" aria-live="polite">' + topics.length + ' topik · ' + getTotalWords() + ' kata</div>';
       h += '<div class="topic-grid" role="list" aria-label="Topik kosakata">';
       for (var i = 0; i < topics.length; i++) {
         var t = topics[i];
@@ -341,15 +318,10 @@ var WakaruViews = (function () {
       try { items = (typeof WakaruData !== 'undefined' && WakaruData.getKosakataByTopic) ? WakaruData.getKosakataByTopic(currentTopic) : []; } catch (e) { items = []; }
       var filtered = filterItems(items, currentFilter);
       var h = '';
-      h += '<div class="page-header kategori-view__header">';
-      h += '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke topik">← Kembali</button>';
-      h += '<span class="page-header__level">' + esc(currentTopic) + '</span>';
-      h += '</div>';
-      h += '<label class="search-wrap" aria-label="Cari di ' + esc(currentTopic) + '">';
+      h += '<label class="search-wrap" aria-label="Cari di ' + esc(currentTopic) + '">';;
       h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
       h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(currentTopic) + '" value="' + esc(currentFilter) + '">';
       h += '</label>';
-      h += '<div class="level-count" id="kategori-count" aria-live="polite">' + (filtered.length ? filtered.length + ' entri' : 'Tidak ada hasil') + '</div>';
       h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
       if (filtered.length) {
         for (var i = 0; i < filtered.length; i++) h += buildRow(filtered[i], 'kosakata');
@@ -364,6 +336,18 @@ var WakaruViews = (function () {
     function refresh() {
       if (currentTopic === null) container.innerHTML = buildCards();
       else container.innerHTML = buildTopicList();
+      _current = {
+        id: 'kosakata',
+        back: function () {
+          if (currentTopic !== null) {
+            currentTopic = null;
+            currentFilter = '';
+            refresh();
+            return true;
+          }
+          return false;
+        }
+      };
       var inp = container.querySelector ? container.querySelector('#kategori-search') : null;
       if (inp && currentTopic !== null) {
         try { inp.focus(); } catch (e) {}
@@ -386,17 +370,6 @@ var WakaruViews = (function () {
           currentTopic = tp;
           currentFilter = '';
           refresh();
-        }
-        return;
-      }
-      var back = t.closest ? t.closest('#kategori-back-btn') : null;
-      if (back) {
-        if (currentTopic !== null) {
-          currentTopic = null;
-          currentFilter = '';
-          refresh();
-        } else {
-          if (window.WakaruKamus && window.WakaruKamus.showGrid) window.WakaruKamus.showGrid();
         }
         return;
       }
@@ -456,10 +429,6 @@ var WakaruViews = (function () {
       var items = activeGroup ? getGroupItems(activeGroup) : [];
       var filtered = filterItems(items, currentFilter);
       var h = '';
-      h += '<div class="page-header kategori-view__header">';
-      h += '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke kategori">← Kembali</button>';
-      h += '<span class="page-header__level">' + esc(title) + '</span>';
-      h += '</div>';
       h += '<div class="grammar-pills" role="tablist" aria-label="Kelompok grammar">';
       for (var i = 0; i < groups.length; i++) {
         var g = groups[i];
@@ -471,7 +440,6 @@ var WakaruViews = (function () {
       h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
       h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari pola atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari grammar" value="' + esc(currentFilter) + '">';
       h += '</label>';
-      h += '<div class="level-count" id="kategori-count" aria-live="polite">' + (filtered.length ? filtered.length + ' pola' : 'Tidak ada hasil') + '</div>';
       h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
       if (filtered.length) {
         for (var j = 0; j < filtered.length; j++) {
@@ -494,10 +462,6 @@ var WakaruViews = (function () {
 
     function buildDetailHtml() {
       var h = '';
-      h += '<div class="page-header kategori-view__header">';
-      h += '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke daftar">← Kembali</button>';
-      h += '<span class="page-header__level">' + esc(activeGroup || title) + '</span>';
-      h += '</div>';
       h += '<div class="grammar-detail">';
       h += '<h2 class="grammar-detail__pola" lang="ja">' + esc(selected.pola) + '</h2>';
       h += '<p class="grammar-detail__arti">' + esc(selected.arti) + '</p>';
@@ -514,6 +478,17 @@ var WakaruViews = (function () {
     function refresh() {
       if (selected) container.innerHTML = buildDetailHtml();
       else container.innerHTML = buildListHtml();
+      _current = {
+        id: 'grammar',
+        back: function () {
+          if (selected) {
+            selected = null;
+            refresh();
+            return true;
+          }
+          return false;
+        }
+      };
       if (!selected) {
         var inp = container.querySelector ? container.querySelector('#kategori-search') : null;
         if (inp) { try { inp.focus(); } catch (e) {} }
@@ -527,8 +502,6 @@ var WakaruViews = (function () {
     function onClick(ev) {
       var t = ev.target;
       if (selected) {
-        var back = t.closest ? t.closest('#kategori-back-btn') : null;
-        if (back) { selected = null; refresh(); return; }
         return;
       }
       var pill = t.closest ? t.closest('[data-group]') : null;
@@ -543,10 +516,6 @@ var WakaruViews = (function () {
         var items = activeGroup ? getGroupItems(activeGroup) : [];
         if (!isNaN(idx) && items[idx]) { selected = items[idx]; refresh(); }
         return;
-      }
-      var back2 = t.closest ? t.closest('#kategori-back-btn') : null;
-      if (back2) {
-        if (window.WakaruKamus && window.WakaruKamus.showGrid) window.WakaruKamus.showGrid();
       }
     }
 
@@ -644,16 +613,10 @@ var WakaruViews = (function () {
 
       function buildHtml() {
         var h = '';
-        h += '<div class="page-header kategori-view__header">';
-        h += '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke kategori">← Kembali</button>';
-        h += '<span class="page-header__level">' + esc(title) + '</span>';
-        h += '</div>';
-        h += '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">';
+        h += '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">';;
         h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
         h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari verba atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '" value="' + esc(currentFilter) + '">';
         h += '</label>';
-        var total = isVerb ? items.length + ' verba' : items.length + ' adjektiva';
-        h += '<div class="level-count" id="kategori-count" aria-live="polite">' + esc(total) + (currentFilter ? ' · filter: ' + esc(currentFilter) : '') + '</div>';
         h += '<div class="conj-wrap" role="region" aria-label="Tabel konjugasi ' + esc(title) + '" tabindex="0">';
         h += '<table class="conj-table"><thead><tr>';
         h += '<th class="conj-th conj-th--corner">Kata</th>';
@@ -703,6 +666,7 @@ var WakaruViews = (function () {
 
       container.innerHTML = buildHtml();
       focusContainer(container);
+      _current = { id: id, back: function () { return false; } };
 
       function onClick(ev) {
         var t = ev.target;
@@ -711,10 +675,6 @@ var WakaruViews = (function () {
           var txt = cell.getAttribute('data-speak');
           if (txt && txt !== '—') speak(txt);
           return;
-        }
-        var back = t.closest ? t.closest('#kategori-back-btn') : null;
-        if (back) {
-          if (window.WakaruKamus && window.WakaruKamus.showGrid) window.WakaruKamus.showGrid();
         }
       }
 
@@ -756,15 +716,10 @@ var WakaruViews = (function () {
       function buildList() {
         var filtered = filterItems(items, currentFilter);
         var h = '';
-        h += '<div class="page-header kategori-view__header">';
-        h += '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke kategori">← Kembali</button>';
-        h += '<span class="page-header__level">' + esc(title) + '</span>';
-        h += '</div>';
         h += '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">';
         h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
         h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari partikel atau fungsi…" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '" value="' + esc(currentFilter) + '">';
         h += '</label>';
-        h += '<div class="level-count" id="kategori-count" aria-live="polite">' + (filtered.length ? filtered.length + ' entri' : 'Tidak ada hasil') + '</div>';
         h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
         if (filtered.length) {
           for (var i = 0; i < filtered.length; i++) h += buildDetailRow(filtered[i], i, items);
@@ -796,10 +751,6 @@ var WakaruViews = (function () {
 
       function buildDetail() {
         var h = '';
-        h += '<div class="page-header kategori-view__header">';
-        h += '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke daftar">← Kembali</button>';
-        h += '<span class="page-header__level">' + esc(title) + '</span>';
-        h += '</div>';
         if (id === 'partikel') {
           h += '<div class="detail-hero">';
           h += '<span class="detail-hero__char" lang="ja">' + esc(selected.partikel) + '</span>';
@@ -831,6 +782,17 @@ var WakaruViews = (function () {
       function refresh() {
         if (selected) container.innerHTML = buildDetail();
         else container.innerHTML = buildList();
+        _current = {
+          id: id,
+          back: function () {
+            if (selected) {
+              selected = null;
+              refresh();
+              return true;
+            }
+            return false;
+          }
+        };
         if (!selected) {
           var inp = container.querySelector ? container.querySelector('#kategori-search') : null;
           if (inp) try { inp.focus(); } catch (e) {}
@@ -844,8 +806,6 @@ var WakaruViews = (function () {
       function onClick(ev) {
         var t = ev.target;
         if (selected) {
-          var back = t.closest ? t.closest('#kategori-back-btn') : null;
-          if (back) { selected = null; refresh(); return; }
           return;
         }
         var row = t.closest ? t.closest('[data-detail-idx]') : null;
@@ -853,10 +813,6 @@ var WakaruViews = (function () {
           var idx = parseInt(row.getAttribute('data-detail-idx'), 10);
           if (!isNaN(idx) && items[idx]) { selected = items[idx]; refresh(); }
           return;
-        }
-        var back2 = t.closest ? t.closest('#kategori-back-btn') : null;
-        if (back2) {
-          if (window.WakaruKamus && window.WakaruKamus.showGrid) window.WakaruKamus.showGrid();
         }
       }
 
@@ -910,10 +866,6 @@ var WakaruViews = (function () {
       function buildHtml() {
         var filt = filtered();
         var h = '';
-        h += '<div class="page-header kategori-view__header">';
-        h += '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke kategori">← Kembali</button>';
-        h += '<span class="page-header__level">' + esc(title) + '</span>';
-        h += '</div>';
         h += '<div class="kanji-controls">';
         h += '<div class="kanji-toggle" role="group" aria-label="Tampilan kanji">';
         h += '<button type="button" class="kanji-toggle__btn' + (viewMode === 'grid' ? ' is-active' : '') + '" data-kanji-mode="grid" aria-pressed="' + (viewMode === 'grid' ? 'true' : 'false') + '" aria-label="Tampilan grid">Grid</button>';
@@ -925,7 +877,6 @@ var WakaruViews = (function () {
         h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
         h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kanji, bacaan, atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari kanji" value="' + esc(currentFilter) + '">';
         h += '</label>';
-        h += '<div class="level-count" id="kategori-count" aria-live="polite">' + esc(filt.length ? filt.length + ' kanji' : '') + '</div>';
         if (viewMode === 'grid') {
           h += '<div id="kategori-list" class="kanji-grid" role="list" aria-label="Grid kanji" aria-live="polite">';
           if (filt.length) {
@@ -950,6 +901,7 @@ var WakaruViews = (function () {
 
       container.innerHTML = buildHtml();
       focusContainer(container);
+      _current = { id: 'kanji', back: function () { return false; } };
 
       function onClick(ev) {
         var t = ev.target;
@@ -971,10 +923,6 @@ var WakaruViews = (function () {
           var val = row.getAttribute('data-kamus-item');
           if (val && typeof window.openKanjiDetail === 'function') window.openKanjiDetail(val);
           return;
-        }
-        var back = t.closest ? t.closest('#kategori-back-btn') : null;
-        if (back) {
-          if (window.WakaruKamus && window.WakaruKamus.showGrid) window.WakaruKamus.showGrid();
         }
       }
 
@@ -1025,15 +973,10 @@ var WakaruViews = (function () {
     function doRender(items) {
       items = items || [];
       var html =
-        '<div class="page-header kategori-view__header">' +
-          '<button id="kategori-back-btn" class="back-btn" type="button" aria-label="Kembali ke kategori">← Kembali</button>' +
-          '<span class="page-header__level">' + esc(title) + '</span>' +
-        '</div>' +
         '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">' +
           '<span class="search-wrap__icon" aria-hidden="true">⌕</span>' +
           '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '">' +
         '</label>' +
-        '<div id="kategori-count" class="level-count" aria-live="polite"></div>' +
         '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite"></div>' +
         '<div id="kategori-empty" class="empty-state" hidden>' +
           '<p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p>' +
@@ -1042,14 +985,8 @@ var WakaruViews = (function () {
       focusContainer(container);
       var searchEl = container.querySelector ? container.querySelector('#kategori-search') : null;
       var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
-      var countEl = container.querySelector ? container.querySelector('#kategori-count') : null;
       var emptyEl = container.querySelector ? container.querySelector('#kategori-empty') : null;
       function onClick(ev) {
-        var back = ev.target.closest ? ev.target.closest('#kategori-back-btn') : null;
-        if (back) {
-          if (window.WakaruKamus && window.WakaruKamus.showGrid) window.WakaruKamus.showGrid();
-          return;
-        }
         var row = ev.target.closest ? ev.target.closest('.materi-item') : null;
         if (row && container.contains(row)) {
           if (id === 'kanji' && typeof window.openKanjiDetail === 'function') {
@@ -1059,10 +996,11 @@ var WakaruViews = (function () {
         }
       }
       function onInput() {
-        if (searchEl) renderList(items, id, listEl, countEl, emptyEl, searchEl.value);
+        if (searchEl) renderList(items, id, listEl, null, emptyEl, searchEl.value);
       }
       bindHandlers(container, onClick, onInput);
-      renderList(items, id, listEl, countEl, emptyEl, '');
+      renderList(items, id, listEl, null, emptyEl, '');
+      _current = { id: id, back: function () { return false; } };
     }
     if (raw && typeof raw.then === 'function') {
       container.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
@@ -1084,7 +1022,8 @@ var WakaruViews = (function () {
   }
 
   return {
-    renderKategoriView: renderKategoriView
+    renderKategoriView: renderKategoriView,
+    handleBack: function () { return _current && typeof _current.back === 'function' ? _current.back() : false; }
   };
 })();
 
