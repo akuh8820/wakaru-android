@@ -1,5 +1,24 @@
 # Changelog
 
+## v3.2.1 — 2026-09-17
+
+### Fix
+- Back sistem kini benar-benar keluar dari quiz/flashcard/kanji (state halaman di-reset — sebelumnya back dari beranda bisa membuka ulang kanji, timer quiz muncul lagi setelah keluar)
+- Tap kosakata terkait di detail kanji kini pindah ke daftar kosakata (sebelumnya render ke view tersembunyi)
+- Flashcard melanjutkan sesi terakhir (idx tersimpan) saat dibuka lagi
+- WebView: nav guard pakai host equality (cegah host tiruan), lifecycle onPause/onResume + detach sebelum destroy, addJavascriptInterface duplikat dihapus
+- strokeCount di-escape sebelum dirender
+
+### Performance
+- Hapus 124 font Noto Sans JP (5.2 MB) — pakai font sistem; APK 6.6 MB → 1.3 MB
+- Search kategori + konjugasi di-debounce 150 ms; konjugasi hanya rebuild tabel (bukan seluruh view)
+- Empty-state kini muncul saat filter 0 hasil di semua kategori
+- Hapus dead code: getTotalWords, query kategori-count, renderGeneric, blok kamus-list-view, CSS mati
+
+### Tooling
+- Smoke test dijalankan di CI (44 checks) sebelum build APK
+- Smoke test: assertion kontrak handleBack + required ID diperbarui
+
 ## v3.2 — 2026-09-17
 
 ### UI
