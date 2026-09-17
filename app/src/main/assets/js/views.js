@@ -75,12 +75,13 @@ var WakaruViews = (function () {
     return out;
   }
 
-  function buildRow(it, categoryId) {
+  function buildRow(it, categoryId, rowIdx) {
     var rowClass = 'materi-item kamus-row';
     var isKanji = categoryId === 'kanji' && !!it.kanji;
     if (isKanji) rowClass += ' kamus-row--clickable materi-kanji';
     var title = it.kanji || it.kana || it.verb || it.adj || it.partikel || it.pola || it.char || '';
     var dataAttr = ' data-kamus-item="' + escHtml(title) + '"';
+    if (typeof rowIdx === 'number') dataAttr += ' data-row-idx="' + rowIdx + '"';
     var h = '<div class="' + rowClass + '"' + dataAttr + '>';
     if (isKanji) {
       var mean = escHtml((it.meanings_id || []).join(', '));
@@ -136,17 +137,87 @@ var WakaruViews = (function () {
     return h;
   }
 
-  function renderList(items, categoryId, listEl, emptyEl, filter) {
-    var filtered = filterItems(items, filter);
-    if (emptyEl) emptyEl.hidden = filtered.length !== 0;
-    if (listEl) listEl.hidden = filtered.length === 0;
-    if (!listEl) return;
-    if (filtered.length === 0) { listEl.innerHTML = ''; return; }
-    var parts = [];
-    for (var i = 0; i < filtered.length; i++) {
-      parts.push(buildRow(filtered[i], categoryId));
+  function renderListDetailView(container, opts) {
+    cleanHandlers(container);
+    var selected = null;
+    var currentFilter = (typeof opts.initialQuery === 'string' && opts.initialQuery) ? opts.initialQuery : '';
+
+    function listHtml() {
+      var all = opts.getItems();
+      var filtered = filterItems(all, currentFilter);
+      var h = '';
+      if (opts.headerHtml) h += opts.headerHtml();
+      h += '<label class="search-wrap" aria-label="' + escHtml(opts.searchLabel || 'Cari') + '">';
+      h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
+      h += '<input id="kategori-search" class="search-input" type="search" placeholder="' + escHtml(opts.placeholder || 'Cari\u2026') + '" autocomplete="off" spellcheck="false" aria-label="' + escHtml(opts.searchLabel || 'Cari') + '" value="' + escHtml(currentFilter) + '">';
+      h += '</label>';
+      h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite"' + (filtered.length ? '' : ' hidden') + '>';
+      for (var i = 0; i < filtered.length; i++) h += opts.rowHtml(filtered[i], all.indexOf(filtered[i]));
+      h += '</div>';
+      h += '<div class="empty-state"' + (filtered.length ? ' hidden' : '') + '><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
+      return h;
     }
-    listEl.innerHTML = parts.join('');
+
+    function updateList() {
+      var all = opts.getItems();
+      var filtered = filterItems(all, currentFilter);
+      var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
+      var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
+      if (listEl) {
+        if (!filtered.length) listEl.innerHTML = '';
+        else {
+          var parts = [];
+          for (var i = 0; i < filtered.length; i++) parts.push(opts.rowHtml(filtered[i], all.indexOf(filtered[i])));
+          listEl.innerHTML = parts.join('');
+        }
+        listEl.hidden = filtered.length === 0;
+      }
+      if (emptyEl) emptyEl.hidden = filtered.length !== 0;
+    }
+
+    function refresh() {
+      container.innerHTML = selected && opts.detailHtml ? opts.detailHtml(selected) : listHtml();
+      if (selected) { focusContainer(container); }
+      else {
+        var inp = container.querySelector ? container.querySelector('#kategori-search') : null;
+        if (inp) { try { inp.focus(); } catch (e) {} if (currentFilter) { try { var len = inp.value.length; inp.setSelectionRange(len, len); } catch (e2) {} } }
+        else focusContainer(container);
+      }
+    }
+
+    function back() {
+      if (selected && opts.detailHtml) { selected = null; refresh(); return true; }
+      if (opts.onBack) return opts.onBack();
+      return false;
+    }
+
+    var ctrl = { refresh: refresh, back: back, setFilter: function (q) { currentFilter = q; } };
+    WakaruNav.category = { id: opts.navId || '', back: back };
+    refresh();
+
+    function onClick(ev) {
+      if (selected) return;
+      var t = ev.target;
+      if (opts.onHeaderClick && opts.onHeaderClick(ev, ctrl)) return;
+      var row = t.closest ? t.closest('[data-row-idx]') : null;
+      if (row && container.contains(row)) {
+        var idx = parseInt(row.getAttribute('data-row-idx'), 10);
+        if (!isNaN(idx)) {
+          var all = opts.getItems();
+          if (all[idx]) {
+            if (opts.onRowClick) opts.onRowClick(all[idx], idx);
+            else if (opts.detailHtml) { selected = all[idx]; refresh(); }
+          }
+        }
+      }
+    }
+
+    var debouncedInput = debounce(function (inp) { currentFilter = inp.value; updateList(); }, 150);
+
+    function onInput(ev) { var inp = ev.target; if (inp && inp.id === 'kategori-search' && !selected) debouncedInput(inp); }
+
+    bindHandlers(container, onClick, onInput);
+    return ctrl;
   }
 
   function cleanHandlers(container) {
@@ -287,91 +358,38 @@ var WakaruViews = (function () {
       return h;
     }
 
-    function buildTopicList() {
-      var items = [];
-      try { items = (typeof WakaruData !== 'undefined' && WakaruData.getKosakataByTopic) ? WakaruData.getKosakataByTopic(currentTopic) : []; } catch (e) { items = []; }
-      var filtered = filterItems(items, currentFilter);
-      var h = '';
-      h += '<label class="search-wrap" aria-label="Cari di ' + escHtml(currentTopic) + '">';
-      h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
-      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + escHtml(currentTopic) + '" value="' + escHtml(currentFilter) + '">';
-      h += '</label>';
-      h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
-      if (filtered.length) {
-        for (var i = 0; i < filtered.length; i++) h += buildRow(filtered[i], 'kosakata');
-      }
-      h += '</div>';
-      h += '<div class="empty-state" hidden><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
-      return h;
-    }
-
     function refresh() {
-      if (currentTopic === null) container.innerHTML = buildCards();
-      else container.innerHTML = buildTopicList();
-      WakaruNav.category = {
-        id: 'kosakata',
-        back: function () {
-          if (currentTopic !== null) {
-            currentTopic = null;
-            currentFilter = '';
-            refresh();
-            return true;
-          }
-          return false;
-        }
-      };
-      var inp = container.querySelector ? container.querySelector('#kategori-search') : null;
-      if (inp && currentTopic !== null) {
-        try { inp.focus(); } catch (e) {}
-        if (currentFilter) {
-          try { var len = inp.value.length; inp.setSelectionRange(len, len); } catch (e2) {}
-        }
-      } else {
+      if (currentTopic === null) {
+        cleanHandlers(container);
+        container.innerHTML = buildCards();
+        WakaruNav.category = { id: 'kosakata', back: function () { return false; } };
+        bindHandlers(container, onCardClick, null);
         focusContainer(container);
+      } else {
+        renderListDetailView(container, {
+          getItems: function () {
+            try { return (typeof WakaruData !== 'undefined' && WakaruData.getKosakataByTopic) ? WakaruData.getKosakataByTopic(currentTopic) : []; } catch (e) { return []; }
+          },
+          rowHtml: function (item, idx) { return buildRow(item, 'kosakata', idx); },
+          initialQuery: currentFilter,
+          placeholder: 'Cari kata, kana, atau arti\u2026',
+          searchLabel: 'Cari di ' + currentTopic,
+          navId: 'kosakata',
+          onBack: function () { currentTopic = null; currentFilter = ''; refresh(); return true; }
+        });
       }
     }
 
     refresh();
 
-    function onClick(ev) {
+    function onCardClick(ev) {
       var t = ev.target;
       var card = t.closest ? t.closest('[data-topic]') : null;
       if (card && container.contains(card)) {
         var tp = card.getAttribute('data-topic');
-        if (tp) {
-          currentTopic = tp;
-          currentFilter = '';
-          refresh();
-        }
-        return;
+        if (tp) { currentTopic = tp; currentFilter = ''; refresh(); }
       }
     }
-
-    var debouncedKosakataInput = debounce(function (inp) {
-      currentFilter = inp.value;
-      var items = [];
-      try { items = (typeof WakaruData !== 'undefined' && WakaruData.getKosakataByTopic) ? WakaruData.getKosakataByTopic(currentTopic) : []; } catch (e) { items = []; }
-      var filtered = filterItems(items, currentFilter);
-      var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
-      var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
-      if (listEl) {
-        if (!filtered.length) listEl.innerHTML = '';
-        else {
-          var parts = [];
-          for (var i = 0; i < filtered.length; i++) parts.push(buildRow(filtered[i], 'kosakata'));
-          listEl.innerHTML = parts.join('');
-        }
-      }
-      if (emptyEl) emptyEl.hidden = filtered.length !== 0;
-      if (listEl) listEl.hidden = filtered.length === 0;
-    }, 150);
-
-    function onInput(ev) {
-      var inp = ev.target;
-      if (inp && inp.id === 'kategori-search') debouncedKosakataInput(inp);
-    }
-
-    bindHandlers(container, onClick, onInput);
   }
 
   /* 3. grammar - Group tabs + list + detail */
@@ -383,134 +401,62 @@ var WakaruViews = (function () {
     var groups = [];
     try { groups = (typeof WakaruData !== 'undefined' && WakaruData.getGrammarGroups) ? WakaruData.getGrammarGroups() : []; } catch (e) { groups = []; }
     var activeGroup = groups.length ? groups[0] : null;
-    var selected = null;
-    var currentFilter = (typeof initialQuery === 'string' && initialQuery) ? initialQuery : '';
 
     function getGroupItems(g) {
       try { return (typeof WakaruData !== 'undefined' && WakaruData.getGrammarByGroup) ? WakaruData.getGrammarByGroup(g) : []; } catch (e) { return []; }
     }
 
-    function buildListHtml() {
-      var items = activeGroup ? getGroupItems(activeGroup) : [];
-      var filtered = filterItems(items, currentFilter);
-      var h = '';
-      h += '<div class="grammar-pills" role="tablist" aria-label="Kelompok grammar">';
+    function headerHtml() {
+      var h = '<div class="grammar-pills" role="tablist" aria-label="Kelompok grammar">';
       for (var i = 0; i < groups.length; i++) {
         var g = groups[i];
         var isActive = g === activeGroup;
         h += '<button type="button" role="tab" class="grammar-pill' + (isActive ? ' is-active' : '') + '" data-group="' + escHtml(g) + '" aria-selected="' + (isActive ? 'true' : 'false') + '" aria-label="Kelompok ' + escHtml(g) + '">' + escHtml(g) + '</button>';
       }
       h += '</div>';
-      h += '<label class="search-wrap" aria-label="Cari di ' + escHtml(activeGroup || title) + '">';
-      h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
-      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari pola atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari grammar" value="' + escHtml(currentFilter) + '">';
-      h += '</label>';
-      h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
-      if (filtered.length) {
-        for (var j = 0; j < filtered.length; j++) {
-          var it = filtered[j];
-          var idx = -1;
-          for (var k = 0; k < items.length; k++) if (items[k] === it) { idx = k; break; }
-          h += '<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + escHtml(activeGroup) + '" data-grammar-idx="' + idx + '" aria-label="' + escHtml(it.pola) + '">';
-          h += '<span class="mi-body"><span class="mi-vkanji" lang="ja">' + escHtml(it.pola) + '</span>';
-          h += '<span class="mi-mean">' + escHtml(it.arti) + '</span>';
-          h += '<span class="mi-read">' + escHtml(it.contoh) + ' \u2014 ' + escHtml(it.terjemahan) + '</span></span>';
-          h += '</button>';
-        }
-      }
-      h += '</div>';
-      h += '<div class="empty-state" hidden><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
       return h;
     }
 
-    function buildDetailHtml() {
-      var h = '';
-      h += '<div class="grammar-detail">';
-      h += '<h2 class="grammar-detail__pola" lang="ja">' + escHtml(selected.pola) + '</h2>';
-      h += '<p class="grammar-detail__arti">' + escHtml(selected.arti) + '</p>';
-      if (selected.romaji) h += '<p class="grammar-detail__romaji">' + escHtml(selected.romaji) + '</p>';
+    function rowHtml(it, idx) {
+      return '<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + escHtml(activeGroup) + '" data-row-idx="' + idx + '" aria-label="' + escHtml(it.pola) + '">' +
+        '<span class="mi-body"><span class="mi-vkanji" lang="ja">' + escHtml(it.pola) + '</span>' +
+        '<span class="mi-mean">' + escHtml(it.arti) + '</span>' +
+        '<span class="mi-read">' + escHtml(it.contoh) + ' \u2014 ' + escHtml(it.terjemahan) + '</span></span></button>';
+    }
+
+    function detailHtml(item) {
+      var h = '<div class="grammar-detail">';
+      h += '<h2 class="grammar-detail__pola" lang="ja">' + escHtml(item.pola) + '</h2>';
+      h += '<p class="grammar-detail__arti">' + escHtml(item.arti) + '</p>';
+      if (item.romaji) h += '<p class="grammar-detail__romaji">' + escHtml(item.romaji) + '</p>';
       h += '<div class="grammar-detail__contoh">';
-      h += '<span lang="ja">' + escHtml(selected.contoh) + '</span>';
-      h += '<button type="button" class="audio-btn" data-speak="' + escHtml(selected.contoh) + '" aria-label="Dengarkan contoh ' + escHtml(selected.contoh) + '"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
+      h += '<span lang="ja">' + escHtml(item.contoh) + '</span>';
+      h += '<button type="button" class="audio-btn" data-speak="' + escHtml(item.contoh) + '" aria-label="Dengarkan contoh ' + escHtml(item.contoh) + '"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
       h += '</div>';
-      h += '<p class="grammar-detail__terjemahan">' + escHtml(selected.terjemahan) + '</p>';
+      h += '<p class="grammar-detail__terjemahan">' + escHtml(item.terjemahan) + '</p>';
       h += '</div>';
       return h;
     }
 
-    function refresh() {
-      if (selected) container.innerHTML = buildDetailHtml();
-      else container.innerHTML = buildListHtml();
-      WakaruNav.category = {
-        id: 'grammar',
-        back: function () {
-          if (selected) {
-            selected = null;
-            refresh();
-            return true;
-          }
-          return false;
+    renderListDetailView(container, {
+      getItems: function () { return activeGroup ? getGroupItems(activeGroup) : []; },
+      headerHtml: headerHtml,
+      rowHtml: rowHtml,
+      detailHtml: detailHtml,
+      navId: 'grammar',
+      placeholder: 'Cari pola atau arti\u2026',
+      searchLabel: 'Cari di ' + (activeGroup || title),
+      initialQuery: initialQuery,
+      onHeaderClick: function (ev, ctrl) {
+        var t = ev.target;
+        var pill = t.closest ? t.closest('[data-group]') : null;
+        if (pill && container.contains(pill)) {
+          var g = pill.getAttribute('data-group');
+          if (g && g !== activeGroup) { activeGroup = g; ctrl.setFilter(''); ctrl.refresh(); return true; }
         }
-      };
-      if (!selected) {
-        var inp = container.querySelector ? container.querySelector('#kategori-search') : null;
-        if (inp) { try { inp.focus(); } catch (e) {} }
-      } else {
-        focusContainer(container);
+        return false;
       }
-    }
-
-    refresh();
-
-    function onClick(ev) {
-      var t = ev.target;
-      if (selected) {
-        return;
-      }
-      var pill = t.closest ? t.closest('[data-group]') : null;
-      if (pill && container.contains(pill)) {
-        var g = pill.getAttribute('data-group');
-        if (g && g !== activeGroup) { activeGroup = g; currentFilter = ''; selected = null; refresh(); }
-        return;
-      }
-      var row = t.closest ? t.closest('[data-grammar-idx]') : null;
-      if (row && container.contains(row)) {
-        var idx = parseInt(row.getAttribute('data-grammar-idx'), 10);
-        var items = activeGroup ? getGroupItems(activeGroup) : [];
-        if (!isNaN(idx) && items[idx]) { selected = items[idx]; refresh(); }
-        return;
-      }
-    }
-
-    var debouncedGrammarInput = debounce(function (inp) {
-      currentFilter = inp.value;
-      var items = activeGroup ? getGroupItems(activeGroup) : [];
-      var filtered = filterItems(items, currentFilter);
-      var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
-      var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
-      if (listEl) {
-        if (!filtered.length) listEl.innerHTML = '';
-        else {
-          var parts = [];
-          for (var i = 0; i < filtered.length; i++) {
-            var it = filtered[i];
-            var idx = -1;
-            for (var k = 0; k < items.length; k++) if (items[k] === it) { idx = k; break; }
-            parts.push('<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + escHtml(activeGroup) + '" data-grammar-idx="' + idx + '" aria-label="' + escHtml(it.pola) + '"><span class="mi-body"><span class="mi-vkanji" lang="ja">' + escHtml(it.pola) + '</span><span class="mi-mean">' + escHtml(it.arti) + '</span><span class="mi-read">' + escHtml(it.contoh) + ' \u2014 ' + escHtml(it.terjemahan) + '</span></span></button>');
-          }
-          listEl.innerHTML = parts.join('');
-        }
-      }
-      if (emptyEl) emptyEl.hidden = filtered.length !== 0;
-      if (listEl) listEl.hidden = filtered.length === 0;
-    }, 150);
-
-    function onInput(ev) {
-      var inp = ev.target;
-      if (inp && inp.id === 'kategori-search' && !selected) debouncedGrammarInput(inp);
-    }
-
-    bindHandlers(container, onClick, onInput);
+    });
   }
 
   /* 4. kata-kerja / kata-sifat - Conjugation tables */
@@ -658,140 +604,66 @@ var WakaruViews = (function () {
     cleanHandlers(container);
     var info = getKategoriInfo(id);
     var title = info.name || id;
-    var items = [];
-    try { items = (typeof WakaruData !== 'undefined' && WakaruData.getByKategori) ? WakaruData.getByKategori(id) : []; } catch (e) { items = []; }
-    doRenderDetail();
 
-    function doRenderDetail() {
-      var selected = null;
-      var currentFilter = (typeof initialQuery === 'string' && initialQuery) ? initialQuery : '';
-      function buildList() {
-        var filtered = filterItems(items, currentFilter);
-        var h = '';
-        h += '<label class="search-wrap" aria-label="Cari di ' + escHtml(title) + '">';
-        h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
-        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari partikel atau fungsi\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + escHtml(title) + '" value="' + escHtml(currentFilter) + '">';
-        h += '</label>';
-        h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
-        if (filtered.length) {
-          for (var i = 0; i < filtered.length; i++) h += buildDetailRow(filtered[i], i, items);
+    function rowHtml(it, idx) {
+      var h = '<button type="button" class="materi-item kamus-row" data-row-idx="' + idx + '" aria-label="' + escHtml(it.partikel || it.kanji || it.kana) + '">';
+      if (id === 'partikel') {
+        h += '<span class="mi-kanji" lang="ja">' + escHtml(it.partikel) + '</span>';
+        h += '<span class="mi-body"><span class="mi-mean" lang="ja">' + escHtml(it.kana) + '</span>';
+        h += '<span class="mi-read">' + escHtml(it.fungsi) + '</span></span>';
+      } else {
+        var w = it.kanji || it.kana || '';
+        h += '<span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + escHtml(w) + '</span>';
+        h += '<span class="mi-vkana" lang="ja">' + escHtml(it.kana || '') + '</span></span>';
+        h += '<span class="mi-mean">' + escHtml(it.arti || '') + '</span>';
+        if (it.romaji) h += '<span class="mi-romaji">' + escHtml(it.romaji) + '</span>';
+        h += '</span>';
+      }
+      h += '</button>';
+      return h;
+    }
+
+    function detailHtml(item) {
+      var h = '';
+      if (id === 'partikel') {
+        h += '<div class="detail-hero">';
+        h += '<span class="detail-hero__char" lang="ja">' + escHtml(item.partikel) + '</span>';
+        h += '<span class="detail-hero__kana" lang="ja">' + escHtml(item.kana || '') + '</span>';
+        h += '<p class="detail-hero__fungsi">' + escHtml(item.fungsi || '') + '</p>';
+        h += '</div>';
+        if (item.contoh) {
+          h += '<div class="section-block"><h2 class="section-title">Contoh</h2>';
+          h += '<div class="example-item"><div class="example-jp"><span lang="ja">' + escHtml(item.contoh) + '</span>';
+          h += '<button type="button" class="audio-btn" data-speak="' + escHtml(item.contoh) + '" aria-label="Dengarkan contoh"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button></div>';
+          if (item.arti_contoh) h += '<span class="example-id">' + escHtml(item.arti_contoh) + '</span>';
+          h += '</div></div>';
+        }
+      } else {
+        var w2 = item.kanji || item.kana || '';
+        h += '<div class="detail-hero">';
+        h += '<span class="detail-hero__char" lang="ja">' + escHtml(w2) + '</span>';
+        if (item.kana && item.kana !== w2) h += '<span class="detail-hero__kana" lang="ja">' + escHtml(item.kana) + '</span>';
+        h += '<p class="detail-hero__fungsi">' + escHtml(item.arti || '') + '</p>';
+        if (item.romaji) h += '<p class="detail-hero__romaji">' + escHtml(item.romaji) + '</p>';
+        if (item.kana) {
+          h += '<button type="button" class="audio-btn detail-hero__audio" data-speak="' + escHtml(item.kana) + '" aria-label="Dengarkan ' + escHtml(item.kana) + '"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
         }
         h += '</div>';
-        h += '<div class="empty-state" hidden><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
-        return h;
       }
-
-      function buildDetailRow(it, idxInFiltered, allItems) {
-        var realIdx = -1;
-        for (var k = 0; k < allItems.length; k++) if (allItems[k] === it) { realIdx = k; break; }
-        var row = '<button type="button" class="materi-item kamus-row" data-detail-idx="' + realIdx + '" aria-label="' + escHtml(it.partikel || it.kanji || it.kana) + '">';
-        if (id === 'partikel') {
-          row += '<span class="mi-kanji" lang="ja">' + escHtml(it.partikel) + '</span>';
-          row += '<span class="mi-body"><span class="mi-mean" lang="ja">' + escHtml(it.kana) + '</span>';
-          row += '<span class="mi-read">' + escHtml(it.fungsi) + '</span></span>';
-        } else {
-          var w = it.kanji || it.kana || '';
-          row += '<span class="mi-body"><span class="mi-vhead"><span class="mi-vkanji" lang="ja">' + escHtml(w) + '</span>';
-          row += '<span class="mi-vkana" lang="ja">' + escHtml(it.kana || '') + '</span></span>';
-          row += '<span class="mi-mean">' + escHtml(it.arti || '') + '</span>';
-          if (it.romaji) row += '<span class="mi-romaji">' + escHtml(it.romaji) + '</span>';
-          row += '</span>';
-        }
-        row += '</button>';
-        return row;
-      }
-
-      function buildDetail() {
-        var h = '';
-        if (id === 'partikel') {
-          h += '<div class="detail-hero">';
-          h += '<span class="detail-hero__char" lang="ja">' + escHtml(selected.partikel) + '</span>';
-          h += '<span class="detail-hero__kana" lang="ja">' + escHtml(selected.kana || '') + '</span>';
-          h += '<p class="detail-hero__fungsi">' + escHtml(selected.fungsi || '') + '</p>';
-          h += '</div>';
-          if (selected.contoh) {
-            h += '<div class="section-block"><h2 class="section-title">Contoh</h2>';
-            h += '<div class="example-item"><div class="example-jp"><span lang="ja">' + escHtml(selected.contoh) + '</span>';
-            h += '<button type="button" class="audio-btn" data-speak="' + escHtml(selected.contoh) + '" aria-label="Dengarkan contoh"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button></div>';
-            if (selected.arti_contoh) h += '<span class="example-id">' + escHtml(selected.arti_contoh) + '</span>';
-            h += '</div></div>';
-          }
-        } else {
-          var w2 = selected.kanji || selected.kana || '';
-          h += '<div class="detail-hero">';
-          h += '<span class="detail-hero__char" lang="ja">' + escHtml(w2) + '</span>';
-          if (selected.kana && selected.kana !== w2) h += '<span class="detail-hero__kana" lang="ja">' + escHtml(selected.kana) + '</span>';
-          h += '<p class="detail-hero__fungsi">' + escHtml(selected.arti || '') + '</p>';
-          if (selected.romaji) h += '<p class="detail-hero__romaji">' + escHtml(selected.romaji) + '</p>';
-          if (selected.kana) {
-            h += '<button type="button" class="audio-btn detail-hero__audio" data-speak="' + escHtml(selected.kana) + '" aria-label="Dengarkan ' + escHtml(selected.kana) + '"><svg class="audio-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
-          }
-          h += '</div>';
-        }
-        return h;
-      }
-
-      function refresh() {
-        if (selected) container.innerHTML = buildDetail();
-        else container.innerHTML = buildList();
-        WakaruNav.category = {
-          id: id,
-          back: function () {
-            if (selected) {
-              selected = null;
-              refresh();
-              return true;
-            }
-            return false;
-          }
-        };
-        if (!selected) {
-          var inp = container.querySelector ? container.querySelector('#kategori-search') : null;
-          if (inp) try { inp.focus(); } catch (e) {}
-        } else {
-          focusContainer(container);
-        }
-      }
-
-      refresh();
-
-      function onClick(ev) {
-        var t = ev.target;
-        if (selected) {
-          return;
-        }
-        var row = t.closest ? t.closest('[data-detail-idx]') : null;
-        if (row && container.contains(row)) {
-          var idx = parseInt(row.getAttribute('data-detail-idx'), 10);
-          if (!isNaN(idx) && items[idx]) { selected = items[idx]; refresh(); }
-          return;
-        }
-      }
-
-      var debouncedDetailInput = debounce(function (inp) {
-        currentFilter = inp.value;
-        var filtered = filterItems(items, currentFilter);
-        var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
-        var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
-        if (listEl) {
-          if (!filtered.length) listEl.innerHTML = '';
-          else {
-            var parts = [];
-            for (var i = 0; i < filtered.length; i++) parts.push(buildDetailRow(filtered[i], i, items));
-            listEl.innerHTML = parts.join('');
-          }
-        }
-        if (emptyEl) emptyEl.hidden = filtered.length !== 0;
-        if (listEl) listEl.hidden = filtered.length === 0;
-      }, 150);
-
-      function onInput(ev) {
-        var inp = ev.target;
-        if (inp && inp.id === 'kategori-search' && !selected) debouncedDetailInput(inp);
-      }
-
-      bindHandlers(container, onClick, onInput);
+      return h;
     }
+
+    renderListDetailView(container, {
+      getItems: function () {
+        try { return (typeof WakaruData !== 'undefined' && WakaruData.getByKategori) ? WakaruData.getByKategori(id) : []; } catch (e) { return []; }
+      },
+      rowHtml: rowHtml,
+      detailHtml: detailHtml,
+      navId: id,
+      placeholder: id === 'partikel' ? 'Cari partikel atau fungsi\u2026' : 'Cari kata atau arti\u2026',
+      searchLabel: 'Cari di ' + title,
+      initialQuery: initialQuery
+    });
   }
 
   /* 6. kanji - Grid/list toggle + search */
