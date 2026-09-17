@@ -1,7 +1,7 @@
 /**
  * WakaruViews — kategori-specific view renderer (Phase 3 lane 2)
  * ES5, no modules. Single entry: renderKategoriView(id, container)
- * 10 kategori-specific views + generic fallback.
+ * 9 kategori-specific views.
  */
 var WakaruViews = (function () {
   'use strict';
@@ -9,6 +9,15 @@ var WakaruViews = (function () {
   var _current = null;
 
   function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  function debounce(fn, ms) {
+    var t;
+    return function () {
+      var ctx = this, args = arguments;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(ctx, args); }, ms);
+    };
+  }
 
   function getKategoriInfo(id) {
     if (typeof WakaruData !== 'undefined' && WakaruData.getKategoriList) {
@@ -80,8 +89,8 @@ var WakaruViews = (function () {
     var h = '<div class="' + rowClass + '"' + dataAttr + '>';
     if (isKanji) {
       var mean = esc((it.meanings_id || []).join(', '));
-      var onR = (it.on_readings || []).slice(0, 2).join('・');
-      var kunR = (it.kun_readings || []).slice(0, 2).join('・');
+      var onR = (it.on_readings || []).slice(0, 2).join('\u30FB');
+      var kunR = (it.kun_readings || []).slice(0, 2).join('\u30FB');
       var read = esc(onR + (kunR ? ' / ' + kunR : ''));
       h += '<span class="mi-kanji" lang="ja">' + esc(it.kanji) + '</span>';
       h += '<span class="mi-body"><span class="mi-mean">' + mean + '</span><span class="mi-read">' + read + '</span></span>';
@@ -89,11 +98,11 @@ var WakaruViews = (function () {
       h += '<span class="mi-kanji" lang="ja">' + esc(it.partikel) + '</span>';
       h += '<span class="mi-body"><span class="mi-mean" lang="ja">' + esc(it.kana) + '</span>';
       h += '<span class="mi-read">' + esc(it.fungsi) + '</span>';
-      h += '<span class="mi-meta">' + esc(it.contoh) + ' — ' + esc(it.arti_contoh) + '</span></span>';
+      h += '<span class="mi-meta">' + esc(it.contoh) + ' \u2014 ' + esc(it.arti_contoh) + '</span></span>';
     } else if (categoryId === 'grammar') {
       h += '<span class="mi-body"><span class="mi-vkanji" lang="ja">' + esc(it.pola) + '</span>';
       h += '<span class="mi-mean">' + esc(it.arti) + '</span>';
-      h += '<span class="mi-read">' + esc(it.contoh) + ' — ' + esc(it.terjemahan) + '</span></span>';
+      h += '<span class="mi-read">' + esc(it.contoh) + ' \u2014 ' + esc(it.terjemahan) + '</span></span>';
     } else if (categoryId === 'kata-kerja' || categoryId === 'kata-sifat') {
       var word = esc(it.verb || it.adj || it.kanji || it.kana);
       var kana = esc(it.kana || '');
@@ -132,9 +141,8 @@ var WakaruViews = (function () {
     return h;
   }
 
-  function renderList(items, categoryId, listEl, countEl, emptyEl, filter) {
+  function renderList(items, categoryId, listEl, emptyEl, filter) {
     var filtered = filterItems(items, filter);
-    if (countEl) countEl.textContent = filtered.length ? filtered.length + ' entri' : '';
     if (emptyEl) emptyEl.hidden = filtered.length !== 0;
     if (listEl) listEl.hidden = filtered.length === 0;
     if (!listEl) return;
@@ -168,7 +176,7 @@ var WakaruViews = (function () {
     }
   }
 
-  /* ── 1. hiragana / katakana — Gojuon grid ───────────────────── */
+  /* 1. hiragana / katakana - Gojuon grid */
   function renderKanaView(id, container) {
     if (!container) return;
     cleanHandlers(container);
@@ -186,29 +194,17 @@ var WakaruViews = (function () {
       }
     } catch (e) { data = []; }
 
-    // handle promise
-    if (data && typeof data.then === 'function') {
-      container.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
-      data.then(function (items) {
-        data = items || [];
-        doRenderKana();
-      });
-      return;
-    }
     doRenderKana();
 
     function doRenderKana() {
       var order = ['A', 'K', 'S', 'T', 'N', 'H', 'M', 'Y', 'R', 'W', 'Lainnya'];
-      var labels = { A: 'A行', K: 'K行', S: 'S行', T: 'T行', N: 'N行', H: 'H行', M: 'M行', Y: 'Y行', R: 'R行', W: 'W行', Lainnya: 'Lainnya' };
+      var labels = { A: 'A\u884C', K: 'K\u884C', S: 'S\u884C', T: 'T\u884C', N: 'N\u884C', H: 'H\u884C', M: 'M\u884C', Y: 'Y\u884C', R: 'R\u884C', W: 'W\u884C', Lainnya: 'Lainnya' };
       var byRow = {};
       for (var i = 0; i < order.length; i++) byRow[order[i]] = [];
       for (var j = 0; j < data.length; j++) {
         var r = data[j].row;
         if (byRow[r]) byRow[r].push(data[j]);
-        else {
-          if (!byRow['Lainnya']) byRow['Lainnya'] = [];
-          byRow['Lainnya'].push(data[j]);
-        }
+        else byRow['Lainnya'].push(data[j]);
       }
       var h = '';
       h += '<div class="gojuon" role="list" aria-label="' + esc(title) + ' gojuon">';
@@ -221,7 +217,7 @@ var WakaruViews = (function () {
         h += '<div class="gj-row-cells">';
         for (var ci = 0; ci < items.length; ci++) {
           var it = items[ci];
-          h += '<button type="button" class="gj-cell" data-char="' + esc(it.char) + '" data-romaji="' + esc(it.romaji) + '" aria-label="' + esc(it.char) + ' — ' + esc(it.romaji) + '">';
+          h += '<button type="button" class="gj-cell" data-char="' + esc(it.char) + '" data-romaji="' + esc(it.romaji) + '" aria-label="' + esc(it.char) + ' \u2014 ' + esc(it.romaji) + '">';
           h += '<span class="gj-cell__char" lang="ja">' + esc(it.char) + '</span>';
           h += '<span class="gj-cell__roma">' + esc(it.romaji) + '</span>';
           h += '</button>';
@@ -251,7 +247,7 @@ var WakaruViews = (function () {
     }
   }
 
-  /* ── 2. kosakata — Topic cards + topic list ────────────────── */
+  /* 2. kosakata - Topic cards + topic list */
   function renderKosakataView(container) {
     if (!container) return;
     cleanHandlers(container);
@@ -261,17 +257,6 @@ var WakaruViews = (function () {
     try {
       topics = (typeof WakaruData !== 'undefined' && WakaruData.getKosakataTopics) ? WakaruData.getKosakataTopics() : [];
     } catch (e) { topics = []; }
-    // fallback scan if empty but kosakata exists
-    if (!topics.length) {
-      try {
-        var allK = (typeof WakaruData !== 'undefined' && WakaruData.getByKategori) ? WakaruData.getByKategori('kosakata') : [];
-        var seen = {};
-        for (var i = 0; i < allK.length; i++) {
-          var cat = allK[i].category;
-          if (cat && !seen[cat]) { seen[cat] = true; topics.push(cat); }
-        }
-      } catch (e2) {}
-    }
     var topicCounts = {};
     var firstCharMap = {};
     for (var ti = 0; ti < topics.length; ti++) {
@@ -296,7 +281,7 @@ var WakaruViews = (function () {
         var t = topics[i];
         var cnt = topicCounts[t] || 0;
         var ic = firstCharMap[t] || t.charAt(0);
-        h += '<button type="button" class="topic-card" data-topic="' + esc(t) + '" role="listitem" aria-label="' + esc(t) + ' — ' + cnt + ' entri">';
+        h += '<button type="button" class="topic-card" data-topic="' + esc(t) + '" role="listitem" aria-label="' + esc(t) + ' \u2014 ' + cnt + ' entri">';
         h += '<span class="topic-card__icon" lang="ja" aria-hidden="true">' + esc(ic) + '</span>';
         h += '<span class="topic-card__accent" aria-hidden="true"></span>';
         h += '<span class="topic-card__label">' + esc(t) + '</span>';
@@ -307,29 +292,21 @@ var WakaruViews = (function () {
       return h;
     }
 
-    function getTotalWords() {
-      var s = 0;
-      for (var k in topicCounts) if (topicCounts.hasOwnProperty(k)) s += topicCounts[k];
-      return s;
-    }
-
     function buildTopicList() {
       var items = [];
       try { items = (typeof WakaruData !== 'undefined' && WakaruData.getKosakataByTopic) ? WakaruData.getKosakataByTopic(currentTopic) : []; } catch (e) { items = []; }
       var filtered = filterItems(items, currentFilter);
       var h = '';
-      h += '<label class="search-wrap" aria-label="Cari di ' + esc(currentTopic) + '">';;
-      h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
-      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(currentTopic) + '" value="' + esc(currentFilter) + '">';
+      h += '<label class="search-wrap" aria-label="Cari di ' + esc(currentTopic) + '">';
+      h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
+      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(currentTopic) + '" value="' + esc(currentFilter) + '">';
       h += '</label>';
       h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
       if (filtered.length) {
         for (var i = 0; i < filtered.length; i++) h += buildRow(filtered[i], 'kosakata');
       }
       h += '</div>';
-      if (!filtered.length) {
-        h += '<div class="empty-state"><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
-      }
+      h += '<div class="empty-state" hidden><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
       return h;
     }
 
@@ -375,34 +352,34 @@ var WakaruViews = (function () {
       }
     }
 
+    var debouncedKosakataInput = debounce(function (inp) {
+      currentFilter = inp.value;
+      var items = [];
+      try { items = (typeof WakaruData !== 'undefined' && WakaruData.getKosakataByTopic) ? WakaruData.getKosakataByTopic(currentTopic) : []; } catch (e) { items = []; }
+      var filtered = filterItems(items, currentFilter);
+      var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
+      var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
+      if (listEl) {
+        if (!filtered.length) listEl.innerHTML = '';
+        else {
+          var parts = [];
+          for (var i = 0; i < filtered.length; i++) parts.push(buildRow(filtered[i], 'kosakata'));
+          listEl.innerHTML = parts.join('');
+        }
+      }
+      if (emptyEl) emptyEl.hidden = filtered.length !== 0;
+      if (listEl) listEl.hidden = filtered.length === 0;
+    }, 150);
+
     function onInput(ev) {
       var inp = ev.target;
-      if (inp && inp.id === 'kategori-search') {
-        currentFilter = inp.value;
-        var items = [];
-        try { items = (typeof WakaruData !== 'undefined' && WakaruData.getKosakataByTopic) ? WakaruData.getKosakataByTopic(currentTopic) : []; } catch (e) { items = []; }
-        var filtered = filterItems(items, currentFilter);
-        var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
-        var countEl = container.querySelector ? container.querySelector('#kategori-count') : null;
-        var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
-        if (countEl) countEl.textContent = filtered.length ? filtered.length + ' entri' : 'Tidak ada hasil';
-        if (listEl) {
-          if (!filtered.length) listEl.innerHTML = '';
-          else {
-            var parts = [];
-            for (var i = 0; i < filtered.length; i++) parts.push(buildRow(filtered[i], 'kosakata'));
-            listEl.innerHTML = parts.join('');
-          }
-        }
-        if (emptyEl) emptyEl.hidden = filtered.length !== 0;
-        if (listEl) listEl.hidden = filtered.length === 0;
-      }
+      if (inp && inp.id === 'kategori-search') debouncedKosakataInput(inp);
     }
 
     bindHandlers(container, onClick, onInput);
   }
 
-  /* ── 3. grammar — Group tabs + list + detail ────────────────── */
+  /* 3. grammar - Group tabs + list + detail */
   function renderGrammarView(container) {
     if (!container) return;
     cleanHandlers(container);
@@ -410,13 +387,6 @@ var WakaruViews = (function () {
     var title = info.name || 'Grammar';
     var groups = [];
     try { groups = (typeof WakaruData !== 'undefined' && WakaruData.getGrammarGroups) ? WakaruData.getGrammarGroups() : []; } catch (e) { groups = []; }
-    if (!groups.length) {
-      try {
-        var allB = (typeof WakaruData !== 'undefined' && WakaruData.getByKategori) ? WakaruData.getByKategori('grammar') : [];
-        var seen = {};
-        for (var i = 0; i < allB.length; i++) { var g = allB[i].kelompok; if (g && !seen[g]) { seen[g] = true; groups.push(g); } }
-      } catch (e2) {}
-    }
     var activeGroup = groups.length ? groups[0] : null;
     var selected = null;
     var currentFilter = '';
@@ -437,8 +407,8 @@ var WakaruViews = (function () {
       }
       h += '</div>';
       h += '<label class="search-wrap" aria-label="Cari di ' + esc(activeGroup || title) + '">';
-      h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
-      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari pola atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari grammar" value="' + esc(currentFilter) + '">';
+      h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
+      h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari pola atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari grammar" value="' + esc(currentFilter) + '">';
       h += '</label>';
       h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
       if (filtered.length) {
@@ -449,14 +419,12 @@ var WakaruViews = (function () {
           h += '<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + esc(activeGroup) + '" data-grammar-idx="' + idx + '" aria-label="' + esc(it.pola) + '">';
           h += '<span class="mi-body"><span class="mi-vkanji" lang="ja">' + esc(it.pola) + '</span>';
           h += '<span class="mi-mean">' + esc(it.arti) + '</span>';
-          h += '<span class="mi-read">' + esc(it.contoh) + ' — ' + esc(it.terjemahan) + '</span></span>';
+          h += '<span class="mi-read">' + esc(it.contoh) + ' \u2014 ' + esc(it.terjemahan) + '</span></span>';
           h += '</button>';
         }
       }
       h += '</div>';
-      if (!filtered.length) {
-        h += '<div class="empty-state"><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
-      }
+      h += '<div class="empty-state" hidden><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
       return h;
     }
 
@@ -519,38 +487,38 @@ var WakaruViews = (function () {
       }
     }
 
+    var debouncedGrammarInput = debounce(function (inp) {
+      currentFilter = inp.value;
+      var items = activeGroup ? getGroupItems(activeGroup) : [];
+      var filtered = filterItems(items, currentFilter);
+      var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
+      var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
+      if (listEl) {
+        if (!filtered.length) listEl.innerHTML = '';
+        else {
+          var parts = [];
+          for (var i = 0; i < filtered.length; i++) {
+            var it = filtered[i];
+            var idx = -1;
+            for (var k = 0; k < items.length; k++) if (items[k] === it) { idx = k; break; }
+            parts.push('<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + esc(activeGroup) + '" data-grammar-idx="' + idx + '" aria-label="' + esc(it.pola) + '"><span class="mi-body"><span class="mi-vkanji" lang="ja">' + esc(it.pola) + '</span><span class="mi-mean">' + esc(it.arti) + '</span><span class="mi-read">' + esc(it.contoh) + ' \u2014 ' + esc(it.terjemahan) + '</span></span></button>');
+          }
+          listEl.innerHTML = parts.join('');
+        }
+      }
+      if (emptyEl) emptyEl.hidden = filtered.length !== 0;
+      if (listEl) listEl.hidden = filtered.length === 0;
+    }, 150);
+
     function onInput(ev) {
       var inp = ev.target;
-      if (inp && inp.id === 'kategori-search' && !selected) {
-        currentFilter = inp.value;
-        var items = activeGroup ? getGroupItems(activeGroup) : [];
-        var filtered = filterItems(items, currentFilter);
-        var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
-        var countEl = container.querySelector ? container.querySelector('#kategori-count') : null;
-        var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
-        if (countEl) countEl.textContent = filtered.length ? filtered.length + ' pola' : 'Tidak ada hasil';
-        if (listEl) {
-          if (!filtered.length) listEl.innerHTML = '';
-          else {
-            var parts = [];
-            for (var i = 0; i < filtered.length; i++) {
-              var it = filtered[i];
-              var idx = -1;
-              for (var k = 0; k < items.length; k++) if (items[k] === it) { idx = k; break; }
-              parts.push('<button type="button" class="materi-item kamus-row grammar-row" data-grammar-group="' + esc(activeGroup) + '" data-grammar-idx="' + idx + '" aria-label="' + esc(it.pola) + '"><span class="mi-body"><span class="mi-vkanji" lang="ja">' + esc(it.pola) + '</span><span class="mi-mean">' + esc(it.arti) + '</span><span class="mi-read">' + esc(it.contoh) + ' — ' + esc(it.terjemahan) + '</span></span></button>');
-            }
-            listEl.innerHTML = parts.join('');
-          }
-        }
-        if (emptyEl) emptyEl.hidden = filtered.length !== 0;
-        if (listEl) listEl.hidden = filtered.length === 0;
-      }
+      if (inp && inp.id === 'kategori-search' && !selected) debouncedGrammarInput(inp);
     }
 
     bindHandlers(container, onClick, onInput);
   }
 
-  /* ── 4. kata-kerja / kata-sifat — Conjugation tables ──────── */
+  /* 4. kata-kerja / kata-sifat - Conjugation tables */
   function renderConjugationView(id, container) {
     if (!container) return;
     cleanHandlers(container);
@@ -562,14 +530,6 @@ var WakaruViews = (function () {
       if (typeof WakaruData !== 'undefined' && WakaruData.getConjugation) items = WakaruData.getConjugation(id);
       if (!items || !items.length) items = (typeof WakaruData !== 'undefined' && WakaruData.getByKategori) ? WakaruData.getByKategori(id) : [];
     } catch (e) { items = []; }
-    if (items && typeof items.then === 'function') {
-      container.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
-      items.then(function (arr) {
-        items = arr || [];
-        doRenderConj();
-      });
-      return;
-    }
     doRenderConj();
 
     function doRenderConj() {
@@ -589,7 +549,6 @@ var WakaruViews = (function () {
         if (!grouped[g]) { grouped[g] = []; groupOrder.push(g); }
         grouped[g].push(items[i]);
       }
-      // sort groupOrder for consistency: verb godan/ichidan/irregular, adj i-adj/na-adj
       if (isVerb) {
         var verbOrder = ['godan', 'ichidan', 'irregular'];
         groupOrder.sort(function (a, b) {
@@ -611,12 +570,8 @@ var WakaruViews = (function () {
         return filterItems(items, currentFilter);
       }
 
-      function buildHtml() {
+      function buildTableContent() {
         var h = '';
-        h += '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">';;
-        h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
-        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari verba atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '" value="' + esc(currentFilter) + '">';
-        h += '</label>';
         h += '<div class="conj-wrap" role="region" aria-label="Tabel konjugasi ' + esc(title) + '" tabindex="0">';
         h += '<table class="conj-table"><thead><tr>';
         h += '<th class="conj-th conj-th--corner">Kata</th>';
@@ -626,7 +581,6 @@ var WakaruViews = (function () {
           h += '<th class="conj-th" scope="col">' + esc(lab) + '</th>';
         }
         h += '</tr></thead><tbody>';
-        // filtered groups
         var filt = filteredItems();
         var filtSet = {};
         for (var s = 0; s < filt.length; s++) {
@@ -642,7 +596,7 @@ var WakaruViews = (function () {
             if (!currentFilter || filtSet[rk]) visibleRows.push(rows[r]);
           }
           if (!visibleRows.length) continue;
-          h += '<tr class="conj-group-row"><td colspan="' + (formKeys.length + 1) + '">' + esc(gname) + ' · ' + visibleRows.length + '</td></tr>';
+          h += '<tr class="conj-group-row"><td colspan="' + (formKeys.length + 1) + '">' + esc(gname) + ' \u00B7 ' + visibleRows.length + '</td></tr>';
           for (var ri = 0; ri < visibleRows.length; ri++) {
             var it = visibleRows[ri];
             var word = it.verb || it.adj || it.kanji || it.kana || '';
@@ -652,15 +606,27 @@ var WakaruViews = (function () {
             h += '<span class="conj-first__arti">' + esc(it.arti || '') + '</span></th>';
             for (var fi = 0; fi < formKeys.length; fi++) {
               var fkey = formKeys[fi];
-              var formVal = (it.forms && it.forms[fkey]) ? it.forms[fkey] : '—';
-              h += '<td class="conj-td"><button type="button" class="conj-cell" data-speak="' + esc(formVal) + '" aria-label="' + esc(word) + ' ' + esc(formLabels[fkey] || fkey) + ' — ' + esc(formVal) + '" lang="ja">' + esc(formVal) + '</button></td>';
+              var formVal = (it.forms && it.forms[fkey]) ? it.forms[fkey] : '\u2014';
+              h += '<td class="conj-td"><button type="button" class="conj-cell" data-speak="' + esc(formVal) + '" aria-label="' + esc(word) + ' ' + esc(formLabels[fkey] || fkey) + ' \u2014 ' + esc(formVal) + '" lang="ja">' + esc(formVal) + '</button></td>';
             }
             h += '</tr>';
           }
         }
         h += '</tbody></table>';
         h += '</div>';
-        h += '<p class="conj-hint">Geser tabel ke samping untuk melihat semua bentuk · ketuk sel untuk mendengar.</p>';
+        h += '<p class="conj-hint">Geser tabel ke samping untuk melihat semua bentuk \u00B7 ketuk sel untuk mendengar.</p>';
+        return h;
+      }
+
+      function buildHtml() {
+        var h = '';
+        h += '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">';
+        h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
+        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari verba atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '" value="' + esc(currentFilter) + '">';
+        h += '</label>';
+        h += '<div id="conj-content">';
+        h += buildTableContent();
+        h += '</div>';
         return h;
       }
 
@@ -673,7 +639,7 @@ var WakaruViews = (function () {
         var cell = t.closest ? t.closest('.conj-cell') : null;
         if (cell && container.contains(cell)) {
           var txt = cell.getAttribute('data-speak');
-          if (txt && txt !== '—') speak(txt);
+          if (txt && txt !== '\u2014') speak(txt);
           return;
         }
       }
@@ -682,12 +648,8 @@ var WakaruViews = (function () {
         var inp = ev.target;
         if (inp && inp.id === 'kategori-search') {
           currentFilter = inp.value;
-          container.innerHTML = buildHtml();
-          var newInp = container.querySelector ? container.querySelector('#kategori-search') : null;
-          if (newInp) {
-            try { newInp.focus(); } catch (e) {}
-            try { var len = newInp.value.length; newInp.setSelectionRange(len, len); } catch (e2) {}
-          }
+          var contentEl = container.querySelector ? container.querySelector('#conj-content') : null;
+          if (contentEl) contentEl.innerHTML = buildTableContent();
         }
       }
 
@@ -695,7 +657,7 @@ var WakaruViews = (function () {
     }
   }
 
-  /* ── 5. partikel / kata-bantu — List + detail ──────────── */
+  /* 5. partikel / kata-bantu - List + detail */
   function renderDetailView(id, container) {
     if (!container) return;
     cleanHandlers(container);
@@ -703,11 +665,6 @@ var WakaruViews = (function () {
     var title = info.name || id;
     var items = [];
     try { items = (typeof WakaruData !== 'undefined' && WakaruData.getByKategori) ? WakaruData.getByKategori(id) : []; } catch (e) { items = []; }
-    if (items && typeof items.then === 'function') {
-      container.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
-      items.then(function (arr) { items = arr || []; doRenderDetail(); });
-      return;
-    }
     doRenderDetail();
 
     function doRenderDetail() {
@@ -717,15 +674,15 @@ var WakaruViews = (function () {
         var filtered = filterItems(items, currentFilter);
         var h = '';
         h += '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">';
-        h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
-        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari partikel atau fungsi…" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '" value="' + esc(currentFilter) + '">';
+        h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
+        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari partikel atau fungsi\u2026" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '" value="' + esc(currentFilter) + '">';
         h += '</label>';
         h += '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite">';
         if (filtered.length) {
           for (var i = 0; i < filtered.length; i++) h += buildDetailRow(filtered[i], i, items);
         }
         h += '</div>';
-        if (!filtered.length) h += '<div class="empty-state"><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
+        h += '<div class="empty-state" hidden><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
         return h;
       }
 
@@ -816,33 +773,33 @@ var WakaruViews = (function () {
         }
       }
 
+      var debouncedDetailInput = debounce(function (inp) {
+        currentFilter = inp.value;
+        var filtered = filterItems(items, currentFilter);
+        var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
+        var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
+        if (listEl) {
+          if (!filtered.length) listEl.innerHTML = '';
+          else {
+            var parts = [];
+            for (var i = 0; i < filtered.length; i++) parts.push(buildDetailRow(filtered[i], i, items));
+            listEl.innerHTML = parts.join('');
+          }
+        }
+        if (emptyEl) emptyEl.hidden = filtered.length !== 0;
+        if (listEl) listEl.hidden = filtered.length === 0;
+      }, 150);
+
       function onInput(ev) {
         var inp = ev.target;
-        if (inp && inp.id === 'kategori-search' && !selected) {
-          currentFilter = inp.value;
-          var filtered = filterItems(items, currentFilter);
-          var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
-          var countEl = container.querySelector ? container.querySelector('#kategori-count') : null;
-          var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
-          if (countEl) countEl.textContent = filtered.length ? filtered.length + ' entri' : 'Tidak ada hasil';
-          if (listEl) {
-            if (!filtered.length) listEl.innerHTML = '';
-            else {
-              var parts = [];
-              for (var i = 0; i < filtered.length; i++) parts.push(buildDetailRow(filtered[i], i, items));
-              listEl.innerHTML = parts.join('');
-            }
-          }
-          if (emptyEl) emptyEl.hidden = filtered.length !== 0;
-          if (listEl) listEl.hidden = filtered.length === 0;
-        }
+        if (inp && inp.id === 'kategori-search' && !selected) debouncedDetailInput(inp);
       }
 
       bindHandlers(container, onClick, onInput);
     }
   }
 
-  /* ── 6. kanji — Grid/list toggle + search ─────────────────── */
+  /* 6. kanji - Grid/list toggle + search */
   function renderKanjiView(container) {
     if (!container) return;
     cleanHandlers(container);
@@ -850,11 +807,6 @@ var WakaruViews = (function () {
     var title = info.name || 'Kanji';
     var items = [];
     try { items = (typeof WakaruData !== 'undefined' && WakaruData.getByKategori) ? WakaruData.getByKategori('kanji') : []; } catch (e) { items = []; }
-    if (items && typeof items.then === 'function') {
-      container.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
-      items.then(function (arr) { items = arr || []; doRenderKanji(); });
-      return;
-    }
     doRenderKanji();
 
     function doRenderKanji() {
@@ -874,8 +826,8 @@ var WakaruViews = (function () {
         h += '<span class="kanji-controls__hint">' + esc(filt.length ? filt.length + ' entri' : 'Tidak ada hasil') + '</span>';
         h += '</div>';
         h += '<label class="search-wrap" aria-label="Cari kanji">';
-        h += '<span class="search-wrap__icon" aria-hidden="true">⌕</span>';
-        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kanji, bacaan, atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari kanji" value="' + esc(currentFilter) + '">';
+        h += '<span class="search-wrap__icon" aria-hidden="true">\u2315</span>';
+        h += '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kanji, bacaan, atau arti\u2026" autocomplete="off" spellcheck="false" aria-label="Cari kanji" value="' + esc(currentFilter) + '">';
         h += '</label>';
         if (viewMode === 'grid') {
           h += '<div id="kategori-list" class="kanji-grid" role="list" aria-label="Grid kanji" aria-live="polite">';
@@ -895,7 +847,7 @@ var WakaruViews = (function () {
           }
           h += '</div>';
         }
-        if (!filt.length) h += '<div class="empty-state"><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
+        h += '<div class="empty-state" hidden><p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p></div>';
         return h;
       }
 
@@ -917,7 +869,6 @@ var WakaruViews = (function () {
           if (ch && typeof window.openKanjiDetail === 'function') window.openKanjiDetail(ch);
           return;
         }
-        // list kanji click
         var row = t.closest ? t.closest('.materi-item') : null;
         if (row && container.contains(row) && viewMode === 'list') {
           var val = row.getAttribute('data-kamus-item');
@@ -926,99 +877,53 @@ var WakaruViews = (function () {
         }
       }
 
+      var debouncedKanjiInput = debounce(function (inp) {
+        currentFilter = inp.value;
+        var filt = filtered();
+        var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
+        var hintEl = container.querySelector ? container.querySelector('.kanji-controls__hint') : null;
+        var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
+        if (hintEl) hintEl.textContent = filt.length ? filt.length + ' entri' : 'Tidak ada hasil';
+        if (emptyEl) emptyEl.hidden = filt.length !== 0;
+        if (listEl) {
+          if (viewMode === 'grid') {
+            if (!filt.length) listEl.innerHTML = '';
+            else {
+              var parts = [];
+              for (var i = 0; i < filt.length; i++) parts.push('<button type="button" class="kanji-grid__cell" data-kanji-char="' + esc(filt[i].kanji) + '" role="listitem" aria-label="Kanji ' + esc(filt[i].kanji) + '"><span class="kanji-grid__char" lang="ja">' + esc(filt[i].kanji) + '</span></button>');
+              listEl.innerHTML = parts.join('');
+            }
+          } else {
+            if (!filt.length) listEl.innerHTML = '';
+            else {
+              var parts2 = [];
+              for (var j = 0; j < filt.length; j++) parts2.push(buildRow(filt[j], 'kanji'));
+              listEl.innerHTML = parts2.join('');
+            }
+          }
+          listEl.hidden = filt.length === 0;
+        }
+      }, 150);
+
       function onInput(ev) {
         var inp = ev.target;
-        if (inp && inp.id === 'kategori-search') {
-          currentFilter = inp.value;
-          var filt = filtered();
-          var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
-          var countEl = container.querySelector ? container.querySelector('#kategori-count') : null;
-          var hintEl = container.querySelector ? container.querySelector('.kanji-controls__hint') : null;
-          var emptyEl = container.querySelector ? container.querySelector('.empty-state') : null;
-          if (countEl) countEl.textContent = filt.length ? filt.length + ' kanji' : '';
-          if (hintEl) hintEl.textContent = filt.length ? filt.length + ' entri' : 'Tidak ada hasil';
-          if (emptyEl) emptyEl.hidden = filt.length !== 0;
-          if (listEl) {
-            if (viewMode === 'grid') {
-              if (!filt.length) listEl.innerHTML = '';
-              else {
-                var parts = [];
-                for (var i = 0; i < filt.length; i++) parts.push('<button type="button" class="kanji-grid__cell" data-kanji-char="' + esc(filt[i].kanji) + '" role="listitem" aria-label="Kanji ' + esc(filt[i].kanji) + '"><span class="kanji-grid__char" lang="ja">' + esc(filt[i].kanji) + '</span></button>');
-                listEl.innerHTML = parts.join('');
-              }
-            } else {
-              if (!filt.length) listEl.innerHTML = '';
-              else {
-                var parts2 = [];
-                for (var j = 0; j < filt.length; j++) parts2.push(buildRow(filt[j], 'kanji'));
-                listEl.innerHTML = parts2.join('');
-              }
-            }
-            listEl.hidden = filt.length === 0;
-          }
-        }
+        if (inp && inp.id === 'kategori-search') debouncedKanjiInput(inp);
       }
 
       bindHandlers(container, onClick, onInput);
-    }
-  }
-
-  /* ── Generic fallback (original) ───────────────────────────── */
-  function renderGeneric(id, container) {
-    cleanHandlers(container);
-    if (!container) return;
-    var info = getKategoriInfo(id);
-    var title = info.name || id;
-    var raw = (typeof WakaruData !== 'undefined' && WakaruData.getByKategori) ? WakaruData.getByKategori(id) : [];
-    function doRender(items) {
-      items = items || [];
-      var html =
-        '<label class="search-wrap" aria-label="Cari di ' + esc(title) + '">' +
-          '<span class="search-wrap__icon" aria-hidden="true">⌕</span>' +
-          '<input id="kategori-search" class="search-input" type="search" placeholder="Cari kata, kana, atau arti…" autocomplete="off" spellcheck="false" aria-label="Cari di ' + esc(title) + '">' +
-        '</label>' +
-        '<div id="kategori-list" class="materi-list kategori-list" aria-live="polite"></div>' +
-        '<div id="kategori-empty" class="empty-state" hidden>' +
-          '<p class="empty-state__title">Tidak ditemukan</p><p class="empty-state__msg">Coba kata kunci lain.</p>' +
-        '</div>';
-      container.innerHTML = html;
-      focusContainer(container);
-      var searchEl = container.querySelector ? container.querySelector('#kategori-search') : null;
-      var listEl = container.querySelector ? container.querySelector('#kategori-list') : null;
-      var emptyEl = container.querySelector ? container.querySelector('#kategori-empty') : null;
-      function onClick(ev) {
-        var row = ev.target.closest ? ev.target.closest('.materi-item') : null;
-        if (row && container.contains(row)) {
-          if (id === 'kanji' && typeof window.openKanjiDetail === 'function') {
-            var val = row.getAttribute('data-kamus-item');
-            if (val) window.openKanjiDetail(val);
-          }
-        }
-      }
-      function onInput() {
-        if (searchEl) renderList(items, id, listEl, null, emptyEl, searchEl.value);
-      }
-      bindHandlers(container, onClick, onInput);
-      renderList(items, id, listEl, null, emptyEl, '');
-      _current = { id: id, back: function () { return false; } };
-    }
-    if (raw && typeof raw.then === 'function') {
-      container.innerHTML = '<div class="level-loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><p>Memuat…</p></div>';
-      raw.then(function (items) { doRender(items); });
-    } else {
-      doRender(raw);
     }
   }
 
   function renderKategoriView(id, container) {
     if (!container) return;
+    _current = null;
     if (id === 'hiragana' || id === 'katakana') return renderKanaView(id, container);
     if (id === 'kosakata') return renderKosakataView(container);
     if (id === 'grammar') return renderGrammarView(container);
     if (id === 'kata-kerja' || id === 'kata-sifat') return renderConjugationView(id, container);
     if (id === 'partikel' || id === 'kata-bantu') return renderDetailView(id, container);
     if (id === 'kanji') return renderKanjiView(container);
-    return renderGeneric(id, container);
+    if (typeof console !== 'undefined' && console.warn) console.warn('WakaruViews: no renderer for kategori "' + id + '"');
   }
 
   return {
@@ -1026,4 +931,3 @@ var WakaruViews = (function () {
     handleBack: function () { return _current && typeof _current.back === 'function' ? _current.back() : false; }
   };
 })();
-
