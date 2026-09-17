@@ -186,7 +186,7 @@ try:
     html = open(html_path, encoding='utf-8').read()
     required_ids = ['kamus-view', 'kamus-category-grid', 'kategori-view',
                     'app-view', 'home-search', 'home-search-results',
-                    'theme-toggle', 'kamus-back-btn', 'kamus-list-view']
+                    'kamus-list-view']
     missing_ids = [i for i in required_ids if f'id="{i}"' not in html]
     if missing_ids:
         fail(f'index.html: missing element IDs: {missing_ids}')

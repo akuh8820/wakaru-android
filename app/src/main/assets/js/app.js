@@ -46,15 +46,7 @@ var SPEAKER_ICON = '<svg class="audio-icon" width="18" height="18" viewBox="0 0 
 // ── Init / Theme ──────────────────────────────────────────────────
 
 var _settingsPrevView = null;
-var _themeMode = 'system';
-var _systemMql = null;
-
-function getEffectiveTheme(mode) {
-  if (mode === 'system') {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  return mode === 'dark' ? 'dark' : 'light';
-}
+var _themeMode = 'light';
 
 function updateThemePickerActive(mode) {
   var opts = document.querySelectorAll('.theme-picker__option');
@@ -66,33 +58,24 @@ function updateThemePickerActive(mode) {
 }
 
 function applyTheme(mode) {
-  if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system';
+  if (mode !== 'light' && mode !== 'dark') mode = 'light';
   _themeMode = mode;
-  var effective = getEffectiveTheme(mode);
-  document.documentElement.setAttribute('data-theme', effective);
-  var btn = document.getElementById('theme-toggle');
-  if (btn) btn.textContent = effective === 'dark' ? '☀️' : '🌙';
+  document.documentElement.setAttribute('data-theme', mode);
   updateThemePickerActive(mode);
   try {
     localStorage.setItem('wakaru-theme-mode', mode);
-    localStorage.setItem('wakaru-theme', effective);
+    localStorage.setItem('wakaru-theme', mode);
   } catch (e) {}
-}
-
-function toggleTheme() {
-  var effective = getEffectiveTheme(_themeMode);
-  var next = effective === 'dark' ? 'light' : 'dark';
-  applyTheme(next);
 }
 
 function loadTheme() {
   var savedMode = null;
   try { savedMode = localStorage.getItem('wakaru-theme-mode'); } catch (e) {}
-  if (savedMode !== 'light' && savedMode !== 'dark' && savedMode !== 'system') {
+  if (savedMode !== 'light' && savedMode !== 'dark') {
     var legacy = null;
     try { legacy = localStorage.getItem('wakaru-theme'); } catch (e2) {}
     if (legacy === 'light' || legacy === 'dark') savedMode = legacy;
-    else savedMode = 'system';
+    else savedMode = 'light';
   }
   applyTheme(savedMode);
 }
@@ -146,22 +129,9 @@ function closeSettings() {
 
 function init() {
   loadTheme();
-  // listen to OS theme changes when in system mode
-  try {
-    _systemMql = window.matchMedia('(prefers-color-scheme: dark)');
-    var onSystemChange = function () {
-      if (_themeMode === 'system') applyTheme('system');
-    };
-    if (_systemMql.addEventListener) _systemMql.addEventListener('change', onSystemChange);
-    else if (_systemMql.addListener) _systemMql.addListener(onSystemChange);
-  } catch (e3) {}
   WakaruData.loadAll().catch(function (err) { console.error('WakaruData.loadAll failed:', err); });
-  var toggle = document.getElementById('theme-toggle');
-  if (toggle) toggle.addEventListener('click', toggleTheme);
   var settingsBtn = document.getElementById('settings-btn');
   if (settingsBtn) settingsBtn.addEventListener('click', openSettings);
-  var settingsBack = document.getElementById('settings-back-btn');
-  if (settingsBack) settingsBack.addEventListener('click', closeSettings);
   var picker = document.querySelector('.theme-picker');
   if (picker) {
     picker.addEventListener('click', function (e) {
@@ -311,7 +281,7 @@ function renderKanjiDetail(kanji, strokes, detail) {
   var strokeCount = strokes ? strokes.length : (kanji.stroke_count || '');
 
   var html =
-    '<div class="page-header"><button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button><span class="page-header__level">Kanji</span></div>' +
+    '<div class="page-header"><span class="page-header__level">Kanji</span></div>' +
     '<div class="kanji-hero">' +
       '<span class="kanji-hero__glyph" lang="ja">' + escHtml(kanji.kanji) + '</span>' +
       '<p class="kanji-hero__meanings">' + escHtml(meanings) + '</p>' +
@@ -414,7 +384,6 @@ function renderKanjiDetail(kanji, strokes, detail) {
   }
 
   main.innerHTML = html;
-  document.getElementById('back-btn').addEventListener('click', function () { wakaruGoBack(); });
   // Stroke animation setup
   var svg = main.querySelector('.stroke-svg');
   if (svg) setupStrokeAnimation(svg);
@@ -435,7 +404,7 @@ function renderQuizSetup() {
   if (main) main.hidden = false;
   if (!main) return;
   main.innerHTML =
-    '<div class="page-header"><button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button><span class="page-header__level">Kuis</span></div>' +
+    '<div class="page-header"><span class="page-header__level">Kuis</span></div>' +
     '<div class="quiz-setup">' +
       '<h1 class="quiz-setup__title">Kuis N5</h1>' +
       '<div class="quiz-setup__section">' +
@@ -472,7 +441,6 @@ function renderQuizSetup() {
       pill.classList.add('is-active');
     });
   });
-  document.getElementById('back-btn').addEventListener('click', function () { wakaruGoBack(); });
   document.getElementById('btn-quiz-start').addEventListener('click', function () {
     startQuiz(getSelectedType(), getSelectedCount());
   });
@@ -555,7 +523,6 @@ function renderQuizQuestion() {
     '<span class="quiz-sub quiz-sub--romaji">' + escHtml(q.romaji) + '</span>';
   var html =
     '<div class="quiz-header">' +
-      '<button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button>' +
       '<span class="quiz-progress-text" aria-live="polite">Soal ' + (s.idx + 1) + '/' + s.count + '</span>' +
     '</div>' +
     '<div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:' + pct + '%"></div></div>' +
@@ -570,11 +537,6 @@ function renderQuizQuestion() {
     '</div>';
   main.innerHTML = html;
   s.answered = false;
-  document.getElementById('back-btn').addEventListener('click', function () {
-    if (confirm('Keluar dari kuis?')) {
-      wakaruGoBack();
-    }
-  });
   document.getElementById('quiz-options').addEventListener('click', function (e) {
     var btn = e.target.closest('.quiz-option');
     if (!btn) return;
@@ -621,7 +583,6 @@ function renderQuizResult() {
   if (main) main.hidden = false;
   var html =
     '<div class="quiz-header">' +
-      '<button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button>' +
       '<span class="quiz-progress-text">Selesai</span>' +
     '</div>' +
     '<div class="quiz-result">' +
@@ -645,7 +606,6 @@ function renderQuizResult() {
       '</div>' +
     '</div>';
   main.innerHTML = html;
-  document.getElementById('back-btn').addEventListener('click', function () { wakaruGoBack(); });
   document.getElementById('btn-quiz-retry').addEventListener('click', function () {
     startQuiz(s.type, s.count);
   });
@@ -673,7 +633,7 @@ function renderFlashSetup() {
     return '<button class="quiz-pill' + (i === 0 ? ' is-active' : '') + '" data-val="' + escHtml(k.id) + '" type="button">' + escHtml(k.name) + ' · ' + k.count + '</button>';
   }).join('');
   main.innerHTML =
-    '<div class="page-header"><button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button><span class="page-header__level">Flashcard</span></div>' +
+    '<div class="page-header"><span class="page-header__level">Flashcard</span></div>' +
     '<div class="quiz-setup">' +
       '<h1 class="quiz-setup__title">Flashcard N5</h1>' +
       '<div class="quiz-setup__section">' +
@@ -684,7 +644,6 @@ function renderFlashSetup() {
       '<label class="flash-shuffle-label"><input type="checkbox" id="flash-autoplay-toggle"' + (autoPlay ? ' checked' : '') + '> Putar audio otomatis</label>' +
       '<button class="btn-start" id="btn-flash-start" type="button">Mulai</button>' +
     '</div>';
-  document.getElementById('back-btn').addEventListener('click', function () { wakaruGoBack(); });
   document.getElementById('flash-mode-pills').addEventListener('click', function (e) {
     var pill = e.target.closest('.quiz-pill');
     if (!pill) return;
@@ -760,7 +719,6 @@ function renderFlashCard() {
   }
   var html =
     '<div class="quiz-header">' +
-      '<button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button>' +
       '<span class="quiz-progress-text">' + (s.idx + 1) + ' / ' + s.items.length + '</span>' +
     '</div>' +
     '<div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:' + pct + '%"></div></div>' +
@@ -802,10 +760,6 @@ function renderFlashCard() {
       flipCard();
     }
   });
-  document.getElementById('back-btn').addEventListener('click', function () {
-    saveFlashSession(s.mode, s.idx);
-    wakaruGoBack();
-  });
   document.getElementById('flash-prev').addEventListener('click', function () {
     if (s.idx > 0) { s.idx--; renderFlashCard(); }
   });
@@ -826,7 +780,6 @@ function renderFlashComplete() {
   clearFlashSession();
   var html =
     '<div class="quiz-header">' +
-      '<button class="back-btn" id="back-btn" type="button" aria-label="Kembali">← Kembali</button>' +
       '<span class="quiz-progress-text">Selesai</span>' +
     '</div>' +
     '<div class="quiz-result">' +
@@ -837,7 +790,6 @@ function renderFlashComplete() {
       '</div>' +
     '</div>';
   main.innerHTML = html;
-  document.getElementById('back-btn').addEventListener('click', function () { wakaruGoBack(); });
   document.getElementById('btn-flash-retry').addEventListener('click', function () {
     startFlash(s.mode, true, s.autoPlay);
   });
@@ -881,6 +833,9 @@ function wakaruGoBack() {
     return 'true';
   }
   if (currentPage === 'quiz' || currentPage === 'flash') {
+    if (currentPage === 'flash' && _flashState && _flashState.mode) {
+      saveFlashSession(_flashState.mode, _flashState.idx);
+    }
     var appView = document.getElementById('app-view');
     if (appView) appView.hidden = true;
     var kamusView = document.getElementById('kamus-view');
