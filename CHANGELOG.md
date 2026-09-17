@@ -1,5 +1,18 @@
 # Changelog
 
+## v3.4 — 2026-09-17
+
+### Refactor
+- views.js: daftar + detail untuk kosakata, grammar, partikel, dan kata-bantu disatukan ke satu factory `renderListDetailView` (928 → 800 baris); helper duplikat (`renderList`, `buildTopicList`, `buildListHtml`, `buildDetailHtml`, `buildDetailRow`, `buildDetail`, `buildList`) dan handler debounce per-view dihapus
+- Kontrak klik baris → item tetap memakai indeks array **tak-terfilter** (`data-row-idx`), perilaku lama dipertahankan; atribut lama `data-grammar-idx`/`data-detail-idx` dihapus
+
+### Fix
+- `aria-label` input pencarian grammar kembali menyebut nama grup aktif (sempat hilang saat refactor)
+- Empty-state kini tampil saat query awal ("Lihat semua") tidak menghasilkan apa pun — sebelumnya layar kosong
+
+### Chore
+- Hapus `data/levels.json` — file mati tanpa referensi, tidak pernah dimuat
+
 ## v3.3 — 2026-09-17
 
 ### Refactor
