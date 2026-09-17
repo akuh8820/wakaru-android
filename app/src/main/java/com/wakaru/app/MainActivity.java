@@ -7,8 +7,10 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
-import android.webkit.JavascriptInterface;
+import android.webkit.JavaScriptReplyProxy;
 import android.webkit.WebChromeClient;
+import android.webkit.WebMessage;
+import android.webkit.WebMessageListener;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -59,19 +61,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                boolean trusted = false;
-                if (url != null) {
-                    Uri uri = Uri.parse(url);
-                    trusted = "appassets.androidplatform.net".equals(uri.getHost())
-                            && "https".equals(uri.getScheme());
-                }
-                if (trusted) {
-                    if (ttsBridge != null) {
-                        view.addJavascriptInterface(ttsBridge, "Android");
-                    }
-                } else {
-                    view.removeJavascriptInterface("Android");
-                }
             }
 
             @Override
@@ -99,6 +88,20 @@ public class MainActivity extends AppCompatActivity {
         settings.setGeolocationEnabled(false);
         settings.setSafeBrowsingEnabled(true);
         ttsBridge = new TTSBridge(this);
+        webView.addWebMessageListener("WakaruBridge", new String[]{"https://appassets.androidplatform.net"},
+                new WebMessageListener() {
+                    @Override
+                    public void onPostMessage(WebView view, WebMessage message, Uri sourceOrigin,
+                                              boolean isMainFrame, JavaScriptReplyProxy replyProxy) {
+                        String data = message.getData();
+                        if (data == null) return;
+                        if (data.startsWith("speak:")) {
+                            ttsBridge.speakJapanese(data.substring(6));
+                        } else if (data.equals("getVersion")) {
+                            replyProxy.postMessage(BuildConfig.VERSION_NAME);
+                        }
+                    }
+                });
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
         setContentView(webView);
 
@@ -141,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        @JavascriptInterface
         public void speakJapanese(String text) {
             if (!ready || tts == null || text == null || text.isEmpty() || text.length() > 500) return;
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "wakaru_" + System.currentTimeMillis());
