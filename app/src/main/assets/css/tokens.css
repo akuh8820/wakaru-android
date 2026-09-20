@@ -1,0 +1,163 @@
+/* ══════════════════════════════════════════════════════════════
+   Wakaru Design Tokens
+   Minimal · sage #5B7B5A · Inter / Inconsolata
+   Vanilla CSS variables — light + dark mode
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Typography · font families ── */
+  --font-sans: 'Inter', 'Hiragino Sans', 'Yu Gothic', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Inconsolata', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-jp: sans-serif;
+
+  /* ── Typography · type scale ── */
+  --text-xs: 0.7rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+
+  /* ── Typography · weights ── */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* ── Typography · line heights ── */
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+
+  /* ── Typography · letter spacing ── */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+  --tracking-wider: 0.12em;
+
+  /* ── Colors · core — light ── */
+  --bg: #F4F4F1;
+  --surface: #FFFFFF;
+  --surface-2: #FAFAF8;
+  --text: #0C0C09;
+  --muted: #6B6B63;
+  --muted-2: #8A8A83;
+  --border: #E8E6E0;
+  --border-strong: #DDDBD5;
+
+  /* ── Colors · accent — light ── */
+  --accent: #5B7B5A;
+  --accent-hover: #4E6A4E;
+  --accent-light: #E9EFE9;
+  --accent-text: #FFFFFF;
+
+  /* ── Colors · semantic ── */
+  --success: #16A34A;
+  --warning: #D97706;
+  --danger: #DC2626;
+
+  /* ── Shadows · light ── */
+  --shadow: rgba(12, 12, 9, 0.06);
+  --shadow-hover: rgba(12, 12, 9, 0.08);
+
+  /* ── Category accents — light ── */
+  --kat-sage: #5B7B5A;
+  --kat-sage-bg: #E9EFE9;
+  --kat-purple: #7C5CBF;
+  --kat-purple-bg: #EDE8F7;
+  --kat-vermilion: #C94A2B;
+  --kat-vermilion-bg: #FDE8E1;
+  --kat-cyan: #148CA3;
+  --kat-cyan-bg: #E0F2F7;
+  --kat-amber: #B7791F;
+  --kat-amber-bg: #FEF3C7;
+  --kat-red: #DC2626;
+  --kat-red-bg: #FEE2E2;
+  --kat-blue: #2563EB;
+  --kat-blue-bg: #DBEAFE;
+  --kat-green: #16A34A;
+  --kat-green-bg: #DCFCE7;
+  --kat-violet: #7C3AED;
+  --kat-violet-bg: #EDE9FE;
+
+  /* ── Quiz feedback · text — light ── */
+  --quiz-correct-text: #166534;
+  --quiz-wrong-text: #991B1B;
+
+  /* ── Feedback · quiz correct/wrong · text (light) ── */
+
+  /* ── Quiz feedback · text ── */
+
+  /* ── Quiz feedback · text loght ── */
+
+  /* ── Spacing · 4/8/12/16/24/32 ── */
+  --space-2xs: 0.25rem; /* 4 */
+  --space-xs: 0.5rem;   /* 8 */
+  --space-sm: 0.75rem;  /* 12 */
+  --space-md: 1rem;     /* 16 */
+  --space-lg: 1.5rem;   /* 24 */
+  --space-xl: 2rem;     /* 32 */
+  --space-2xl: 3rem;    /* 48 */
+
+  /* ── Border radius ── */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-pill: 999px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Dark Mode — [data-theme="dark"]
+   ══════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  /* ── Colors · core — dark ── */
+  --bg: #181A18;
+  --surface: #242624;
+  --surface-2: #2A2C2A;
+  --text: #F2F0EB;
+  --muted: #A8A6A0;
+  --muted-2: #8E8C86;
+  --border: #2E302E;
+  --border-strong: #3A3C39;
+
+  /* ── Colors · accent — dark ── */
+  --accent: #8EB08E;
+  --accent-hover: #A1C2A1;
+  --accent-light: #2A332A;
+  --accent-text: #0C0C09;
+
+  /* ── Shadows · dark ── */
+  --shadow: rgba(0, 0, 0, 0.35);
+  --shadow-hover: rgba(0, 0, 0, 0.5);
+
+  /* ── Category accents — dark ── */
+  --kat-sage: #8EB08E;
+  --kat-sage-bg: #2A332A;
+  --kat-purple: #A78BFA;
+  --kat-purple-bg: #2E2850;
+  --kat-vermilion: #FB7A5A;
+  --kat-vermilion-bg: #3A2520;
+  --kat-cyan: #38BDF8;
+  --kat-cyan-bg: #1E3238;
+  --kat-amber: #FCD34D;
+  --kat-amber-bg: #3A2E1A;
+  --kat-red: #F87171;
+  --kat-red-bg: #3A2020;
+  --kat-blue: #60A5FA;
+  --kat-blue-bg: #1E2E4A;
+  --kat-green: #4ADE80;
+  --kat-green-bg: #1E3325;
+  --kat-violet: #A78BFA;
+  --kat-violet-bg: #2A2540;
+
+  /* ── Feedback · quiz correct/wrong · dark ── */
+  --quiz-correct-bg: #14532D;
+  --quiz-correct-border: #22C55E;
+  --quiz-correct-text: #BBF7D0;
+  --quiz-wrong-bg: #7F1D1D;
+  --quiz-wrong-border: #EF4444;
+  --quiz-wrong-text: #FECACA;
+
+  /* ── Quiz feedback · dark ── */
+}

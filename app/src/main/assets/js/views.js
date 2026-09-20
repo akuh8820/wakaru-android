@@ -1,11 +1,99 @@
 /**
- * WakaruViews — kategori-specific view renderer (Phase 3 lane 2)
- * ES5, no modules. Single entry: renderKategoriView(id, container)
- * 9 kategori-specific views.
+ * WakaruViews — navigation + kategori renderers
+ * ES5, no modules.
  */
 var WakaruViews = (function () {
   'use strict';
 
+  // ═══ Navigation ═══════════════════════════════════════════════
+
+  var VIEWS = [
+    'beranda-view', 'kamus-view', 'level-view',
+    'quiz-view', 'flashcard-view', 'settings-view', 'app-view'
+  ];
+
+  var VIEW_TO_NAV = {
+    'beranda-view': 'nav-beranda',
+    'kamus-view': 'nav-kamus',
+    'level-view': 'nav-progres',
+    'quiz-view': 'nav-latihan',
+    'flashcard-view': 'nav-latihan',
+    'settings-view': 'nav-tentang'
+  };
+
+  var _currentView = 'beranda-view';
+
+  function show(viewId) {
+    VIEWS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.hidden = (id !== viewId);
+    });
+    if (viewId === 'kamus-view' && window.WakaruKamus && window.WakaruKamus.showGrid) {
+      window.WakaruKamus.showGrid();
+    }
+    updateNavActive(viewId);
+    if (window.WakaruNav) {
+      var pageMap = {
+        'beranda-view': 'beranda', 'kamus-view': 'kamus', 'level-view': 'level',
+        'quiz-view': 'quiz', 'flashcard-view': 'flash', 'settings-view': 'settings'
+      };
+      window.WakaruNav.page = pageMap[viewId] || 'kamus';
+    }
+    _currentView = viewId;
+    try { localStorage.setItem('wakaru-last-view-v4', viewId); } catch (e) {}
+  }
+
+  function updateNavActive(viewId) {
+    var nav = document.getElementById('bottom-nav');
+    if (!nav) return;
+    var activeNavId = VIEW_TO_NAV[viewId] || 'nav-beranda';
+    nav.querySelectorAll('.nav__item').forEach(function (btn) {
+      var isActive = btn.id === activeNavId;
+      btn.classList.toggle('nav__item--active', isActive);
+      if (isActive) btn.setAttribute('aria-current', 'page');
+      else btn.removeAttribute('aria-current');
+    });
+  }
+
+  function init() {
+    // Nav buttons — capture phase to override inline handlers
+    var nav = document.getElementById('bottom-nav');
+    if (nav) {
+      nav.addEventListener('click', function (e) {
+        var btn = e.target.closest('.nav__item');
+        if (!btn) return;
+        e.stopPropagation();
+        var viewId = btn.getAttribute('data-view');
+        if (viewId) show(viewId);
+      }, true);
+    }
+    // Brand → beranda
+    var brand = document.querySelector('.site-header__brand');
+    if (brand) {
+      brand.addEventListener('click', function (e) {
+        e.preventDefault();
+        show('beranda-view');
+      });
+    }
+    // Settings button in header
+    var settingsBtn = document.getElementById('settings-btn');
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', function () {
+        show('settings-view');
+      });
+    }
+    // Restore last view
+    var lastView = 'beranda-view';
+    try {
+      var saved = localStorage.getItem('wakaru-last-view-v4');
+      if (saved && VIEWS.indexOf(saved) !== -1) lastView = saved;
+    } catch (e) {}
+    show(lastView);
+  }
+
+  function getCurrentView() { return _currentView; }
+
+  // ═══ Helpers ═══════════════════════════════════════════════════
 
   function debounce(fn, ms) {
     var t;
@@ -75,6 +163,14 @@ var WakaruViews = (function () {
     return out;
   }
 
+  function escHtml(s) {
+    return window.escHtml ? window.escHtml(s) : String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ═══ Kategori Renderers ═══════════════════════════════════════
+
   function buildRow(it, categoryId, rowIdx) {
     var rowClass = 'materi-item kamus-row';
     var isKanji = categoryId === 'kanji' && !!it.kanji;
@@ -129,12 +225,34 @@ var WakaruViews = (function () {
         if (showKana) h += '<span class="mi-vkana" lang="ja">' + escHtml(kana2) + '</span>';
         h += '</span><span class="mi-mean">' + escHtml(arti) + '</span>';
         if (!showKana && kana2) h += '<span class="mi-read" lang="ja">' + escHtml(kana2) + '</span>';
-        if (romaji2) h += '<span class="mi-romaji">' + escHtml(romaji2) + '</span>';
+        if (romaji2) h += '<span class="mi-romaji">' + romaji2 + '</span>';
         h += '</span>';
       }
     }
     h += '</div>';
     return h;
+  }
+
+  function cleanHandlers(container) {
+    try {
+      if (container._wakaruClick && container.removeEventListener) container.removeEventListener('click', container._wakaruClick);
+      if (container._wakaruInput && container.removeEventListener) container.removeEventListener('input', container._wakaruInput);
+    } catch (e) {}
+    container._wakaruClick = null;
+    container._wakaruInput = null;
+  }
+
+  function bindHandlers(container, clickFn, inputFn) {
+    if (container.addEventListener) {
+      if (clickFn) {
+        container.addEventListener('click', clickFn);
+        container._wakaruClick = clickFn;
+      }
+      if (inputFn) {
+        container.addEventListener('input', inputFn);
+        container._wakaruInput = inputFn;
+      }
+    }
   }
 
   function renderListDetailView(container, opts) {
@@ -221,28 +339,6 @@ var WakaruViews = (function () {
     return ctrl;
   }
 
-  function cleanHandlers(container) {
-    try {
-      if (container._wakaruClick && container.removeEventListener) container.removeEventListener('click', container._wakaruClick);
-      if (container._wakaruInput && container.removeEventListener) container.removeEventListener('input', container._wakaruInput);
-    } catch (e) {}
-    container._wakaruClick = null;
-    container._wakaruInput = null;
-  }
-
-  function bindHandlers(container, clickFn, inputFn) {
-    if (container.addEventListener) {
-      if (clickFn) {
-        container.addEventListener('click', clickFn);
-        container._wakaruClick = clickFn;
-      }
-      if (inputFn) {
-        container.addEventListener('input', inputFn);
-        container._wakaruInput = inputFn;
-      }
-    }
-  }
-
   /* 1. hiragana / katakana - Gojuon grid */
   function renderKanaView(id, container) {
     if (!container) return;
@@ -319,7 +415,6 @@ var WakaruViews = (function () {
     if (!container) return;
     cleanHandlers(container);
     var info = getKategoriInfo('kosakata');
-    var title = info.name || 'Kosakata';
     var topics = [];
     try {
       topics = (typeof WakaruData !== 'undefined' && WakaruData.getKosakataTopics) ? WakaruData.getKosakataTopics() : [];
@@ -398,7 +493,6 @@ var WakaruViews = (function () {
     if (!container) return;
     cleanHandlers(container);
     var info = getKategoriInfo('grammar');
-    var title = info.name || 'Grammar';
     var groups = [];
     try { groups = (typeof WakaruData !== 'undefined' && WakaruData.getGrammarGroups) ? WakaruData.getGrammarGroups() : []; } catch (e) { groups = []; }
     var activeGroup = groups.length ? groups[0] : null;
@@ -446,7 +540,7 @@ var WakaruViews = (function () {
       detailHtml: detailHtml,
       navId: 'grammar',
       placeholder: 'Cari pola atau arti\u2026',
-      searchLabel: 'Cari di ' + (activeGroup || title),
+      searchLabel: 'Cari di ' + (activeGroup || info.name || 'Grammar'),
       initialQuery: initialQuery,
       onHeaderClick: function (ev, ctrl) {
         var t = ev.target;
@@ -782,6 +876,7 @@ var WakaruViews = (function () {
     }
   }
 
+  /* Public kategori renderer */
   function renderKategoriView(id, container, initialQuery) {
     if (!container) return;
     WakaruNav.category = null;
@@ -794,8 +889,14 @@ var WakaruViews = (function () {
     if (typeof console !== 'undefined' && console.warn) console.warn('WakaruViews: no renderer for kategori "' + id + '"');
   }
 
+  // ═══ Public API ═══════════════════════════════════════════════
+
   return {
+    show: show,
+    init: init,
+    getCurrentView: getCurrentView,
     renderKategoriView: renderKategoriView,
     handleBack: function () { return WakaruNav.category && typeof WakaruNav.category.back === 'function' ? WakaruNav.category.back() : false; }
   };
 })();
+window.WakaruViews = WakaruViews;

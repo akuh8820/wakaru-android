@@ -289,3 +289,4 @@ var WakaruData = (function () {
     search: search
   };
 })();
+window.WakaruData = WakaruData;

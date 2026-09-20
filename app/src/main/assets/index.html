@@ -6,15 +6,39 @@
   <meta name="theme-color" content="#F4F4F1">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#181A18">
   <title>Wakaru — Belajar Bahasa Jepang</title>
+  <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/beranda.css">
+  <link rel="stylesheet" href="css/level.css">
+  <link rel="stylesheet" href="css/quiz.css">
+  <link rel="stylesheet" href="css/flashcard.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/kana.css">
+  <link rel="stylesheet" href="css/kanji-detail.css">
+  <link rel="stylesheet" href="css/kosakata.css">
+  <link rel="stylesheet" href="css/bunpou.css">
+  <link rel="stylesheet" href="css/konjugasi.css">
+  <link rel="stylesheet" href="css/partikel.css">
   <script>(function(){try{var m=localStorage.getItem('wakaru-theme-mode');if(m!=='dark'&&m!=='light')m=localStorage.getItem('wakaru-theme');var t=m==='dark'?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
 <body>
-  <header>
-    <h1>Wakaru</h1>
-    <div class="header-actions">
-      <button id="settings-btn" aria-label="Pengaturan" type="button">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 9 15a1.65 1.65 0 0 0-1-1.51V13a1.65 1.65 0 0 0 1-1.51A1.65 1.65 0 0 0 9 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 13.28 4.33 1.65 1.65 0 0 0 14.28 2.83V2a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 15 9a1.65 1.65 0 0 0 1 1.51V11a1.65 1.65 0 0 0-1 1.51 1.65 1.65 0 0 0 1 1.49Z"/></svg>
+  <header class="site-header" id="site-header">
+    <a class="site-header__brand" href="#" aria-label="Wakaru — Beranda" data-nav="beranda">
+      <span class="site-header__dot" aria-hidden="true"></span>
+      <span class="site-header__title">Wakaru</span>
+    </a>
+    <div class="site-header__actions">
+      <div class="tts-indicator" id="tts-indicator" role="status" aria-live="polite" aria-label="Status TTS — Offline siap">
+        <span class="tts-indicator__icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </span>
+        <span class="tts-indicator__label">Offline TTS</span>
+        <span class="tts-indicator__dot" aria-hidden="true"></span>
+      </div>
+      <button id="settings-btn" class="avatar-btn" aria-label="Pengaturan" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
       </button>
     </div>
   </header>
@@ -152,7 +176,283 @@
     </div>
   </section>
 
+  <!-- ── Phase 3a Views ── -->
+  <section id="beranda-view" hidden tabindex="-1" aria-label="Beranda">
+    <div class="beranda-welcome">
+      <span class="beranda-welcome__eyebrow">Selamat Datang Kembali</span>
+      <h2 class="beranda-welcome__title">Konnichiwa, Pembelajar!</h2>
+      <p class="beranda-welcome__subtitle">Siap memperkaya kosakata bahasa Jepangmu hari ini?</p>
+    </div>
+
+    <div class="beranda-streak" role="status" aria-label="Streak 5 hari">
+      <span class="beranda-streak__deco" aria-hidden="true"><svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></span>
+      <div class="beranda-streak__top">
+        <span class="beranda-streak__badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.5-2.25 1.5-3.2"/></svg> Streak 5 Hari</span>
+        <span class="beranda-streak__target">Target: 20 Kata/Hari</span>
+      </div>
+      <div class="beranda-streak__progress">
+        <div class="beranda-streak__progress-row"><span>Progres Harian</span><strong>15 / 20 Kata</strong></div>
+        <div class="beranda-streak__track" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="Progres harian 75 persen"><div class="beranda-streak__fill" style="width:75%"></div></div>
+      </div>
+      <button class="beranda-streak__cta" type="button" aria-label="Lanjutkan sesi N5 Pelajaran 3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg> Lanjutkan Sesi (N5 - Pelajaran 3)</button>
+    </div>
+
+    <div class="beranda-wotd-wrap">
+      <div class="beranda-wotd__header">
+        <h3 class="beranda-wotd__title">Kata Hari Ini</h3>
+        <span class="beranda-wotd__badge">Kosakata Pilihan</span>
+      </div>
+      <div class="beranda-wotd">
+        <div class="beranda-wotd__top">
+          <div>
+            <span class="beranda-wotd__kanji" lang="ja">勉強</span>
+            <p class="beranda-wotd__romaji" lang="ja">Benkyou</p>
+          </div>
+          <button class="beranda-wotd__audio" type="button" aria-label="Putar audio Benkyou"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></button>
+        </div>
+        <p class="beranda-wotd__meaning">Belajar / Studi</p>
+        <p class="beranda-wotd__example"><span lang="ja">毎日日本語を勉強します</span> — Mainichi nihongo o benkyou shimasu — Setiap hari saya belajar bahasa Jepang.</p>
+      </div>
+    </div>
+
+    <div class="beranda-levels-wrap">
+      <div class="beranda-levels__header">
+        <h3 class="beranda-levels__title">Pilih Level JLPT</h3>
+        <span class="beranda-levels__badge">Kurikulum</span>
+      </div>
+      <div class="beranda-levels" role="list" aria-label="Pilih level JLPT">
+        <button class="beranda-level-card beranda-level-card--n5" type="button" role="listitem" aria-label="Pemula N5, 65 persen selesai"><span class="beranda-level-card__left"><span class="beranda-level-card__icon" aria-hidden="true">N5</span><span class="beranda-level-card__text"><span class="beranda-level-card__label">Pemula (N5)</span><span class="beranda-level-card__desc">Hiragana, Katakana, 800 Kosakata</span></span></span><span class="beranda-level-card__right"><span class="beranda-level-card__progress">65% Selesai</span><span class="beranda-level-card__chevron" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></span></button>
+        <button class="beranda-level-card beranda-level-card--n4" type="button" role="listitem" aria-label="Menengah Bawah N4, 12 persen"><span class="beranda-level-card__left"><span class="beranda-level-card__icon" aria-hidden="true">N4</span><span class="beranda-level-card__text"><span class="beranda-level-card__label">Menengah Bawah (N4)</span><span class="beranda-level-card__desc">Percakapan Sehari-hari, 1.500 Kosakata</span></span></span><span class="beranda-level-card__right"><span class="beranda-level-card__progress">12% Selesai</span><span class="beranda-level-card__chevron" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></span></button>
+        <button class="beranda-level-card beranda-level-card--n3" type="button" role="listitem" aria-label="Menengah N3, belum mulai"><span class="beranda-level-card__left"><span class="beranda-level-card__icon" aria-hidden="true">N3</span><span class="beranda-level-card__text"><span class="beranda-level-card__label">Menengah (N3)</span><span class="beranda-level-card__desc">Bahasa Bisnis &amp; Artikel, 3.000 Kosakata</span></span></span><span class="beranda-level-card__right"><span class="beranda-level-card__progress">Belum Mulai</span><span class="beranda-level-card__chevron" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></span></button>
+      </div>
+    </div>
+
+    <div class="beranda-offline" role="status" aria-label="Mode offline aktif">
+      <div class="beranda-offline__left">
+        <span class="beranda-offline__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 5.7-2.39"/><path d="M8.53 16.11a6 6 0 0 1 6.07 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></span>
+        <div>
+          <p class="beranda-offline__title">Mode Offline Aktif</p>
+          <p class="beranda-offline__desc">Semua suara TTS tersimpan secara lokal di perangkat.</p>
+        </div>
+      </div>
+      <span class="beranda-offline__check" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+    </div>
+  </section>
+
+  <section id="level-view" hidden tabindex="-1" aria-label="Level N5">
+    <div class="level-banner" role="region" aria-label="JLPT N5 Level">
+      <span class="level-banner__deco" aria-hidden="true"></span>
+      <div class="level-banner__top">
+        <div>
+          <span class="level-banner__eyebrow">JLPT N5 Level</span>
+          <h2 class="level-banner__title">Dasar Bahasa Jepang</h2>
+        </div>
+        <span class="level-banner__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M22 10v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6"/><path d="M12 2l7 4-7 4-7-4 7-4z"/><path d="M7 10l5 3 5-3"/></svg></span>
+      </div>
+      <p class="level-banner__desc">Kuasai dasar esensial untuk memulai perjalanan percakapan dan pemahaman teks Jepang Anda.</p>
+      <div class="level-banner__progress">
+        <div class="level-banner__progress-row"><span>Total Progress Keseluruhan</span><strong>42%</strong></div>
+        <div class="level-banner__track" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="100" aria-label="Progress keseluruhan 42 persen"><div class="level-banner__fill" style="width:42%"></div></div>
+      </div>
+    </div>
+
+    <div class="level-filter-bar">
+      <h3 class="level-filter-bar__title">9 Kategori Pembelajaran</h3>
+      <div class="level-filter-bar__pills" role="group" aria-label="Filter kategori">
+        <button class="level-filter level-filter--active" type="button" aria-pressed="true">Semua</button>
+        <button class="level-filter" type="button" aria-pressed="false">Belum Selesai</button>
+      </div>
+    </div>
+
+    <div class="level-grid" role="list" aria-label="Kategori N5">
+      <div class="level-card" data-cat="hiragana" role="listitem"><div class="level-card__head"><div class="level-card__left"><span class="level-card__icon" lang="ja" aria-hidden="true">あ</span><div class="level-card__meta"><span class="level-card__label">Hiragana</span><span class="level-card__sub">46 karakter dasar</span></div></div><span class="level-card__badge level-card__badge--done">Selesai</span></div><div class="level-card__prog"><div class="level-card__prog-row"><span>Progress</span><span>100%</span></div><div class="level-card__track"><div class="level-card__fill" style="width:100%"></div></div></div><div class="level-card__actions"><button class="level-card__btn" type="button" aria-label="Flashcard Hiragana"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> Flashcard</button><button class="level-card__btn level-card__btn--primary" type="button" aria-label="Kuis Hiragana"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Kuis</button></div></div>
+      <div class="level-card" data-cat="katakana" role="listitem"><div class="level-card__head"><div class="level-card__left"><span class="level-card__icon" lang="ja" aria-hidden="true">ア</span><div class="level-card__meta"><span class="level-card__label">Katakana</span><span class="level-card__sub">46 karakter serapan</span></div></div><span class="level-card__badge level-card__badge--done">Selesai</span></div><div class="level-card__prog"><div class="level-card__prog-row"><span>Progress</span><span>100%</span></div><div class="level-card__track"><div class="level-card__fill" style="width:100%"></div></div></div><div class="level-card__actions"><button class="level-card__btn" type="button" aria-label="Flashcard Katakana">Flashcard</button><button class="level-card__btn level-card__btn--primary" type="button" aria-label="Kuis Katakana">Kuis</button></div></div>
+      <div class="level-card" data-cat="kanji" role="listitem"><div class="level-card__head"><div class="level-card__left"><span class="level-card__icon" lang="ja" aria-hidden="true">日</span><div class="level-card__meta"><span class="level-card__label">Kanji</span><span class="level-card__sub">100 karakter dasar</span></div></div><span class="level-card__badge level-card__badge--progress">45%</span></div><div class="level-card__prog"><div class="level-card__prog-row"><span>45 / 100 dikuasai</span><span>45%</span></div><div class="level-card__track"><div class="level-card__fill" style="width:45%"></div></div></div><div class="level-card__actions"><button class="level-card__btn" type="button">Flashcard</button><button class="level-card__btn level-card__btn--primary" type="button">Kuis</button></div></div>
+      <div class="level-card" data-cat="kosakata" role="listitem"><div class="level-card__head"><div class="level-card__left"><span class="level-card__icon" lang="ja" aria-hidden="true">語</span><div class="level-card__meta"><span class="level-card__label">Kosakata</span><span class="level-card__sub">797 item penting</span></div></div><span class="level-card__badge level-card__badge--progress">30%</span></div><div class="level-card__prog"><div class="level-card__prog-row"><span>239 / 797 item</span><span>30%</span></div><div class="level-card__track"><div class="level-card__fill" style="width:30%"></div></div></div><div class="level-card__actions"><button class="level-card__btn" type="button">Flashcard</button><button class="level-card__btn level-card__btn--primary" type="button">Kuis</button></div></div>
+      <div class="level-card" data-cat="grammar" role="listitem"><div class="level-card__head"><div class="level-card__left"><span class="level-card__icon" lang="ja" aria-hidden="true">文</span><div class="level-card__meta"><span class="level-card__label">Bunpou</span><span class="level-card__sub">Pola kalimat dasar</span></div></div><span class="level-card__badge level-card__badge--progress">50%</span></div><div class="level-card__prog"><div class="level-card__prog-row"><span>12 / 24 pola</span><span>50%</span></div><div class="level-card__track"><div class="level-card__fill" style="width:50%"></div></div></div><div class="level-card__actions"><button class="level-card__btn" type="button">Flashcard</button><button class="level-card__btn level-card__btn--primary" type="button">Kuis</button></div></div>
+      <div class="level-card" data-cat="partikel" role="listitem"><div class="level-card__head"><div class="level-card__left"><span class="level-card__icon" lang="ja" aria-hidden="true">は</span><div class="level-card__meta"><span class="level-card__label">Partikel</span><span class="level-card__sub">Wa, o, ni, de, dll</span></div></div><span class="level-card__badge level-card__badge--progress">60%</span></div><div class="level-card__prog"><div class="level-card__prog-row"><span>9 / 15 partikel</span><span>60%</span></div><div class="level-card__track"><div class="level-card__fill" style="width:60%"></div></div></div><div class="level-card__actions"><button class="level-card__btn" type="button">Flashcard</button><button class="level-card__btn level-card__btn--primary" type="button">Kuis</button></div></div>
+      <div class="level-card" data-cat="kata-kerja" role="listitem"><div class="level-card__head"><div class="level-card__left"><span class="level-card__icon" lang="ja" aria-hidden="true">動</span><div class="level-card__meta"><span class="level-card__label">Kata Kerja</span><span class="level-card__sub">Kelompok 1, 2, 3</span></div></div><span class="level-card__badge">0%</span></div><div class="level-card__prog"><div class="level-card__prog-row"><span>0 / 80 konjugasi</span><span>0%</span></div><div class="level-card__track"><div class="level-card__fill" style="width:0%"></div></div></div><div class="level-card__actions"><button class="level-card__btn" type="button">Flashcard</button><button class="level-card__btn level-card__btn--primary" type="button">Kuis</button></div></div>
+      <div class="level-card" data-cat="kata-sifat" role="listitem"><div class="level-card__head"><div class="level-card__left"><span class="level-card__icon" lang="ja" aria-hidden="true">形</span><div class="level-card__meta"><span class="level-card__label">Kata Sifat</span><span class="level-card__sub">Ke-i dan Na-ke-i</span></div></div><span class="level-card__badge">0%</span></div><div class="level-card__prog"><div class="level-card__prog-row"><span>0 / 50 adjektiva</span><span>0%</span></div><div class="level-card__track"><div class="level-card__fill" style="width:0%"></div></div></div><div class="level-card__actions"><button class="level-card__btn" type="button">Flashcard</button><button class="level-card__btn level-card__btn--primary" type="button">Kuis</button></div></div>
+      <div class="level-card" data-cat="kata-bantu" role="listitem"><div class="level-card__head"><div class="level-card__left"><span class="level-card__icon" lang="ja" aria-hidden="true">助</span><div class="level-card__meta"><span class="level-card__label">Kata Bantu</span><span class="level-card__sub">Penghubung &amp; Keterangan</span></div></div><span class="level-card__badge">0%</span></div><div class="level-card__prog"><div class="level-card__prog-row"><span>0 / 30 item</span><span>0%</span></div><div class="level-card__track"><div class="level-card__fill" style="width:0%"></div></div></div><div class="level-card__actions"><button class="level-card__btn" type="button">Flashcard</button><button class="level-card__btn level-card__btn--primary" type="button">Kuis</button></div></div>
+    </div>
+
+    <div class="level-cta" role="region" aria-label="Pertahankan konsistensi">
+      <span class="level-cta__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="6"/><path d="M15.5 8a3.5 3.5 0 0 1-7 0"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 18h6"/></svg></span>
+      <h3 class="level-cta__title">Pertahankan Konsistensi!</h3>
+      <p class="level-cta__desc">Selesaikan latihan kuis harian untuk membuka pencapaian lencana N5 baru.</p>
+      <button class="level-cta__btn" type="button" aria-label="Mulai latihan harian cepat">Latihan Harian Cepat</button>
+    </div>
+  </section>
+
+  <section id="quiz-view" hidden tabindex="-1" aria-label="Kuis Latihan">
+    <div class="quiz-head">
+      <div>
+        <span class="quiz-head__eyebrow">Kuis Latihan</span>
+        <h2 class="quiz-head__title">Bab 3: Tata Bahasa Dasar</h2>
+      </div>
+      <span class="quiz-head__streak" aria-label="Streak 5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.5-2.25 1.5-3.2"/></svg> Streak 5</span>
+    </div>
+
+    <div class="quiz-progress">
+      <div class="quiz-progress__row"><span>Pertanyaan 3 dari 10</span><span class="quiz-progress__score">Skor: 200 pts</span></div>
+      <div class="quiz-progress__track" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" aria-label="Progress kuis 30 persen"><div class="quiz-progress__fill" style="width:30%"></div></div>
+    </div>
+
+    <div class="quiz-card" role="region" aria-label="Soal kuis">
+      <span class="quiz-card__deco" aria-hidden="true"></span>
+      <div class="quiz-card__top">
+        <div>
+          <span class="quiz-card__badge">Pilihan Ganda</span>
+          <h3 class="quiz-card__question">Manakah partikel yang tepat untuk menyatakan kepemilikan (posesi)?</h3>
+        </div>
+        <button class="quiz-card__audio" type="button" aria-label="Dengar pengucapan"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+      </div>
+      <div class="quiz-example">
+        <div>
+          <p class="quiz-example__label" style="font-size: var(--text-xs); color: var(--muted); font-family: var(--font-mono); letter-spacing: var(--tracking-wide); text-transform: uppercase;">Contoh Kalimat:</p>
+          <p class="quiz-example__jp" lang="ja">わたし<span>(?)</span>hon</p>
+        </div>
+        <span class="quiz-example__id">"Buku saya"</span>
+      </div>
+      <div class="quiz-options" role="group" aria-label="Pilihan jawaban">
+        <button class="quiz-option" type="button" aria-label="Pilihan A, ni"><span class="quiz-option__left"><span class="quiz-option__letter">A</span><span class="quiz-option__text" lang="ja">に (ni)</span></span><span class="quiz-option__chevron" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></button>
+        <button class="quiz-option" type="button" aria-label="Pilihan B, no, jawaban benar"><span class="quiz-option__left"><span class="quiz-option__letter">B</span><span class="quiz-option__text" lang="ja">の (no)</span></span><span class="quiz-option__chevron" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></button>
+        <button class="quiz-option" type="button" aria-label="Pilihan C, wo"><span class="quiz-option__left"><span class="quiz-option__letter">C</span><span class="quiz-option__text" lang="ja">を (wo)</span></span><span class="quiz-option__chevron" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></button>
+        <button class="quiz-option" type="button" aria-label="Pilihan D, wa"><span class="quiz-option__left"><span class="quiz-option__letter">D</span><span class="quiz-option__text" lang="ja">は (wa)</span></span><span class="quiz-option__chevron" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></button>
+      </div>
+    </div>
+
+    <div class="quiz-feedback quiz-feedback--correct" hidden role="status" aria-live="polite" aria-label="Feedback jawaban">
+      <div class="quiz-feedback__head"><span class="quiz-feedback__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg></span><span>
+          <strong class="quiz-feedback__title">Benar Sekali!</strong>
+          <span class="quiz-feedback__desc"> Partikel の (no) digunakan untuk menunjukkan kepemilikan noun.</span>
+        </span></div>
+      <button class="quiz-feedback__next" type="button">Pertanyaan Selanjutnya <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+    </div>
+
+    <div class="quiz-review" role="region" aria-label="Riwayat dan review">
+      <div class="quiz-review__head">
+        <span class="quiz-review__title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Riwayat &amp; Review Salah</span>
+        <span class="quiz-review__badge">2 Tertunda</span>
+      </div>
+      <p class="quiz-review__desc">Latih kembali kosakata dan tata bahasa yang sebelumnya salah dijawab untuk memperkuat memori jangka panjang.</p>
+      <button class="quiz-review__cta" type="button" aria-label="Mulai review kesalahan">Mulai Review Kesalahan</button>
+    </div>
+  </section>
+
+  <section id="flashcard-view" hidden tabindex="-1" aria-label="Flashcard">
+    <div class="flash-session" role="region" aria-label="Sesi N5">
+      <span class="flash-session__left"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> Sesi N5 • Kartu <span id="flash-current-num">1</span>/10</span>
+      <span class="flash-session__actions">
+        <button class="flash-btn" type="button" aria-label="Acak kartu"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg> Acak</button>
+        <button class="flash-btn flash-btn--icon" type="button" aria-label="Ulangi sesi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+      </span>
+    </div>
+
+    <div class="flash-progress" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" aria-label="Progress flashcard 10 persen"><div class="flash-progress__fill" style="width:10%"></div></div>
+
+    <div class="flash-stage" role="button" tabindex="0" aria-label="Kartu flashcard, ketuk untuk membalik" aria-pressed="false">
+      <div class="flash-card" id="flashcard-inner">
+        <div class="flash-card__face flash-card__face--front">
+          <div class="flash-card__top">
+            <span class="flash-card__badge">JLPT N5</span>
+            <button class="flash-card__audio" type="button" aria-label="Putar audio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></button>
+          </div>
+          <div class="flash-card__center">
+            <span class="flash-card__kanji" lang="ja">学生</span>
+            <span class="flash-card__furigana" lang="ja">がくせい (gakusei)</span>
+          </div>
+          <span class="flash-card__hint"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> Ketuk kartu untuk melihat arti</span>
+        </div>
+        <div class="flash-card__face flash-card__face--back">
+          <div class="flash-card__top">
+            <span class="flash-card__badge">Arti &amp; Contoh</span>
+            <button class="flash-card__audio" type="button" aria-label="Putar audio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></button>
+          </div>
+          <div class="flash-card__center">
+            <span class="flash-card__meaning">Pelajar / Murid</span>
+            <div class="flash-card__example">
+              <span class="flash-card__example-label">Contoh Kalimat:</span>
+              <span class="flash-card__example-jp" lang="ja">私は学生です。</span>
+              <span class="flash-card__example-id">Saya adalah seorang pelajar.</span>
+            </div>
+          </div>
+          <span class="flash-card__hint"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> Ketuk untuk kembali ke depan</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flash-controls" role="group" aria-label="Kontrol hafalan">
+      <button class="flash-controls__btn flash-controls__btn--again" type="button" aria-label="Masih belajar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Masih Belajar</button>
+      <button class="flash-controls__btn flash-controls__btn--known" type="button" aria-label="Sudah hafal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Sudah Hafal</button>
+    </div>
+
+    <div class="flash-complete" hidden role="status" aria-live="polite" aria-label="Sesi selesai">
+      <span class="flash-complete__icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="6"/><path d="M15.5 8a3.5 3.5 0 0 1-7 0"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 18h6"/></svg></span>
+      <h3 class="flash-complete__title">Sesi Selesai!</h3>
+      <p class="flash-complete__desc">Luar biasa! Kamu telah meninjau 10 kartu hari ini. Kosakata baru telah tersimpan di otak hebatmu.</p>
+      <button class="flash-complete__btn" type="button">Mulai Sesi Baru</button>
+    </div>
+  </section>
+
+  <section id="kana-view" hidden tabindex="-1" aria-label="Kana">
+    <div class="page-header"><span class="page-header__level">Kana</span></div>
+    <div id="kana-content"></div>
+  </section>
+
+  <section id="kanji-view" hidden tabindex="-1" aria-label="Kanji">
+    <div class="page-header"><span class="page-header__level">Kanji</span></div>
+    <div id="kanji-content"></div>
+  </section>
+
+  <section id="kosakata-view" hidden tabindex="-1" aria-label="Kosakata">
+    <div class="page-header"><span class="page-header__level">Kosakata</span></div>
+    <div id="kosakata-content"></div>
+  </section>
+
+  <section id="bunpou-view" hidden tabindex="-1" aria-label="Bunpou">
+    <div class="page-header"><span class="page-header__level">Bunpou</span></div>
+    <div id="bunpou-content"></div>
+  </section>
+
+  <section id="konjugasi-view" hidden tabindex="-1" aria-label="Konjugasi">
+    <div class="page-header"><span class="page-header__level">Konjugasi</span></div>
+    <div id="konjugasi-content"></div>
+  </section>
+
+  <section id="partikel-view" hidden tabindex="-1" aria-label="Partikel">
+    <div class="page-header"><span class="page-header__level">Partikel</span></div>
+    <div id="partikel-content"></div>
+  </section>
+
+  <!-- Bottom navigation — 5 tab (Beranda · Kamus · Latihan · Progres · Tentang) -->
+  <nav class="nav" id="bottom-nav" aria-label="Navigasi utama">
+    <div class="nav__inner">
+      <button class="nav__item nav__item--active" id="nav-beranda" type="button" data-nav="beranda" data-view="beranda-view" aria-label="Beranda" aria-current="page">
+        <span class="nav__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+        <span class="nav__label">Beranda</span>
+      </button>
+      <button class="nav__item" id="nav-kamus" type="button" data-nav="kamus" data-view="kamus-view" data-alias="level,level-view" aria-label="Kamus">
+        <span class="nav__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="15" y2="11"/></svg></span>
+        <span class="nav__label">Kamus</span>
+      </button>
+      <button class="nav__item" id="nav-latihan" type="button" data-nav="latihan" data-view="quiz-view" data-alias="flashcard-view,quiz-view" aria-label="Latihan">
+        <span class="nav__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+        <span class="nav__label">Latihan</span>
+      </button>
+      <button class="nav__item" id="nav-progres" type="button" data-nav="progres" data-view="level-view" aria-label="Progres">
+        <span class="nav__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+        <span class="nav__label">Progres</span>
+      </button>
+      <button class="nav__item" id="nav-tentang" type="button" data-nav="tentang" data-alias="pengaturan" data-view="settings-view" aria-label="Tentang">
+        <span class="nav__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <span class="nav__label">Tentang</span>
+      </button>
+    </div>
+  </nav>
+
   <script src="js/data.js"></script>
+  <script src="js/progress.js"></script>
   <script src="js/views.js"></script>
   <script src="js/app.js"></script>
   <script>

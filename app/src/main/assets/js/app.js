@@ -890,3 +890,5 @@ try {
 } catch (e) {}
 
 init();
+window.WakaruAudio = WakaruAudio;
+window.WakaruApp = { openQuiz: openQuiz, openFlash: openFlash, openSettings: openSettings, openKanjiDetail: openKanjiDetail };

@@ -1,0 +1,256 @@
+/* Wakaru Partikel + Kata Bantu v4 — card list (char besar + nama + fungsi) · divider antar grup
+   BEM .partikel-* — tokens only, no hex. */
+
+.partikel-view {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-bottom: var(--space-lg);
+  animation: fadeInUp 300ms ease both;
+}
+.partikel-view[hidden] { display: none !important; }
+
+/* ── intro ── */
+.partikel-intro {
+  padding: var(--space-sm) 0 var(--space-xs);
+}
+.partikel-intro__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+.partikel-intro__title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+  margin-top: 4px;
+  line-height: var(--leading-tight);
+}
+.partikel-intro__desc {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: var(--leading-relaxed);
+  margin-top: var(--space-xs);
+  max-width: 42ch;
+}
+
+/* ── group ── */
+.partikel-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.partikel-group__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--border);
+}
+.partikel-group__title {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+.partikel-group__count {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--muted-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 2px 8px;
+  line-height: 1;
+}
+.partikel-group__line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── divider antar grup ── */
+.partikel-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0;
+}
+.partikel-divider__line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.partikel-divider__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--muted-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+/* ── partikel card list ── */
+.partikel-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.partikel-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--space-sm) var(--space-md);
+  min-height: 72px;
+  box-shadow: 0 1px 4px var(--shadow);
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease, background 0.25s ease;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  animation: fadeInUp 260ms ease both;
+}
+.partikel-card:hover { border-color: var(--border-strong); box-shadow: 0 4px 14px var(--shadow-hover); transform: translateY(-1px); }
+.partikel-card:active { transform: translateY(0); box-shadow: 0 1px 3px var(--shadow); }
+.partikel-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+
+.partikel-card__char {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: var(--font-bold);
+  color: var(--kat-red);
+  background: var(--kat-red-bg);
+  border: 1px solid color-mix(in srgb, var(--kat-red) 18%, transparent);
+  border-radius: var(--r-md);
+  line-height: 1;
+}
+.partikel-card__char[lang="ja"] { font-style: normal; }
+.partikel-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.partikel-card__name {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--text);
+  line-height: var(--leading-tight);
+}
+.partikel-card__name[lang="ja"] { font-style: normal; }
+.partikel-card__kana {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: var(--leading-normal);
+}
+.partikel-card__kana[lang="ja"] { font-style: normal; }
+.partikel-card__fungsi {
+  font-size: var(--text-sm);
+  color: var(--muted-2);
+  line-height: var(--leading-normal);
+  overflow-wrap: break-word;
+}
+.partikel-card__chevron {
+  flex-shrink: 0;
+  color: var(--muted-2);
+  display: inline-flex;
+}
+.partikel-card__chevron svg { width: 18px; height: 18px; stroke: currentColor; }
+
+/* kata bantu — uses violet accent */
+.partikel-card--aux .partikel-card__char {
+  color: var(--kat-violet);
+  background: var(--kat-violet-bg);
+  border-color: color-mix(in srgb, var(--kat-violet) 18%, transparent);
+}
+.partikel-card--aux:hover { border-color: var(--kat-violet); }
+
+/* partikel variant — sage for wa/ha etc? keep red default, allow modifier */
+.partikel-card--primary .partikel-card__char {
+  color: var(--kat-sage);
+  background: var(--kat-sage-bg);
+  border-color: color-mix(in srgb, var(--kat-sage) 18%, transparent);
+}
+
+/* ── kata bantu list (compact) ── */
+.partikel-aux-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.partikel-aux-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--space-sm) var(--space-md);
+  min-height: 56px;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+.partikel-aux-item:hover { border-color: var(--kat-violet); background: var(--kat-violet-bg); }
+.partikel-aux-item__char {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: var(--font-bold);
+  color: var(--kat-violet);
+  background: var(--kat-violet-bg);
+  border: 1px solid color-mix(in srgb, var(--kat-violet) 18%, transparent);
+  border-radius: var(--r-md);
+  line-height: 1;
+}
+.partikel-aux-item__char[lang="ja"] { font-style: normal; }
+.partikel-aux-item__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.partikel-aux-item__name { font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--text); }
+.partikel-aux-item__desc { font-size: var(--text-xs); color: var(--muted-2); line-height: var(--leading-normal); }
+
+/* empty */
+.partikel-empty {
+  text-align: center;
+  padding: var(--space-lg) var(--space-md);
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--r-md);
+  color: var(--muted);
+}
+.partikel-empty__title { font-weight: var(--font-semibold); color: var(--text); margin-bottom: 4px; }
+.partikel-empty__desc { font-size: var(--text-sm); line-height: var(--leading-relaxed); }
+
+/* dark */
+[data-theme="dark"] .partikel-card { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] .partikel-aux-item { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] .partikel-divider__label { background: var(--surface-2); border-color: var(--border); }
+
+@media (prefers-reduced-motion: reduce) {
+  .partikel-view { animation: none !important; }
+  .partikel-card { animation: none !important; }
+}

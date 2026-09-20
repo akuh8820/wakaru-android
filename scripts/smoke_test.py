@@ -181,6 +181,7 @@ check_file('conjugation_adj.json', [
 ])
 
 # ── HTML structure ─────────────────────────────────────────────────
+import re as _re
 html_path = os.path.join(ASSETS, 'index.html')
 try:
     html = open(html_path, encoding='utf-8').read()
@@ -207,6 +208,77 @@ try:
 except Exception as e:
     fail(f'index.html: {e}')
 
+# ── Section views count (≥ 11) ───────────────────────────────────
+try:
+    html = open(html_path, encoding='utf-8').read()
+    section_ids = _re.findall(r'id="([a-z][a-z0-9-]*-view)"', html)
+    if len(section_ids) >= 11:
+        ok(f'index.html: {len(section_ids)} section views (≥ 11)')
+    else:
+        fail(f'index.html: only {len(section_ids)} section views (need ≥ 11)')
+except Exception as e:
+    fail(f'section views count: {e}')
+
+# ── CSS links count (≥ 11) ───────────────────────────────────────
+try:
+    css_refs = set(_re.findall(r'href="css/([a-z][a-z0-9-]*\.css)"', html))
+    if len(css_refs) >= 11:
+        ok(f'index.html: {len(css_refs)} CSS links (≥ 11)')
+    else:
+        fail(f'index.html: only {len(css_refs)} CSS links (need ≥ 11)')
+except Exception as e:
+    fail(f'css links count: {e}')
+
+# ── Script order: data → progress → views → app ──────────────────
+try:
+    script_srcs = _re.findall(r'src="js/([a-z]+)\.js"', html)
+    expected_order = ['data', 'progress', 'views', 'app']
+    idx = 0
+    order_ok = True
+    for s in script_srcs:
+        if idx < len(expected_order) and s == expected_order[idx]:
+            idx += 1
+        elif s in expected_order:
+            order_ok = False
+            break
+    if order_ok and idx == len(expected_order):
+        ok(f'index.html: script order correct ({", ".join(expected_order)})')
+    else:
+        fail(f'index.html: script order wrong (got {script_srcs}, expected {expected_order})')
+except Exception as e:
+    fail(f'script order: {e}')
+
+# ── Global assignments (window.*) ────────────────────────────────
+required_globals = ['WakaruViews', 'WakaruApp', 'WakaruData', 'WakaruAudio',
+                    'WakaruProgress', 'WakaruStreak', 'WakaruDaily']
+for g in required_globals:
+    found = False
+    for js_name in ['data.js', 'views.js', 'app.js', 'progress.js']:
+        js_path = os.path.join(ASSETS, 'js', js_name)
+        try:
+            content = open(js_path, encoding='utf-8').read()
+            if f'window.{g}' in content:
+                found = True
+                break
+        except Exception:
+            pass
+    if found:
+        ok(f'global window.{g} assigned')
+    else:
+        fail(f'global window.{g} NOT assigned in any JS file')
+
+# ── Inline script blocks (non-theme guard) ───────────────────────
+try:
+    # Find all <script> blocks without src= (inline)
+    inline_scripts = _re.findall(r'<script(?![^>]*src=)[^>]*>(.*?)</script>', html, _re.S)
+    non_theme = [s for s in inline_scripts if 'wakaru-theme' not in s]
+    if len(non_theme) <= 1:
+        ok(f'index.html: {len(non_theme)} non-theme inline script(s) (≤ 1)')
+    else:
+        fail(f'index.html: {len(non_theme)} non-theme inline scripts (need ≤ 1)')
+except Exception as e:
+    fail(f'inline scripts check: {e}')
+
 # ── views.js handleBack contract ──────────────────────────────────
 views_path = os.path.join(ASSETS, 'js', 'views.js')
 try:
@@ -219,7 +291,7 @@ except Exception as e:
     fail(f'views.js: {e}')
 
 # ── JS syntax check ────────────────────────────────────────────────
-for js in ['data.js', 'views.js', 'app.js']:
+for js in ['data.js', 'progress.js', 'views.js', 'app.js']:
     js_path = os.path.join(ASSETS, 'js', js)
     try:
         import subprocess

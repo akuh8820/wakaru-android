@@ -1,0 +1,304 @@
+/* Wakaru Kanji Detail v4 — hero kanji · audio TTS · readings chips · stroke grid · contoh
+   BEM .kanji-detail-* — tokens only, no hex. */
+
+.kanji-detail-view {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-bottom: var(--space-lg);
+  animation: fadeInUp 300ms ease both;
+}
+.kanji-detail-view[hidden] { display: none !important; }
+
+/* ── hero ── */
+.kanji-detail-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--space-lg) var(--space-md) var(--space-md);
+  box-shadow: 0 1px 8px var(--shadow);
+}
+.kanji-detail-hero__glyph {
+  font-size: 5rem;
+  font-weight: var(--font-bold);
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: var(--tracking-tight);
+}
+.kanji-detail-hero__glyph[lang="ja"] { font-style: normal; }
+.kanji-detail-hero__meanings {
+  font-size: var(--text-lg);
+  font-weight: var(--font-medium);
+  color: var(--text);
+  line-height: var(--leading-normal);
+}
+.kanji-detail-hero__meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--muted-2);
+  text-transform: uppercase;
+}
+
+/* audio TTS button */
+.kanji-detail-audio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 var(--space-md);
+  border-radius: var(--r-pill);
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  transition: background 150ms ease, border-color 150ms ease, transform 120ms ease, box-shadow 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.kanji-detail-audio:hover { background: var(--surface-2); border-color: var(--accent); box-shadow: 0 2px 8px var(--shadow-hover); }
+.kanji-detail-audio:active { transform: scale(0.97); }
+.kanji-detail-audio:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.kanji-detail-audio__icon { display: inline-flex; flex-shrink: 0; }
+.kanji-detail-audio__icon svg { width: 18px; height: 18px; stroke: currentColor; }
+.kanji-detail-audio.is-playing { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.kanji-detail-audio--circle {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: var(--r-pill);
+}
+
+/* ── section blocks ── */
+.kanji-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.kanji-detail-section__title {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--muted-2);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── readings : on-yomi / kun-yomi chips ── */
+.kanji-detail-readings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.kanji-detail-readings__group {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--space-sm) var(--space-md);
+  box-shadow: 0 1px 4px var(--shadow);
+}
+.kanji-detail-readings__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--muted-2);
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+.kanji-detail-readings__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+.kanji-detail-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--text);
+  transition: background 150ms ease, border-color 150ms ease;
+}
+.kanji-detail-chip[lang="ja"] { font-weight: var(--font-semibold); letter-spacing: 0.02em; }
+.kanji-detail-chip:hover { background: var(--accent-light); border-color: var(--accent); }
+.kanji-detail-chip--on { border-color: color-mix(in srgb, var(--kat-vermilion) 18%, transparent); }
+.kanji-detail-chip--on:hover { border-color: var(--kat-vermilion); color: var(--kat-vermilion); }
+.kanji-detail-chip--kun { border-color: color-mix(in srgb, var(--kat-sage) 18%, transparent); }
+.kanji-detail-chip--kun:hover { border-color: var(--kat-sage); color: var(--kat-sage); }
+.kanji-detail-chip--empty {
+  font-size: var(--text-sm);
+  color: var(--muted-2);
+  font-style: italic;
+  background: transparent;
+  border-style: dashed;
+}
+
+/* ── stroke order grid ── */
+.kanji-detail-stroke {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--space-md);
+  box-shadow: 0 1px 4px var(--shadow);
+}
+.kanji-detail-stroke__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+.kanji-detail-stroke__cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  position: relative;
+  overflow: hidden;
+}
+.kanji-detail-stroke__cell svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.kanji-detail-stroke__num {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: var(--font-bold);
+  color: var(--accent-text);
+  background: var(--accent);
+  border-radius: var(--r-pill);
+  line-height: 1;
+}
+.kanji-detail-stroke__controls {
+  display: flex;
+  gap: var(--space-xs);
+  justify-content: center;
+}
+.kanji-detail-stroke__btn {
+  min-height: 36px;
+  padding: 0 var(--space-md);
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+.kanji-detail-stroke__btn:hover { border-color: var(--accent); background: var(--accent-light); }
+.kanji-detail-stroke__btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.kanji-detail-stroke__count {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted-2);
+  text-align: center;
+  display: block;
+  margin-top: var(--space-xs);
+  letter-spacing: var(--tracking-wide);
+}
+@media (max-width: 380px) {
+  .kanji-detail-stroke__grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── contoh kata list ── */
+.kanji-detail-examples {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.kanji-detail-example {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--space-sm) var(--space-md);
+  box-shadow: 0 1px 4px var(--shadow);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.kanji-detail-example:hover { border-color: var(--border-strong); box-shadow: 0 4px 12px var(--shadow-hover); }
+.kanji-detail-example__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+.kanji-detail-example__jp {
+  font-size: var(--text-md);
+  font-weight: var(--font-semibold);
+  color: var(--text);
+  line-height: var(--leading-normal);
+}
+.kanji-detail-example__jp[lang="ja"] { font-style: normal; }
+.kanji-detail-example__kana {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: var(--leading-normal);
+}
+.kanji-detail-example__kana[lang="ja"] { font-style: normal; }
+.kanji-detail-example__id {
+  font-size: var(--text-sm);
+  color: var(--muted-2);
+  line-height: var(--leading-relaxed);
+  font-style: italic;
+}
+.kanji-detail-example__audio {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+.kanji-detail-example__audio:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+.kanji-detail-example__audio:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.kanji-detail-example__audio svg { width: 16px; height: 16px; stroke: currentColor; }
+
+/* dark */
+[data-theme="dark"] .kanji-detail-hero { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] .kanji-detail-readings__group { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] .kanji-detail-stroke { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] .kanji-detail-example { background: var(--surface); border-color: var(--border); }
+
+@media (prefers-reduced-motion: reduce) {
+  .kanji-detail-view { animation: none !important; }
+}

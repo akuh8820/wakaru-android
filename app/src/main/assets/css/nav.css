@@ -1,0 +1,211 @@
+/* Wakaru Bottom Navigation v4 — 5 tab · fixed bottom · safe-area · ≥44px
+   Material-3-like, sage highlight, tokens only. No hex. */
+
+body {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── nav shell ── */
+.nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(20px) saturate(1.2);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+/* safe-area + inner padding */
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 2px;
+  height: 72px;
+  padding: 6px var(--space-xs) calc(6px + env(safe-area-inset-bottom, 0px));
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ── item ── */
+.nav__item {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 1 1 0;
+  max-width: 84px;
+  min-width: 48px;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px 4px;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  position: relative;
+}
+
+.nav__item:active {
+  transform: scale(0.97);
+}
+
+.nav__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* icon wrapper — keeps 44px touch target vertically */
+.nav__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.nav__icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke-width 0.2s ease, transform 0.2s ease;
+}
+
+/* label */
+.nav__label {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: var(--font-medium);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  transition: color 0.2s ease, font-weight 0.2s ease;
+}
+
+/* ── active state — sage highlight via tokens ── */
+.nav__item--active,
+.nav__item[aria-current="page"] {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.nav__item--active .nav__label,
+.nav__item[aria-current="page"] .nav__label {
+  font-weight: var(--font-semibold);
+  color: var(--accent);
+}
+
+.nav__item--active .nav__icon svg,
+.nav__item[aria-current="page"] .nav__icon svg {
+  stroke-width: 2.2;
+  transform: translateY(-1px);
+}
+
+/* subtle top accent line on active */
+.nav__item--active::before,
+.nav__item[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 28%;
+  right: 28%;
+  height: 3px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  opacity: 0.95;
+}
+
+/* hover (desktop) */
+@media (hover: hover) {
+  .nav__item:hover {
+    color: var(--text);
+    background: var(--surface-2);
+    border-color: var(--border);
+  }
+  .nav__item--active:hover,
+  .nav__item[aria-current="page"]:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+}
+
+/* ── ensure 44px touch target for narrow viewports ── */
+@media (max-width: 360px) {
+  .nav__inner {
+    padding-left: 2px;
+    padding-right: 2px;
+    gap: 0;
+  }
+  .nav__item {
+    min-width: 44px;
+    max-width: none;
+    padding: 6px 2px 4px;
+  }
+  .nav__label {
+    font-size: 0.62rem;
+  }
+  .nav__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ── larger phones: airier ── */
+@media (min-width: 560px) {
+  .nav__inner {
+    height: 74px;
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+    gap: 4px;
+  }
+  .nav__item {
+    max-width: 88px;
+    min-height: 56px;
+  }
+}
+
+/* ── dark mode tuning — tokens handle colors, just border tweak ── */
+[data-theme="dark"] .nav {
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  border-top-color: var(--border);
+}
+
+[data-theme="dark"] .nav__item--active,
+[data-theme="dark"] .nav__item[aria-current="page"] {
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* ── reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .nav__item,
+  .nav__icon,
+  .nav__icon svg,
+  .nav__label {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── nav spacer helper (if needed for scroll) ── */
+.nav-spacer {
+  height: calc(72px + env(safe-area-inset-bottom, 0px));
+  flex-shrink: 0;
+}
