@@ -1,3 +1,21 @@
+## v4.0 — 2026-09-20
+
+### Added
+- Redesign v4.0: 15 CSS token-driven (0 hardcoded hex), 4 JS rewire (data→progress→views→app), 11 content views (kana/kanji/kosakata/bunpou/konjugasi/partikel)
+- Progress tracking: WakaruProgress + streak (WakaruStreak) + target harian (WakaruDaily), persisted localStorage
+- Audio TTS: WakaruAudio (WebViewCompat-safe, androidx.webkit)
+- Pelacakan progres per kategori: kana, kanji, kosakata, bunpou, konjugasi, partikel
+
+### Refactor
+- index.html: 14 section + 15 CSS + 4 JS (progress.js tambahan), inline theme-guard tunggal
+- views.py: rewrite fasilitas list/detail + wiring data-view
+- app.js: rewire inisialisasi + audio
+- data.js: rewire definisi WakaruData + audio
+
+### Chore
+- CHANGELOG: section v4.0
+- versionName 4.0 / versionCode 13
+
 # Changelog
 
 ## v3.4 — 2026-09-17
